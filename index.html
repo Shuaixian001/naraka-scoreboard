@@ -118,7 +118,7 @@
     color: var(--muted); font-weight: 600; font-size: 12px;
     position: sticky; top: 0; background: var(--panel); z-index: 2;
   }
-  table.lb .num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.lb .num { text-align: center; font-variant-numeric: tabular-nums; }
   table.lb td.mh { color: var(--gold); font-weight: 700; background: rgba(217,154,16,.13); }
   table.lb th.wd { color: var(--accent2); }
   table.lb .total { font-weight: 700; color: var(--accent); font-size: 16px; }
@@ -159,7 +159,7 @@
     white-space: nowrap;
   }
   .mp-badge.win { background: rgba(217,154,16,.18); color: var(--gold); }
-  .mp-progress { display: flex; align-items: center; gap: 6px; }
+  .mp-progress { display: flex; align-items: center; justify-content: center; gap: 6px; }
   .mp-progress .bar { width: 52px; height: 4px; border-radius: 2px; background: var(--border); overflow: hidden; flex: none; }
   .mp-progress .bar i { display: block; height: 100%; background: var(--accent2); }
   .mp-progress span { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -1156,7 +1156,7 @@ function renderLeaderboard(ev, S) {
 
   const hasGroups = ev.groups.length > 0;
   const hasCarry = S.rows.some(function(r) { return r.carryT !== 0; });
-  let head = '<tr><th style="width:44px">排名</th>';
+  let head = '<tr><th class="num" style="width:44px">排名</th>';
   if (hasGroups) head += '<th style="width:40px">组</th>';
   head += '<th>队伍 / 选手</th>';
   if (hasCarry) head += '<th class="num" style="width:56px">前序</th>';
@@ -1166,7 +1166,7 @@ function renderLeaderboard(ev, S) {
     head += '<th class="num' + (meta.isWudao ? ' wd' : '') + '" title="' + esc(tip) + '">' + lab + '</th>';
   });
   head += '<th class="num" style="width:68px">总积分</th>';
-  if (S.usingMP) head += '<th style="width:140px">赛点状态</th>';
+  if (S.usingMP) head += '<th class="num" style="width:140px">赛点状态</th>';
   head += '</tr>';
 
   // 排名 + [组] + 队伍/选手 + [前序] + 每局 × N + 总积分 + [赛点状态]
@@ -1250,7 +1250,7 @@ function lbRow(r, rank, ev, S, hasGroups, hasCarry, colspan) {
   const nameHtml = esc(c.name) + (r.tied ? ' <span class="muted" style="font-size:12px">并列</span>' : '');
   const members = c.members.length ? '<span class="members">' + esc(c.members.join(' / ')) + '</span>' : '';
 
-  let tds = '<td>' + rankBadge(rank) + '</td>';
+  let tds = '<td class="num">' + rankBadge(rank) + '</td>';
   if (hasGroups) tds += '<td class="muted">' + esc(c.group || '—') + '</td>';
   tds += '<td class="name">' + nameHtml + members + '</td>';
   if (hasCarry) tds += '<td class="num">' + (r.carryT !== 0 ? fmtT(r.carryT) : '<span class="muted">—</span>') + '</td>';
@@ -1266,7 +1266,7 @@ function lbRow(r, rank, ev, S, hasGroups, hasCarry, colspan) {
   });
 
   tds += '<td class="num total">' + fmtT(r.totalT) + '</td>';
-  if (S.usingMP) tds += '<td>' + mpStatusHTML(r, S) + '</td>';
+  if (S.usingMP) tds += '<td class="num">' + mpStatusHTML(r, S) + '</td>';
 
   return '<tr class="lb-row' + (r.isChampion ? ' champion' : '') + '" onclick="toggleDetail(\'' + c.id + '\')">' + tds + '</tr>' +
     '<tr class="detail-row hidden" id="detail-' + c.id + '"><td colspan="' + colspan + '">' + detail + '</td></tr>';
