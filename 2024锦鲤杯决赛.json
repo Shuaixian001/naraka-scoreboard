@@ -1,0 +1,635 @@
+{
+  "events": [
+    {
+      "id": "id-mu9n9yn2-bpcmmg",
+      "name": "2024锦鲤杯决赛",
+      "mode": "solo",
+      "scoring": {
+        "killPoints": 1,
+        "placement": {
+          "1": 3,
+          "2": 2,
+          "3": 1.5,
+          "4": 1.5,
+          "5": 1,
+          "6": 1,
+          "7": 0.5,
+          "8": 0.5,
+          "9": 0.5,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "wudaoPlacement": {
+          "1": 2,
+          "2": 1,
+          "3": 0.5,
+          "4": 0.5,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "killCoef": {
+          "1": 1.2,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1,
+          "10": 1,
+          "11": 1,
+          "12": 1,
+          "13": 1,
+          "14": 1,
+          "15": 1,
+          "16": 1,
+          "17": 1,
+          "18": 1,
+          "19": 1,
+          "20": 1,
+          "21": 1,
+          "22": 1,
+          "23": 1,
+          "24": 1,
+          "25": 1,
+          "26": 1,
+          "27": 1,
+          "28": 1,
+          "29": 1,
+          "30": 1,
+          "31": 1,
+          "32": 1,
+          "33": 1,
+          "34": 1,
+          "35": 1,
+          "36": 1,
+          "37": 1,
+          "38": 1,
+          "39": 1,
+          "40": 1,
+          "41": 1,
+          "42": 1,
+          "43": 1,
+          "44": 1,
+          "45": 1,
+          "46": 1,
+          "47": 1,
+          "48": 1
+        }
+      },
+      "groups": [
+        "Platform",
+        "NBPL",
+        "NA",
+        "AS",
+        "SEA",
+        "EU"
+      ],
+      "rankStyles": [],
+      "tieBreak": {
+        "points": [
+          {
+            "k": "firstScore",
+            "dir": "asc"
+          },
+          {
+            "k": "kills",
+            "dir": "desc"
+          }
+        ],
+        "mp": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          }
+        ]
+      },
+      "notes": "人定胜天选",
+      "manualOrder": [
+        "id-mu9nfbfq-sejobi",
+        "id-mu9nfbfq-3iu7bf",
+        "id-mu9nfbfq-jhnc7l",
+        "id-mu9nfbfq-8x7fvi",
+        "id-mu9nfbfq-qw3n6p",
+        "id-mu9nfbfq-4r68c1"
+      ],
+      "matchPoint": {
+        "enabled": true,
+        "threshold": 20,
+        "maxMatches": 8,
+        "bonusEnabled": false,
+        "bonusStep": 0.5,
+        "sameGameCanWin": false,
+        "championOverride": null
+      },
+      "competitors": [
+        {
+          "id": "id-mu9nfbfq-pnbsqp",
+          "name": "Kelie",
+          "members": [],
+          "group": "Platform",
+          "carry": 0
+        },
+        {
+          "id": "id-mu9nfbfq-sejobi",
+          "name": "OUG.Mike",
+          "members": [],
+          "group": "NBPL",
+          "carry": 0
+        },
+        {
+          "id": "id-mu9nfbfq-jhnc7l",
+          "name": "WBG.Spider",
+          "members": [],
+          "group": "NBPL",
+          "carry": 0
+        },
+        {
+          "id": "id-mu9nfbfq-wuupcc",
+          "name": "DRG.Feng",
+          "members": [],
+          "group": "NBPL",
+          "carry": 0
+        },
+        {
+          "id": "id-mu9nfbfq-dk5xrm",
+          "name": "JDG.Verse",
+          "members": [],
+          "group": "NBPL",
+          "carry": 0
+        },
+        {
+          "id": "id-mu9nfbfq-3iu7bf",
+          "name": "Countryman",
+          "members": [],
+          "group": "Platform",
+          "carry": 0
+        },
+        {
+          "id": "id-mu9nfbfq-x9j86p",
+          "name": "tryhard",
+          "members": [],
+          "group": "NA",
+          "carry": 0
+        },
+        {
+          "id": "id-mu9nfbfq-8x7fvi",
+          "name": "TheCow",
+          "members": [],
+          "group": "Platform",
+          "carry": 0
+        },
+        {
+          "id": "id-mu9nfbfq-qw3n6p",
+          "name": "Chuzheng",
+          "members": [],
+          "group": "Platform",
+          "carry": 0
+        },
+        {
+          "id": "id-mu9nfbfq-4r68c1",
+          "name": "Zelldincht",
+          "members": [],
+          "group": "AS",
+          "carry": 0
+        },
+        {
+          "id": "id-mu9nfbfq-zlexrb",
+          "name": "LyPolaris",
+          "members": [],
+          "group": "SEA",
+          "carry": 0
+        },
+        {
+          "id": "id-mu9nfbfq-4xiu39",
+          "name": "Spinachh",
+          "members": [],
+          "group": "EU",
+          "carry": 0
+        }
+      ],
+      "matches": [
+        {
+          "id": "id-mu9nj00o-vfpszn",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu9nfbfq-pnbsqp": {
+              "kills": 6,
+              "placement": 1
+            },
+            "id-mu9nfbfq-sejobi": {
+              "kills": 2,
+              "placement": 9
+            },
+            "id-mu9nfbfq-jhnc7l": {
+              "kills": 2,
+              "placement": 12
+            },
+            "id-mu9nfbfq-wuupcc": {
+              "kills": 4,
+              "placement": 2
+            },
+            "id-mu9nfbfq-3iu7bf": {
+              "kills": 1,
+              "placement": 4
+            },
+            "id-mu9nfbfq-dk5xrm": {
+              "kills": 3,
+              "placement": 11
+            },
+            "id-mu9nfbfq-zlexrb": {
+              "kills": 3,
+              "placement": 3
+            },
+            "id-mu9nfbfq-4r68c1": {
+              "kills": 0,
+              "placement": 10
+            },
+            "id-mu9nfbfq-x9j86p": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-mu9nfbfq-4xiu39": {
+              "kills": 0,
+              "placement": 6
+            },
+            "id-mu9nfbfq-8x7fvi": {
+              "kills": 1,
+              "placement": 7
+            },
+            "id-mu9nfbfq-qw3n6p": {
+              "kills": 4,
+              "placement": 5
+            }
+          },
+          "topPick": null
+        },
+        {
+          "id": "id-mu9nowvj-oaz5e1",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu9nfbfq-pnbsqp": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-mu9nfbfq-sejobi": {
+              "kills": 2,
+              "placement": 3
+            },
+            "id-mu9nfbfq-jhnc7l": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mu9nfbfq-wuupcc": {
+              "kills": 2,
+              "placement": 6
+            },
+            "id-mu9nfbfq-dk5xrm": {
+              "kills": 4,
+              "placement": 9
+            },
+            "id-mu9nfbfq-3iu7bf": {
+              "kills": 4,
+              "placement": 4
+            },
+            "id-mu9nfbfq-x9j86p": {
+              "kills": 4,
+              "placement": 1
+            },
+            "id-mu9nfbfq-8x7fvi": {
+              "kills": 1,
+              "placement": 10
+            },
+            "id-mu9nfbfq-qw3n6p": {
+              "kills": 1,
+              "placement": 12
+            },
+            "id-mu9nfbfq-4r68c1": {
+              "kills": 3,
+              "placement": 2
+            },
+            "id-mu9nfbfq-zlexrb": {
+              "kills": 1,
+              "placement": 11
+            },
+            "id-mu9nfbfq-4xiu39": {
+              "kills": 0,
+              "placement": 5
+            }
+          },
+          "topPick": null
+        },
+        {
+          "id": "id-mu9q3as0-aj2sa7",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu9nfbfq-pnbsqp": {
+              "kills": 4,
+              "placement": 1
+            },
+            "id-mu9nfbfq-sejobi": {
+              "kills": 2,
+              "placement": 9
+            },
+            "id-mu9nfbfq-jhnc7l": {
+              "kills": 2,
+              "placement": 12
+            },
+            "id-mu9nfbfq-wuupcc": {
+              "kills": 3,
+              "placement": 6
+            },
+            "id-mu9nfbfq-dk5xrm": {
+              "kills": 3,
+              "placement": 4
+            },
+            "id-mu9nfbfq-3iu7bf": {
+              "kills": 1,
+              "placement": 2
+            },
+            "id-mu9nfbfq-x9j86p": {
+              "kills": 0,
+              "placement": 3
+            },
+            "id-mu9nfbfq-8x7fvi": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-mu9nfbfq-qw3n6p": {
+              "kills": 2,
+              "placement": 5
+            },
+            "id-mu9nfbfq-4r68c1": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-mu9nfbfq-zlexrb": {
+              "kills": 1,
+              "placement": 11
+            },
+            "id-mu9nfbfq-4xiu39": {
+              "kills": 0,
+              "placement": 10
+            }
+          }
+        },
+        {
+          "id": "id-mu9q6j5z-ecjtw9",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu9nfbfq-pnbsqp": {
+              "kills": 1,
+              "placement": 3
+            },
+            "id-mu9nfbfq-sejobi": {
+              "kills": 5,
+              "placement": 4
+            },
+            "id-mu9nfbfq-jhnc7l": {
+              "kills": 1,
+              "placement": 9
+            },
+            "id-mu9nfbfq-wuupcc": {
+              "kills": 3,
+              "placement": 6
+            },
+            "id-mu9nfbfq-dk5xrm": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-mu9nfbfq-3iu7bf": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-mu9nfbfq-x9j86p": {
+              "kills": 2,
+              "placement": 2
+            },
+            "id-mu9nfbfq-8x7fvi": {
+              "kills": 6,
+              "placement": 1
+            },
+            "id-mu9nfbfq-qw3n6p": {
+              "kills": 1,
+              "placement": 5
+            },
+            "id-mu9nfbfq-4r68c1": {
+              "kills": 1,
+              "placement": 10
+            },
+            "id-mu9nfbfq-zlexrb": {
+              "kills": 0,
+              "placement": 11
+            },
+            "id-mu9nfbfq-4xiu39": {
+              "kills": 0,
+              "placement": 12
+            }
+          }
+        },
+        {
+          "id": "id-mu9q98je-mu1kuj",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu9nfbfq-pnbsqp": {
+              "kills": 3,
+              "placement": 3
+            },
+            "id-mu9nfbfq-sejobi": {
+              "kills": 3,
+              "placement": 2
+            },
+            "id-mu9nfbfq-jhnc7l": {
+              "kills": 5,
+              "placement": 1
+            },
+            "id-mu9nfbfq-wuupcc": {
+              "kills": 3,
+              "placement": 4
+            },
+            "id-mu9nfbfq-dk5xrm": {
+              "kills": 2,
+              "placement": 12
+            },
+            "id-mu9nfbfq-3iu7bf": {
+              "kills": 3,
+              "placement": 5
+            },
+            "id-mu9nfbfq-x9j86p": {
+              "kills": 1,
+              "placement": 6
+            },
+            "id-mu9nfbfq-8x7fvi": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mu9nfbfq-qw3n6p": {
+              "kills": 0,
+              "placement": 11
+            },
+            "id-mu9nfbfq-4r68c1": {
+              "kills": 2,
+              "placement": 8
+            },
+            "id-mu9nfbfq-zlexrb": {
+              "kills": 1,
+              "placement": 9
+            },
+            "id-mu9nfbfq-4xiu39": {
+              "kills": 0,
+              "placement": 10
+            }
+          }
+        },
+        {
+          "id": "id-mu9qbzum-g3wah9",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu9nfbfq-pnbsqp": {
+              "kills": 3,
+              "placement": 3
+            },
+            "id-mu9nfbfq-sejobi": {
+              "kills": 5,
+              "placement": 1
+            },
+            "id-mu9nfbfq-jhnc7l": {
+              "kills": 6,
+              "placement": 2
+            },
+            "id-mu9nfbfq-wuupcc": {
+              "kills": 0,
+              "placement": 9
+            },
+            "id-mu9nfbfq-dk5xrm": {
+              "kills": 4,
+              "placement": 4
+            },
+            "id-mu9nfbfq-3iu7bf": {
+              "kills": 0,
+              "placement": 12
+            },
+            "id-mu9nfbfq-x9j86p": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-mu9nfbfq-8x7fvi": {
+              "kills": 0,
+              "placement": 6
+            },
+            "id-mu9nfbfq-qw3n6p": {
+              "kills": 1,
+              "placement": 11
+            },
+            "id-mu9nfbfq-4r68c1": {
+              "kills": 1,
+              "placement": 10
+            },
+            "id-mu9nfbfq-zlexrb": {
+              "kills": 2,
+              "placement": 5
+            },
+            "id-mu9nfbfq-4xiu39": {
+              "kills": 0,
+              "placement": 7
+            }
+          }
+        }
+      ],
+      "locked": false
+    }
+  ],
+  "activeEventId": "id-mu9n9yn2-bpcmmg"
+}

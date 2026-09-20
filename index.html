@@ -63,6 +63,7 @@
   button.small { padding: 4px 10px; font-size: 13px; }
   button.tiny { padding: 2px 7px; font-size: 12px; font-weight: 500; }
   button.lock-on { background: var(--ok); color: #fff; border: 1px solid var(--ok); }
+  button.ghost.on { background: rgba(43,127,212,.12); border-color: var(--accent2); color: var(--accent2); }
   .muted { color: var(--muted); }
 
   /* 顶部栏 */
@@ -85,10 +86,18 @@
     padding: 16px 20px 40px;
     align-items: start;
   }
+  /* 两张卡片各自是一个层；点哪张哪张浮到上层（窄屏下才可能重叠） */
+  .layout > .card { position: relative; z-index: 1; }
+  .layout > .card.front { z-index: 6; }
+  @media (min-width: 981px) {
+    .layout > .card:first-child { position: sticky; top: 76px; }
+  }
   @media (max-width: 980px) {
     .layout { grid-template-columns: 1fr; }
-    .layout > .card:first-child { position: static; }
   }
+  /* 表格比屏幕还高时停用吸顶，否则底部永远滚不到（高度由 ResizeObserver 量出来加 .too-tall） */
+  #card-lb.too-tall { position: static; top: auto; }
+  #card-lb.expanded #leaderboard-container { height: auto; max-height: none; resize: none; }
 
   .card {
     background: var(--panel);
@@ -97,7 +106,6 @@
     padding: 16px;
     box-shadow: 0 1px 3px rgba(20,30,50,.06);
   }
-  .layout > .card:first-child { position: sticky; top: 76px; }
   .card h2 {
     font-size: 15px; margin-bottom: 12px;
     display: flex; align-items: center; gap: 8px;
@@ -105,7 +113,13 @@
   .card h2 .hint { color: var(--muted); font-weight: normal; font-size: 12px; margin-left: auto; }
 
   .scroll-area { overflow: auto; }
-  #leaderboard-container { max-height: max(300px, calc(100vh - 480px)); }
+  /* 默认给得比较足；右下角可以拖拽自己调高矮 */
+  #leaderboard-container {
+    height: max(360px, calc(100vh - 330px));
+    min-height: 160px;
+    resize: vertical;
+    overflow: auto;
+  }
 
   /* 备注：纯文本，用户自己写，不参与任何计算 */
   .notes-block { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
@@ -128,8 +142,21 @@
   .tie-group { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
   .tie-group-head { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
   .tie-group-head.done { color: var(--ok); }
-  .tie-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px dashed var(--border); }
+  .tie-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; margin: 0 -8px; border-radius: 6px;
+    border-bottom: 1px dashed var(--border); cursor: pointer;
+  }
   .tie-row:last-child { border-bottom: none; }
+  .tie-row:hover { background: var(--panel2); }
+  .tie-row:active { background: var(--border); }
+  .tie-num {
+    flex: none; width: 22px; height: 22px; line-height: 20px; text-align: center;
+    border-radius: 50%; font-size: 12px; font-weight: 700;
+    background: var(--panel2); color: var(--muted); border: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+  }
+  .tie-row.picked .tie-num { background: var(--accent2); color: #fff; border-color: var(--accent2); }
   .tie-name { flex: 1; font-size: 13px; font-weight: 600; min-width: 0; }
   .tie-score { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; flex: none; }
 
@@ -154,6 +181,13 @@
   table.lb th.wd { color: var(--accent2); }
   table.lb .total { font-weight: 700; color: var(--accent); font-size: 16px; }
   table.lb td.name { white-space: normal; min-width: 110px; }
+  /* 简表：不铺满，表格按内容收拢，分数紧挨着名字，不给姓名列留拉伸的余量 */
+  table.lb.lb-simple { width: auto; }
+  /* 不给姓名列设下限，列宽 = 名字/队名的实际宽度（表头「队伍 / 选手」不换行，已是最低下限） */
+  table.lb.lb-simple td.name { min-width: 0; }
+  table.lb.lb-simple .total { font-size: 18px; }
+  /* 简表：横幅宽度由 JS 量出表格宽度后写死，别被长文案顶破 */
+  #card-lb.simple #mp-banner { max-width: 100%; }
   .lb-row { cursor: pointer; }
   .lb-row:hover td { background: var(--panel2); }
   tr.champion td { background: rgba(217,154,16,.08); border-top: 1px solid rgba(217,154,16,.45); }
@@ -403,8 +437,11 @@
 
 <div class="layout">
   <!-- 左：积分榜 -->
-  <section class="card">
-    <h2>实时积分榜 <span class="hint" id="lb-meta"></span></h2>
+  <section class="card expanded" id="card-lb">
+    <h2>实时积分榜 <span class="hint" id="lb-meta"></span>
+      <button class="ghost tiny hidden" id="lb-view" onclick="toggleLbView()">简表</button>
+      <button class="ghost tiny hidden" id="lb-expand" onclick="toggleLbExpand()">展开全部</button>
+    </h2>
     <div id="mp-banner"></div>
     <div class="chips" id="lb-filters"></div>
     <div class="scroll-area" id="leaderboard-container"></div>
@@ -429,7 +466,7 @@
   </section>
 
   <!-- 右：面板 -->
-  <section class="card">
+  <section class="card" id="card-panel">
     <div class="tabs">
       <button id="tab-record" class="active" onclick="switchPanel('record')">比赛录入</button>
       <button id="tab-comp" onclick="switchPanel('comp')">参赛者</button>
@@ -651,6 +688,7 @@ function jsq(s) { return esc(String(s == null ? '' : s).replace(/\\/g, '\\\\').r
 let state = null;
 let currentPanel = 'record';
 let lbFilter = { board: 'merged', group: null };
+let lbSimple = false;         // 简表：折叠「前序 + 每局」中间列，只留排名/组/队伍/总分
 let placeTarget = 'tianti';   // 当前编辑的排名分表：天人 / 武道
 let placeDraft = null;        // 设置面板打开期间的暂存，保存时一次写回
 let pickCtx = null;           // 单局最高分并列裁定的上下文
@@ -1172,25 +1210,42 @@ function computeStandings(ev) {
     return pa - pb;
   };
   rows.sort(cmpFull);
-  rows.forEach(function(r, i) {
-    r.rank = (i > 0 && cmpFull(rows[i - 1], r) === 0) ? rows[i - 1].rank : i + 1;
-  });
-  rows.forEach(function(r, i) {
-    r.tied = (i > 0 && cmpFull(rows[i - 1], r) === 0) || (i + 1 < rows.length && cmpFull(rows[i + 1], r) === 0);
-  });
 
-  /* ---- 规则完全分不出先后的组（连续段，顺序即当前显示顺序） ---- */
+  /* ---- 分组与名次 ----
+     规则同分、且整组没被人工点过，才算并列；组一旦被点过，
+     没点到的也按现有顺序各占一个名次。
+     赛点制下已夺冠的选手独占第一名：既不参与同分评定，也不与人共享名次。 */
   const tieGroups = [];
-  for (let i = 0; i < rows.length; ) {
-    let j = i;
-    while (j + 1 < rows.length && cmp(rows[j + 1], rows[i]) === 0) j++;
-    if (j > i) {
-      const ids = [];
-      for (let k = i; k <= j; k++) ids.push(rows[k].id);
-      tieGroups.push({ ids: ids, resolved: ids.every(function(id) { return posOf[id] != null; }) });
+  let champId = null;
+  let touchedIds = {};
+  const sameRank = function(a, b) {
+    if (champId && (a.id === champId || b.id === champId)) return false;
+    return cmp(a, b) === 0 && !touchedIds[a.id] && !touchedIds[b.id];
+  };
+  const layout = function() {
+    touchedIds = {};
+    tieGroups.length = 0;
+    for (let i = 0; i < rows.length; ) {
+      if (rows[i].id === champId) { i++; continue; }
+      let j = i;
+      while (j + 1 < rows.length && rows[j + 1].id !== champId && cmp(rows[j + 1], rows[i]) === 0) j++;
+      if (j > i) {
+        const ids = [];
+        for (let k = i; k <= j; k++) ids.push(rows[k].id);
+        const touched = ids.some(function(id) { return posOf[id] != null; });
+        if (touched) ids.forEach(function(id) { touchedIds[id] = 1; });
+        tieGroups.push({ ids: ids, resolved: touched });
+      }
+      i = j + 1;
     }
-    i = j + 1;
-  }
+    rows.forEach(function(r, i) {
+      r.rank = (i > 0 && sameRank(rows[i - 1], r)) ? rows[i - 1].rank : i + 1;
+    });
+    rows.forEach(function(r, i) {
+      r.tied = (i > 0 && sameRank(rows[i - 1], r)) || (i + 1 < rows.length && sameRank(rows[i + 1], r));
+    });
+  };
+  layout();
 
   /* ---- 对局元信息补全 ---- */
   matches.forEach(function(meta, i) {
@@ -1271,13 +1326,25 @@ function computeStandings(ev) {
     if (!top.tied) champion = { compId: top.id, matchId: null, matchIndex: null, source: 'points' };
   }
 
-  if (champion && byId[champion.compId]) byId[champion.compId].isChampion = true;
+  /* ---- 冠军置顶：夺冠后立刻成为第一名，其余整体下移一位 ---- */
+  if (champion && byId[champion.compId]) {
+    const champRow = byId[champion.compId];
+    champRow.isChampion = true;
+    rows.sort(function(a, b) {
+      if (a === b) return 0;
+      if (a === champRow) return -1;
+      if (b === champRow) return 1;
+      return 0;   // 稳定排序，其余保持原有相对顺序
+    });
+    champId = champRow.id;
+    layout();
+  }
 
   const openIds = rows.filter(function(r) { return r.openedAtIndex != null; }).map(function(r) { return r.id; });
 
   return {
     mp: mp, usingMP: usingMP, thT: thT, stepT: stepT, tieRules: tieRules,
-    cmpFull: cmpFull, tieGroups: tieGroups,
+    cmpFull: cmpFull, sameRank: sameRank, tieGroups: tieGroups,
     rows: rows, byId: byId, matches: matches,
     champion: champion, ambiguous: ambiguous,
     openCount: openIds.length, openIds: openIds,
@@ -1404,8 +1471,8 @@ function renderBanner(ev, S) {
     const name = r ? r.comp.name : '—';
     if (S.champion.source === 'points') {
       key = 'points:' + S.champion.compId;
-      cls += ' pending';
-      html = '打满 ' + S.maxMatches + ' 局仍未决出，按总积分定冠军：<b>' + esc(name) + '</b>';
+      cls += ' win';
+      html = '🏆 打满 ' + S.maxMatches + ' 局仍未决出，积分第一夺冠：<b>' + esc(name) + '</b>';
     } else {
       key = 'win:' + S.champion.compId;
       cls += ' win';
@@ -1446,8 +1513,8 @@ function boardRows(S) {
   }
   let last = null, lastRank = 0;
   return base.map(function(r, i) {
-    // 必须用 cmpFull：只比规则的话，人工裁定过的人仍会被算成并列
-    const rank = (last && S.cmpFull(last, r) === 0) ? lastRank : i + 1;
+    // 必须用 sameRank：只比规则、或只比裁定顺序，都会把裁定过的人算成并列
+    const rank = (last && S.sameRank(last, r)) ? lastRank : i + 1;
     last = r; lastRank = rank;
     return { row: r, rank: rank };
   });
@@ -1465,39 +1532,78 @@ function renderLeaderboard(ev, S) {
   meta.textContent = modeTxt + ' · ' + fmtTxt + ' · ' + ev.competitors.length + ' 人 · ' +
     ev.matches.length + ' 局' + (ev.groups.length ? groupTxt : '');
 
+  const list = ev.competitors.length === 0 ? [] : boardRows(S);
+  const hasGroups = ev.groups.length > 0;
+  const hasCarry = S.rows.some(function(r) { return r.carryT !== 0; });
+  // 无前序、无对局时没有可折叠的中间列，简表与完整表无差别
+  const canSimplify = list.length > 0 && (S.matches.length > 0 || hasCarry);
+  const simple = lbSimple && canSimplify;
+
+  // 两个按钮的状态必须在提前返回之前更新，否则空榜时会残留上一次的显示
+  const cardEl = document.getElementById('card-lb');
+  if (cardEl) cardEl.classList.toggle('simple', simple);
+  if (!canSimplify) syncBannerWidth();
+  const viewBtn = document.getElementById('lb-view');
+  if (viewBtn) {
+    viewBtn.className = 'ghost tiny' + (canSimplify ? '' : ' hidden');
+    viewBtn.textContent = lbSimple ? '完整表' : '简表';
+    viewBtn.classList.toggle('on', simple);
+  }
+  const expBtn = document.getElementById('lb-expand');
+  if (expBtn) {
+    expBtn.className = 'ghost tiny' + (list.length > 8 ? '' : ' hidden');
+    expBtn.textContent = document.getElementById('card-lb').classList.contains('expanded') ? '收起' : '展开全部';
+  }
+
   if (ev.competitors.length === 0) {
     container.innerHTML = '<div class="empty">还没有参赛者，请在右侧「参赛者」里添加</div>';
     return;
   }
-
-  const list = boardRows(S);
   if (list.length === 0) {
     container.innerHTML = '<div class="empty">该组暂无参赛者</div>';
     return;
   }
 
-  const hasGroups = ev.groups.length > 0;
-  const hasCarry = S.rows.some(function(r) { return r.carryT !== 0; });
   let head = '<tr><th class="num" style="width:44px">排名</th>';
   if (hasGroups) head += '<th style="width:40px">组</th>';
   head += '<th>队伍 / 选手</th>';
-  if (hasCarry) head += '<th class="num" style="width:56px">前序</th>';
-  S.matches.forEach(function(meta) {
-    const lab = '第' + cnNum(meta.index + 1) + '局';
-    const tip = lab + (meta.name ? ' · ' + meta.name : '') + (meta.isWudao ? '（武道对局）' : '');
-    head += '<th class="num' + (meta.isWudao ? ' wd' : '') + '" title="' + esc(tip) + '">' + lab + '</th>';
-  });
-  head += '<th class="num" style="width:68px">总积分</th>';
+  if (simple) {
+    head += '<th class="num" style="width:68px">总积分</th>';
+  } else {
+    if (hasCarry) head += '<th class="num" style="width:56px">前序</th>';
+    S.matches.forEach(function(meta) {
+      const lab = '第' + cnNum(meta.index + 1) + '局';
+      const tip = lab + (meta.name ? ' · ' + meta.name : '') + (meta.isWudao ? '（武道对局）' : '');
+      head += '<th class="num' + (meta.isWudao ? ' wd' : '') + '" title="' + esc(tip) + '">' + lab + '</th>';
+    });
+    head += '<th class="num" style="width:68px">总积分</th>';
+  }
   if (S.usingMP) head += '<th class="num" style="width:140px">赛点状态</th>';
   head += '</tr>';
 
   // 排名 + [组] + 队伍/选手 + [前序] + 每局 × N + 总积分 + [赛点状态]
-  const colspan = 3 + (hasGroups ? 1 : 0) + (hasCarry ? 1 : 0)
-                + S.matches.length + (S.usingMP ? 1 : 0);
+  const colspan = 3 + (hasGroups ? 1 : 0)
+                + (simple ? 0 : (hasCarry ? 1 : 0) + S.matches.length)
+                + (S.usingMP ? 1 : 0);
 
-  container.innerHTML = '<table class="lb"><thead>' + head + '</thead><tbody>' +
-    list.map(function(item) { return lbRow(item.row, item.rank, ev, S, hasGroups, hasCarry, colspan); }).join('') +
+  container.innerHTML = '<table class="lb' + (simple ? ' lb-simple' : '') + '"><thead>' + head + '</thead><tbody>' +
+    list.map(function(item) { return lbRow(item.row, item.rank, ev, S, hasGroups, hasCarry, colspan, simple); }).join('') +
     '</tbody></table>';
+
+  syncBannerWidth();
+}
+
+/* 简表下把横幅收成表格同宽：CSS 引用不到兄弟元素的宽度，只能量一次再写死 */
+function syncBannerWidth() {
+  const el = document.getElementById('mp-banner');
+  if (!el) return;
+  const card = document.getElementById('card-lb');
+  const box = document.getElementById('leaderboard-container');
+  if (!card || !card.classList.contains('simple') || !box) { el.style.width = ''; return; }
+  const t = box.querySelector('table');
+  const w = t ? t.offsetWidth : 0;
+  // 表格比容器还宽时（横向滚动）交回 CSS，避免横幅被顶破
+  el.style.width = (w > 0 && w < box.clientWidth) ? w + 'px' : '';
 }
 
 function renderLbFilters(ev) {
@@ -1513,6 +1619,44 @@ function renderLbFilters(ev) {
     h += '<button class="chip' + active + '" onclick="setLbFilter(\'group\',\'' + jsq(g) + '\')">' + esc(g) + ' 组（' + n + '）</button>';
   });
   el.innerHTML = h;
+}
+
+/* 展开 / 收起积分榜：展开后不限高，所有名次一次显示出来 */
+function toggleLbExpand() {
+  const card = document.getElementById('card-lb');
+  const box = document.getElementById('leaderboard-container');
+  const btn = document.getElementById('lb-expand');
+  const on = card.classList.toggle('expanded');
+  // 展开时清掉手动拖出来的行内高度，否则会盖住「不限高」
+  if (on && box) box.style.height = '';
+  if (btn) btn.textContent = on ? '收起' : '展开全部';
+  if (!on && box) box.scrollTop = 0;
+}
+
+/* 简表 / 完整表：只折叠「前序 + 每局」中间列，总分与赛点状态照旧 */
+function toggleLbView() {
+  lbSimple = !lbSimple;
+  const box = document.getElementById('leaderboard-container');
+  if (box) box.scrollTop = 0;
+  refreshDerived();
+}
+
+/* 窗口宽度变化会改表格的收拢宽度，横幅要跟着重新量 */
+let bannerSyncTimer = null;
+window.addEventListener('resize', function() {
+  if (bannerSyncTimer) clearTimeout(bannerSyncTimer);
+  bannerSyncTimer = setTimeout(function() { bannerSyncTimer = null; syncBannerWidth(); }, 150);
+});
+
+/* 手动拖得比屏幕还高时停用吸顶（CSS 做不到这个判断，只能量） */
+if (typeof ResizeObserver === 'function') {
+  const box = document.getElementById('leaderboard-container');
+  const card = document.getElementById('card-lb');
+  if (box && card) {
+    new ResizeObserver(function() {
+      card.classList.toggle('too-tall', box.offsetHeight > window.innerHeight - 120);
+    }).observe(box);
+  }
 }
 
 function setLbFilter(board, group) {
@@ -1541,7 +1685,7 @@ function mpStatusHTML(r, S) {
     '<span>' + fmtT(r.totalT) + '/' + fmtT(S.thT) + '</span></div>';
 }
 
-function lbRow(r, rank, ev, S, hasGroups, hasCarry, colspan) {
+function lbRow(r, rank, ev, S, hasGroups, hasCarry, colspan, simple) {
   const c = r.comp;
   const carryLine = r.carryT !== 0
     ? '<div class="pm"><span>前序积分（带入）</span><span>' + fmtT(r.carryT) + ' 分</span></div>'
@@ -1576,9 +1720,9 @@ function lbRow(r, rank, ev, S, hasGroups, hasCarry, colspan) {
   let tds = '<td class="num">' + rankBadge(rank) + '</td>';
   if (hasGroups) tds += '<td class="muted">' + esc(c.group || '—') + '</td>';
   tds += '<td class="name">' + nameHtml + members + '</td>';
-  if (hasCarry) tds += '<td class="num">' + (r.carryT !== 0 ? fmtT(r.carryT) : '<span class="muted">—</span>') + '</td>';
+  if (!simple && hasCarry) tds += '<td class="num">' + (r.carryT !== 0 ? fmtT(r.carryT) : '<span class="muted">—</span>') + '</td>';
 
-  S.matches.forEach(function(meta, i) {
+  if (!simple) S.matches.forEach(function(meta, i) {
     const g = r.games[i];
     if (!g || !g.participated) { tds += '<td class="num muted">·</td>'; return; }
     if (!g.hasResult) { tds += '<td class="num muted">—</td>'; return; }
@@ -1764,7 +1908,7 @@ function matchCardHTML(ev, m, i, S) {
     tools += '<div class="match-tools">' +
       '<input type="text" placeholder="搜索选手…" oninput="filterMatchRows(\'' + m.id + '\', this.value)">' +
       '<button class="ghost tiny" onclick="jumpToPending(\'' + m.id + '\')">跳到未录入</button>' +
-      '<span class="muted">Enter / ↑ ↓ 可切换单元格</span></div>';
+      '<span class="muted">Enter / ↑ ↓ ← → 可切换单元格，左右能一路走完整张表</span></div>';
   }
 
   const evtAttrs = ' oninput="onResultInput(this)" onkeydown="onCellKeydown(event,this)" onfocus="this.select()"';
@@ -1941,20 +2085,27 @@ function renderTiePanel(ev, S) {
   }
 
   h += '<div class="muted" style="font-size:12px;margin-bottom:8px">' +
-    '下面这些名次按同分规则分不出先后，用箭头排出先后即可；不动就保持并列。</div>';
+    '按你想要的顺序依次点名字：第 1 个点的排最前，没点到的按现有顺序跟在后面。' +
+    '再点一下已编好的名字可以取消。</div>';
 
+  const picked = ev.manualOrder || [];
   groups.forEach(function(g, gi) {
+    // 已点过的排在前面，且顺序就是点击顺序，所以直接按当前行号编号
+    const nPicked = g.ids.filter(function(id) { return picked.indexOf(id) !== -1; }).length;
     h += '<div class="tie-group">' +
       '<div class="tie-group-head' + (g.resolved ? ' done' : '') + '">' +
       g.ids.length + ' 人规则同分 · ' + (g.resolved ? '已裁定' : '待裁定') + '</div>';
     g.ids.forEach(function(id, mi) {
       const r = S.byId[id];
       if (!r) return;
-      h += '<div class="tie-row">' +
+      const on = mi < nPicked;                       // 点过的都排在前面
+      // 组被点过后所有成员都有确定名次，没点到的显示灰色位置号
+      const num = g.resolved ? (mi + 1) : '—';
+      const attr = ev.locked ? '' : ' onclick="pickTieMember(' + gi + ',' + mi + ')"';
+      h += '<div class="tie-row' + (on ? ' picked' : '') + '"' + attr + '>' +
+        '<span class="tie-num">' + num + '</span>' +
         '<span class="tie-name">' + esc(r.comp.name) + '</span>' +
         '<span class="tie-score">' + fmtT(r.totalT) + ' 分</span>' +
-        '<button class="ghost tiny" onclick="moveTieMember(' + gi + ',' + mi + ',-1)"' + dis + '>↑</button>' +
-        '<button class="ghost tiny" onclick="moveTieMember(' + gi + ',' + mi + ',1)"' + dis + '>↓</button>' +
         '</div>';
     });
     h += '</div>';
@@ -1964,18 +2115,16 @@ function renderTiePanel(ev, S) {
   el.innerHTML = h;
 }
 
-function moveTieMember(gi, mi, dir) {
+/* 点一下名字 = 排到下一个位置；再点一下 = 取消 */
+function pickTieMember(gi, mi) {
   const ev = getActiveEvent(); if (!ev) return;
+  if (ev.locked) return;
   const g = computeStandings(ev).tieGroups[gi]; if (!g) return;
-  const ids = g.ids.slice();
-  const j = mi + dir;
-  if (j < 0 || j >= ids.length) return;
-  const t = ids[mi]; ids[mi] = ids[j]; ids[j] = t;
+  const id = g.ids[mi]; if (!id) return;
   if (!Array.isArray(ev.manualOrder)) ev.manualOrder = [];
-  const inGroup = {};
-  ids.forEach(function(id) { inGroup[id] = 1; });
-  // 组内成员按新顺序排到最前，其余裁定顺序原样保留
-  ev.manualOrder = ids.concat(ev.manualOrder.filter(function(id) { return !inGroup[id]; }));
+  const at = ev.manualOrder.indexOf(id);
+  if (at === -1) ev.manualOrder.push(id);
+  else ev.manualOrder.splice(at, 1);
   saveState();
   renderAll();
 }
@@ -2696,8 +2845,10 @@ function refreshDerived() {
 }
 
 function onCellKeydown(e, el) {
-  if (e.key !== 'Enter' && e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  const k = e.key;
+  if (k !== 'Enter' && k !== 'ArrowDown' && k !== 'ArrowUp' && k !== 'ArrowLeft' && k !== 'ArrowRight') return;
   e.preventDefault();
+
   const mid = el.dataset.m, cid = el.dataset.c, field = el.dataset.f;
   const body = document.getElementById('matchbody-' + mid);
   if (!body) return;
@@ -2707,8 +2858,21 @@ function onCellKeydown(e, el) {
   );
   const idx = rows.findIndex(function(tr) { return tr.dataset.comp === cid; });
   if (idx < 0) return;
-  const dir = e.key === 'ArrowUp' ? -1 : 1;
-  const next = rows[idx + dir];
+
+  // 左右：按整张表从上到下、一行内先击败后名次的顺序走，跨行也不断
+  if (k === 'ArrowLeft' || k === 'ArrowRight') {
+    const inputs = [];
+    rows.forEach(function(tr) {
+      const cells = tr.querySelectorAll('input');
+      for (let i = 0; i < cells.length; i++) inputs.push(cells[i]);
+    });
+    const to = inputs[inputs.indexOf(el) + (k === 'ArrowRight' ? 1 : -1)];
+    if (to) { to.focus(); to.select(); }
+    return;
+  }
+
+  // 上下：换行，保持在同一列
+  const next = rows[idx + (k === 'ArrowUp' ? -1 : 1)];
   if (!next) return;
   const input = next.querySelector('input[data-f="' + field + '"]');
   if (input) { input.focus(); input.select(); }
@@ -2836,6 +3000,16 @@ function importData(input) {
   reader.readAsText(file);
   input.value = '';
 }
+
+/* 点哪张卡片，哪张浮到上层（窄屏下两张卡片可能重叠） */
+document.addEventListener('click', function(e) {
+  const t = e.target;
+  if (!t || typeof t.closest !== 'function') return;
+  ['card-lb', 'card-panel'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('front', !!t.closest('#' + id));
+  });
+}, true);
 
 /* 赛制单选切换时立刻显示/隐藏赛点区块 */
 document.addEventListener('change', function(e) {
