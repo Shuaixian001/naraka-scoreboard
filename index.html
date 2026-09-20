@@ -567,8 +567,8 @@
       <div class="set-actions">
         <div class="warn hidden" id="set-lock-note"></div>
         <button id="set-save" onclick="saveSettings()">保存设置</button>
-        <button class="ghost" onclick="exportData()">导出数据</button>
-        <button class="ghost" onclick="document.getElementById('import-file').click()">导入数据</button>
+        <button class="ghost" onclick="exportData()">导出本赛事</button>
+        <button class="ghost" onclick="document.getElementById('import-file').click()">导入赛事</button>
         <input id="import-file" type="file" accept=".json" style="display:none" onchange="importData(this)">
         <button class="danger" id="set-delete" onclick="deleteEvent()">删除本赛事</button>
       </div>
@@ -2775,37 +2775,63 @@ function saveSettings() {
   alert('已保存');
 }
 
+/* 只导出当前赛事（外层仍用 { events: [...] } 结构，便于被导入识别） */
 function exportData() {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const ev = getActiveEvent(); if (!ev) return;
+  const payload = { events: [ev], activeEventId: ev.id };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = '永劫无间积分数据.json';
+  const safe = String(ev.name || '赛事').replace(/[\\/:*?"<>|]/g, '_').trim() || '赛事';
+  a.download = safe + '.json';
   a.click();
   URL.revokeObjectURL(a.href);
 }
 
+/* 导入只做追加，不覆盖现有数据（导出是单赛事，覆盖会冲掉其他赛事） */
 function importData(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = function() {
-    try {
-      const data = JSON.parse(reader.result);
-      if (!data || !Array.isArray(data.events)) throw new Error('bad');
-      state = data;
-      state.events.forEach(normalize);
-      if (!state.events.some(function(e) { return e.id === state.activeEventId; })) {
-        state.activeEventId = state.events[0].id;
+    let data;
+    try { data = JSON.parse(reader.result); }
+    catch (e) { alert('导入失败：文件不是合法的 JSON。'); return; }
+
+    // 兼容三种：{events:[...]}（本工具导出）、单个赛事对象、早期整包导出
+    let list;
+    if (data && Array.isArray(data.events)) list = data.events;
+    else if (data && typeof data === 'object' &&
+             (Array.isArray(data.competitors) || Array.isArray(data.matches) || data.mode)) list = [data];
+    else list = null;
+
+    if (!list || list.length === 0) { alert('导入失败：文件里没有赛事数据。'); return; }
+    list.forEach(normalize);
+
+    const names = list.map(function(e) { return e.name; }).join('、');
+    if (!confirm('导入 ' + list.length + ' 个赛事：' + names + '\n\n会作为新赛事添加，现有数据不受影响。')) return;
+
+    const usedIds = {}, usedNames = {};
+    state.events.forEach(function(e) { usedIds[e.id] = 1; usedNames[e.name] = 1; });
+    list.forEach(function(e) {
+      if (usedIds[e.id]) e.id = uid();
+      usedIds[e.id] = 1;
+      if (usedNames[e.name]) {
+        let nm = e.name + '（导入）', n = 2;
+        while (usedNames[nm]) { nm = e.name + '（导入' + n + '）'; n++; }
+        e.name = nm;
       }
-      lbFilter = { board: 'merged', group: null };
-      lastChampionKey = null;
-      notesEditing = false;
-      saveState();
-      renderAll();
-      alert('导入成功');
-    } catch (e) {
-      alert('导入失败：文件格式不正确');
-    }
+      usedNames[e.name] = 1;
+      state.events.push(e);
+    });
+
+    state.activeEventId = list[list.length - 1].id;
+    lbFilter = { board: 'merged', group: null };
+    lastChampionKey = null;
+    notesEditing = false;
+    saveState();
+    renderAll();
+    alert('已导入 ' + list.length + ' 个赛事：' + names);
   };
   reader.readAsText(file);
   input.value = '';
