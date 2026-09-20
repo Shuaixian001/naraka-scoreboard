@@ -1,0 +1,501 @@
+{
+  "events": [
+    {
+      "id": "id-mu8erw31-s4j2m0",
+      "name": "第一赛段决赛",
+      "mode": "trio",
+      "scoring": {
+        "killPoints": 1,
+        "placement": {
+          "1": 4,
+          "2": 2,
+          "3": 1,
+          "4": 1,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "wudaoPlacement": {
+          "1": 8,
+          "2": 4,
+          "3": 2,
+          "4": 2,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "killCoef": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1,
+          "10": 1,
+          "11": 1,
+          "12": 1,
+          "13": 1,
+          "14": 1,
+          "15": 1,
+          "16": 1,
+          "17": 1,
+          "18": 1,
+          "19": 1,
+          "20": 1,
+          "21": 1,
+          "22": 1,
+          "23": 1,
+          "24": 1,
+          "25": 1,
+          "26": 1,
+          "27": 1,
+          "28": 1,
+          "29": 1,
+          "30": 1,
+          "31": 1,
+          "32": 1,
+          "33": 1,
+          "34": 1,
+          "35": 1,
+          "36": 1,
+          "37": 1,
+          "38": 1,
+          "39": 1,
+          "40": 1,
+          "41": 1,
+          "42": 1,
+          "43": 1,
+          "44": 1,
+          "45": 1,
+          "46": 1,
+          "47": 1,
+          "48": 1
+        }
+      },
+      "groups": [],
+      "matchPoint": {
+        "enabled": true,
+        "threshold": 40,
+        "maxMatches": 8,
+        "bonusEnabled": true,
+        "bonusStep": 1,
+        "sameGameCanWin": false,
+        "championOverride": null
+      },
+      "competitors": [
+        {
+          "id": "id-mu8es6fm-xzsuh2",
+          "name": "CDGG",
+          "members": [],
+          "group": null,
+          "carry": 4
+        },
+        {
+          "id": "id-mu8es6fm-3koiis",
+          "name": "RW",
+          "members": [],
+          "group": null,
+          "carry": 2
+        },
+        {
+          "id": "id-mu8es6fm-i2ho4f",
+          "name": "XKG",
+          "members": [],
+          "group": null,
+          "carry": 5
+        },
+        {
+          "id": "id-mu8es6fm-9oubaa",
+          "name": "VN521",
+          "members": [],
+          "group": null,
+          "carry": 6
+        },
+        {
+          "id": "id-mu8es6fm-lpwilr",
+          "name": "WFG",
+          "members": [],
+          "group": null,
+          "carry": 7
+        },
+        {
+          "id": "id-mu8es6fm-0ymhzb",
+          "name": "OUG",
+          "members": [],
+          "group": null,
+          "carry": 8
+        },
+        {
+          "id": "id-mu8es6fm-9rprvs",
+          "name": "IG",
+          "members": [],
+          "group": null,
+          "carry": 1
+        },
+        {
+          "id": "id-mu8es6fm-3mfv50",
+          "name": "TE",
+          "members": [],
+          "group": null,
+          "carry": 3
+        }
+      ],
+      "matches": [
+        {
+          "id": "id-mu8esxyy-1zdrlt",
+          "name": "",
+          "type": "wudao",
+          "groups": [],
+          "results": {
+            "id-mu8es6fm-xzsuh2": {
+              "kills": null,
+              "placement": 1
+            },
+            "id-mu8es6fm-3koiis": {
+              "kills": null,
+              "placement": 4
+            },
+            "id-mu8es6fm-i2ho4f": {
+              "kills": null,
+              "placement": 8
+            },
+            "id-mu8es6fm-9oubaa": {
+              "kills": null,
+              "placement": 7
+            },
+            "id-mu8es6fm-lpwilr": {
+              "kills": null,
+              "placement": 6
+            },
+            "id-mu8es6fm-0ymhzb": {
+              "kills": null,
+              "placement": 3
+            },
+            "id-mu8es6fm-9rprvs": {
+              "kills": null,
+              "placement": 2
+            },
+            "id-mu8es6fm-3mfv50": {
+              "kills": null,
+              "placement": 5
+            }
+          },
+          "topPick": null
+        },
+        {
+          "id": "id-mu8etlb3-qtw6lu",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu8es6fm-xzsuh2": {
+              "kills": 17,
+              "placement": 2
+            },
+            "id-mu8es6fm-3koiis": {
+              "kills": 10,
+              "placement": 2
+            },
+            "id-mu8es6fm-i2ho4f": {
+              "kills": 7,
+              "placement": 5
+            },
+            "id-mu8es6fm-9oubaa": {
+              "kills": 7,
+              "placement": 3
+            },
+            "id-mu8es6fm-lpwilr": {
+              "kills": 8,
+              "placement": 6
+            },
+            "id-mu8es6fm-0ymhzb": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mu8es6fm-9rprvs": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-mu8es6fm-3mfv50": {
+              "kills": 4,
+              "placement": 4
+            }
+          },
+          "topPick": null
+        },
+        {
+          "id": "id-mu8exirv-96x8ib",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu8es6fm-xzsuh2": {
+              "kills": 12,
+              "placement": 2
+            },
+            "id-mu8es6fm-9oubaa": {
+              "kills": 11,
+              "placement": 1
+            },
+            "id-mu8es6fm-3koiis": {
+              "kills": 14,
+              "placement": 4
+            },
+            "id-mu8es6fm-9rprvs": {
+              "kills": 9,
+              "placement": 8
+            },
+            "id-mu8es6fm-0ymhzb": {
+              "kills": 6,
+              "placement": 7
+            },
+            "id-mu8es6fm-i2ho4f": {
+              "kills": 5,
+              "placement": 3
+            },
+            "id-mu8es6fm-lpwilr": {
+              "kills": 3,
+              "placement": 6
+            },
+            "id-mu8es6fm-3mfv50": {
+              "kills": 0,
+              "placement": 5
+            }
+          },
+          "topPick": "id-mu8es6fm-3koiis"
+        },
+        {
+          "id": "id-mu8ez2z3-775v6o",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu8es6fm-i2ho4f": {
+              "kills": 15,
+              "placement": 1
+            },
+            "id-mu8es6fm-xzsuh2": {
+              "kills": 9,
+              "placement": 4
+            },
+            "id-mu8es6fm-3koiis": {
+              "kills": 10,
+              "placement": 3
+            },
+            "id-mu8es6fm-9rprvs": {
+              "kills": 9,
+              "placement": 8
+            },
+            "id-mu8es6fm-3mfv50": {
+              "kills": 6,
+              "placement": 7
+            },
+            "id-mu8es6fm-0ymhzb": {
+              "kills": 3,
+              "placement": 6
+            },
+            "id-mu8es6fm-9oubaa": {
+              "kills": 7,
+              "placement": 2
+            },
+            "id-mu8es6fm-lpwilr": {
+              "kills": 1,
+              "placement": 5
+            }
+          },
+          "topPick": null
+        },
+        {
+          "id": "id-mu8f1068-mdedns",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu8es6fm-xzsuh2": {
+              "kills": 4,
+              "placement": 4
+            },
+            "id-mu8es6fm-3koiis": {
+              "kills": 12,
+              "placement": 8
+            },
+            "id-mu8es6fm-lpwilr": {
+              "kills": 10,
+              "placement": 1
+            },
+            "id-mu8es6fm-9rprvs": {
+              "kills": 7,
+              "placement": 2
+            },
+            "id-mu8es6fm-3mfv50": {
+              "kills": 1,
+              "placement": 7
+            },
+            "id-mu8es6fm-0ymhzb": {
+              "kills": 6,
+              "placement": 6
+            },
+            "id-mu8es6fm-9oubaa": {
+              "kills": 5,
+              "placement": 3
+            },
+            "id-mu8es6fm-i2ho4f": {
+              "kills": 2,
+              "placement": 5
+            }
+          },
+          "topPick": null
+        },
+        {
+          "id": "id-mu8f3k1h-yfm71v",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu8es6fm-xzsuh2": {
+              "kills": 15,
+              "placement": 1
+            },
+            "id-mu8es6fm-i2ho4f": {
+              "kills": 14,
+              "placement": 4
+            },
+            "id-mu8es6fm-0ymhzb": {
+              "kills": 13,
+              "placement": 2
+            },
+            "id-mu8es6fm-lpwilr": {
+              "kills": 8,
+              "placement": 8
+            },
+            "id-mu8es6fm-3koiis": {
+              "kills": 5,
+              "placement": 3
+            },
+            "id-mu8es6fm-9oubaa": {
+              "kills": 4,
+              "placement": 7
+            },
+            "id-mu8es6fm-9rprvs": {
+              "kills": 2,
+              "placement": 6
+            },
+            "id-mu8es6fm-3mfv50": {
+              "kills": 1,
+              "placement": 5
+            }
+          },
+          "topPick": null
+        }
+      ],
+      "locked": false,
+      "rankStyles": [],
+      "tieBreak": {
+        "points": [
+          {
+            "k": "firstScore",
+            "dir": "asc"
+          },
+          {
+            "k": "kills",
+            "dir": "desc"
+          }
+        ],
+        "mp": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          }
+        ]
+      },
+      "notes": "",
+      "manualOrder": []
+    }
+  ],
+  "activeEventId": "id-mu8erw31-s4j2m0"
+}

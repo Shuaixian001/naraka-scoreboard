@@ -1,0 +1,510 @@
+{
+  "events": [
+    {
+      "id": "id-mu96fkrp-97hg1x",
+      "name": "第一赛段第二轮败者组",
+      "mode": "solo",
+      "scoring": {
+        "killPoints": 1,
+        "placement": {
+          "1": 2.5,
+          "2": 1,
+          "3": 0.5,
+          "4": 0.5,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "wudaoPlacement": {
+          "1": 2,
+          "2": 1,
+          "3": 0.5,
+          "4": 0.5,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "killCoef": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1,
+          "10": 1,
+          "11": 1,
+          "12": 1,
+          "13": 1,
+          "14": 1,
+          "15": 1,
+          "16": 1,
+          "17": 1,
+          "18": 1,
+          "19": 1,
+          "20": 1,
+          "21": 1,
+          "22": 1,
+          "23": 1,
+          "24": 1,
+          "25": 1,
+          "26": 1,
+          "27": 1,
+          "28": 1,
+          "29": 1,
+          "30": 1,
+          "31": 1,
+          "32": 1,
+          "33": 1,
+          "34": 1,
+          "35": 1,
+          "36": 1,
+          "37": 1,
+          "38": 1,
+          "39": 1,
+          "40": 1,
+          "41": 1,
+          "42": 1,
+          "43": 1,
+          "44": 1,
+          "45": 1,
+          "46": 1,
+          "47": 1,
+          "48": 1
+        }
+      },
+      "groups": [],
+      "rankStyles": [
+        {
+          "from": 5,
+          "to": 8,
+          "color": "#8a93a3"
+        }
+      ],
+      "matchPoint": {
+        "enabled": false,
+        "threshold": 16,
+        "maxMatches": 8,
+        "bonusEnabled": true,
+        "bonusStep": 0.5,
+        "sameGameCanWin": false,
+        "championOverride": null
+      },
+      "competitors": [
+        {
+          "id": "id-mu96ga2q-axtm5k",
+          "name": "OUG.Mike",
+          "members": [],
+          "group": null,
+          "carry": 0
+        },
+        {
+          "id": "id-mu96ga2q-so9gfy",
+          "name": "WFG.Xuanyuan",
+          "members": [],
+          "group": null,
+          "carry": 0
+        },
+        {
+          "id": "id-mu96ga2q-41m9z5",
+          "name": "SSONE.Frozt",
+          "members": [],
+          "group": null,
+          "carry": 0
+        },
+        {
+          "id": "id-mu96ga2q-2124k8",
+          "name": "TE.Wufeng",
+          "members": [],
+          "group": null,
+          "carry": 0
+        },
+        {
+          "id": "id-mu96ga2q-ba3gur",
+          "name": "IG.Wangliang",
+          "members": [],
+          "group": null,
+          "carry": 0
+        },
+        {
+          "id": "id-mu96ga2q-boldej",
+          "name": "CDGG.Chen",
+          "members": [],
+          "group": null,
+          "carry": 0
+        },
+        {
+          "id": "id-mu96ga2q-uz2fwf",
+          "name": "XKG.Arano",
+          "members": [],
+          "group": null,
+          "carry": 0
+        },
+        {
+          "id": "id-mu96ga2q-zyjir9",
+          "name": "VN521.Lypo",
+          "members": [],
+          "group": null,
+          "carry": 0
+        }
+      ],
+      "matches": [
+        {
+          "id": "id-mu96gofs-jp2v7w",
+          "name": "",
+          "type": "wudao",
+          "groups": [],
+          "results": {
+            "id-mu96ga2q-axtm5k": {
+              "kills": null,
+              "placement": 8
+            },
+            "id-mu96ga2q-so9gfy": {
+              "kills": null,
+              "placement": 2
+            },
+            "id-mu96ga2q-41m9z5": {
+              "kills": null,
+              "placement": 1
+            },
+            "id-mu96ga2q-2124k8": {
+              "kills": null,
+              "placement": 7
+            },
+            "id-mu96ga2q-ba3gur": {
+              "kills": null,
+              "placement": 6
+            },
+            "id-mu96ga2q-boldej": {
+              "kills": null,
+              "placement": 4
+            },
+            "id-mu96ga2q-uz2fwf": {
+              "kills": null,
+              "placement": 3
+            },
+            "id-mu96ga2q-zyjir9": {
+              "kills": null,
+              "placement": 5
+            }
+          },
+          "topPick": null
+        },
+        {
+          "id": "id-mu96hhrd-mxwutm",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu96ga2q-axtm5k": {
+              "kills": 4,
+              "placement": 2
+            },
+            "id-mu96ga2q-so9gfy": {
+              "kills": 2,
+              "placement": 8
+            },
+            "id-mu96ga2q-41m9z5": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-mu96ga2q-2124k8": {
+              "kills": 5,
+              "placement": 1
+            },
+            "id-mu96ga2q-ba3gur": {
+              "kills": 0,
+              "placement": 6
+            },
+            "id-mu96ga2q-boldej": {
+              "kills": 3,
+              "placement": 4
+            },
+            "id-mu96ga2q-uz2fwf": {
+              "kills": 0,
+              "placement": 5
+            },
+            "id-mu96ga2q-zyjir9": {
+              "kills": 0,
+              "placement": 3
+            }
+          },
+          "topPick": null
+        },
+        {
+          "id": "id-mu96iovc-nlz3c7",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu96ga2q-axtm5k": {
+              "kills": 6,
+              "placement": 1
+            },
+            "id-mu96ga2q-so9gfy": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-mu96ga2q-41m9z5": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mu96ga2q-2124k8": {
+              "kills": 2,
+              "placement": 4
+            },
+            "id-mu96ga2q-ba3gur": {
+              "kills": 1,
+              "placement": 3
+            },
+            "id-mu96ga2q-boldej": {
+              "kills": 0,
+              "placement": 6
+            },
+            "id-mu96ga2q-uz2fwf": {
+              "kills": 1,
+              "placement": 5
+            },
+            "id-mu96ga2q-zyjir9": {
+              "kills": 1,
+              "placement": 2
+            }
+          },
+          "topPick": null
+        },
+        {
+          "id": "id-mu96lk2d-iuikia",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu96ga2q-axtm5k": {
+              "kills": 5,
+              "placement": 2
+            },
+            "id-mu96ga2q-so9gfy": {
+              "kills": 4,
+              "placement": 1
+            },
+            "id-mu96ga2q-41m9z5": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-mu96ga2q-2124k8": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mu96ga2q-ba3gur": {
+              "kills": 3,
+              "placement": 4
+            },
+            "id-mu96ga2q-boldej": {
+              "kills": 0,
+              "placement": 5
+            },
+            "id-mu96ga2q-uz2fwf": {
+              "kills": 1,
+              "placement": 3
+            },
+            "id-mu96ga2q-zyjir9": {
+              "kills": 2,
+              "placement": 6
+            }
+          },
+          "topPick": null
+        },
+        {
+          "id": "id-mu96mf75-xw7szl",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu96ga2q-axtm5k": {
+              "kills": 6,
+              "placement": 4
+            },
+            "id-mu96ga2q-so9gfy": {
+              "kills": 5,
+              "placement": 2
+            },
+            "id-mu96ga2q-41m9z5": {
+              "kills": 2,
+              "placement": 1
+            },
+            "id-mu96ga2q-2124k8": {
+              "kills": 3,
+              "placement": 8
+            },
+            "id-mu96ga2q-ba3gur": {
+              "kills": 3,
+              "placement": 3
+            },
+            "id-mu96ga2q-boldej": {
+              "kills": 2,
+              "placement": 6
+            },
+            "id-mu96ga2q-uz2fwf": {
+              "kills": 0,
+              "placement": 5
+            },
+            "id-mu96ga2q-zyjir9": {
+              "kills": 0,
+              "placement": 7
+            }
+          },
+          "topPick": null
+        },
+        {
+          "id": "id-mu96nmxu-e1q1uh",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mu96ga2q-axtm5k": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-mu96ga2q-so9gfy": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mu96ga2q-41m9z5": {
+              "kills": 4,
+              "placement": 1
+            },
+            "id-mu96ga2q-2124k8": {
+              "kills": 2,
+              "placement": 6
+            },
+            "id-mu96ga2q-ba3gur": {
+              "kills": 1,
+              "placement": 2
+            },
+            "id-mu96ga2q-boldej": {
+              "kills": 3,
+              "placement": 3
+            },
+            "id-mu96ga2q-uz2fwf": {
+              "kills": 5,
+              "placement": 4
+            },
+            "id-mu96ga2q-zyjir9": {
+              "kills": 1,
+              "placement": 5
+            }
+          },
+          "topPick": "id-mu96ga2q-uz2fwf"
+        }
+      ],
+      "locked": false,
+      "tieBreak": {
+        "points": [
+          {
+            "k": "firstScore",
+            "dir": "asc"
+          },
+          {
+            "k": "kills",
+            "dir": "desc"
+          }
+        ],
+        "mp": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          }
+        ]
+      },
+      "notes": "111",
+      "manualOrder": [
+        "id-mu96ga2q-uz2fwf",
+        "id-mu96ga2q-boldej"
+      ]
+    }
+  ],
+  "activeEventId": "id-mu96fkrp-97hg1x"
+}
