@@ -283,6 +283,26 @@
   .chip .x { margin-left: 6px; opacity: .55; }
   .chip .x:hover { opacity: 1; }
 
+  /* 赛区标签 */
+  .chip.tag-chip { border-color: var(--tc); color: var(--tc); cursor: default; }
+  .chip.tag-chip:hover { border-color: var(--tc); color: var(--tc); }
+  .chip.tag-chip .x { cursor: pointer; }
+  .chip.tag-chip input[type=color] {
+    width: 14px; height: 14px; padding: 0; margin: 0 6px 0 0;
+    border: none; border-radius: 3px; background: none;
+    cursor: pointer; vertical-align: -2px;
+  }
+  .chip.tag-chip input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+  .chip.tag-chip input[type=color]::-webkit-color-swatch { border: 1px solid var(--border); border-radius: 3px; }
+
+  /* 积分榜里的赛区小标签 */
+  .tagpill {
+    display: inline-block; padding: 1px 8px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; max-width: 96px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle;
+  }
+  table.lb td.tagcell { text-align: center; }
+
   /* 右侧面板 */
   .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
   .tabs button {
@@ -299,17 +319,19 @@
   .add-box .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   ul.clist { list-style: none; max-height: 58vh; overflow: auto; }
   ul.clist li {
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
     padding: 6px 4px; border-bottom: 1px solid var(--border);
   }
-  ul.clist .c-info { flex: 1; min-width: 0; }
+  /* 一行放不下（组 + 赛区 + 前序 + 按钮）时让控件折到第二行，别把名字挤没 */
+  ul.clist .c-info { flex: 1 1 130px; min-width: 0; }
   ul.clist .c-info b { font-weight: 600; }
   ul.clist .c-info small { color: var(--muted); display: block; }
   ul.clist .c-actions { display: flex; gap: 4px; flex: none; }
-  ul.clist select.gsel {
+  ul.clist select.gsel, ul.clist select.tsel {
     padding: 3px 6px; font-size: 12px; border-radius: 6px;
     width: auto; min-width: 62px; flex: none;
   }
+  ul.clist select.tsel { min-width: 72px; }
   ul.clist .carry-box {
     display: flex; align-items: center; gap: 4px; flex: none;
     font-size: 12px; color: var(--muted); cursor: help;
@@ -365,6 +387,13 @@
     background: var(--panel2); color: var(--muted); border: 1px solid var(--border);
   }
   .gchip.wudao { background: rgba(43,127,212,.15); color: var(--accent2); border-color: rgba(43,127,212,.45); }
+  .gchip.map { background: rgba(31,157,90,.14); color: var(--ok); border-color: rgba(31,157,90,.45); }
+
+  /* 录入区的地图天气下拉 */
+  .match-tools select.msel {
+    padding: 4px 8px; font-size: 12px; border-radius: 6px;
+    width: auto; min-width: 118px; max-width: 180px;
+  }
   .add-match-btn { width: 100%; background: transparent; border: 1px dashed var(--border); color: var(--muted); padding: 10px; }
 
   /* 设置 */
@@ -518,6 +547,7 @@
         </div>
       </div>
       <div class="chips" id="group-chips"></div>
+      <div class="chips" id="tag-chips"></div>
       <div class="chips">
         <button class="chip" id="carry-bulk-toggle" onclick="toggleCarryBulk()">批量填写前序积分</button>
         <button class="chip" id="comp-batch-open" onclick="openCompBatch()">批量管理 / 删除</button>
@@ -692,6 +722,12 @@
       <button class="small" id="cbt-set-btn" onclick="compBatchSetGroup()">应用分组</button>
       <button class="ghost small" id="cbt-addgroup-btn" onclick="compBatchAddGroup()">+ 新建组</button>
     </div>
+    <div class="batch-tools" style="margin:6px 0 0">
+      <span class="muted">赛区标为</span>
+      <select id="cbt-tag" style="width:auto;min-width:110px"></select>
+      <button class="small" id="cbt-settag-btn" onclick="compBatchSetTag()">应用赛区</button>
+      <button class="ghost small" id="cbt-addtag-btn" onclick="compBatchAddTag()">+ 新建标签</button>
+    </div>
     <div class="modal-actions">
       <button class="danger" id="cbt-del-btn" onclick="compBatchDelete()">删除选中</button>
       <span class="grow"></span>
@@ -742,6 +778,46 @@ const STORAGE_KEY = 'naraka_score_v1';
 const BACKUP_KEY  = 'naraka_score_v1_backup';
 const MAX_RANK = 48;
 const GROUPS = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+
+/* 地图天气：武道只有火罗国，天人可选下面这些 */
+const WUDAO_MAP = '火罗国';
+const TIANTI_MAPS = [
+  '聚窟州·早晨', '聚窟州·正午', '聚窟州·黄昏', '聚窟州·夜晚',
+  '火罗国·黄昏', '火罗国·阴天', '火罗国·晴天', '火罗国·星夜',
+  '龙隐洞天·日暮', '龙隐洞天·夜半', '龙隐洞天·朝露',
+  '宛渠·夕阳', '宛渠·烈日', '宛渠·星夜'
+];
+/* 新建赛事时的默认排布：第 1 局武道（火罗国），第 2-8 局依次是这些 */
+const DEFAULT_MAP_SEQUENCE = [
+  '聚窟州·早晨', '火罗国·阴天', '龙隐洞天·朝露', '聚窟州·正午',
+  '火罗国·星夜', '龙隐洞天·夜半', '聚窟州·夜晚'
+];
+/* index 从 0 数；第 1 局是武道，之后按固定顺序排 */
+function defaultMatchMap(index, type) {
+  if (type === 'wudao') return WUDAO_MAP;
+  return DEFAULT_MAP_SEQUENCE[index - 1] || null;
+}
+
+/* 赛区标签：名字自己起，颜色从这套里自动轮着给，之后可以逐条改 */
+const TAG_COLORS = ['#2b7fd4','#d9622a','#1f9d5a','#b8790a','#8b5cf6','#d93b3b',
+                    '#0891b2','#a16207','#4f46e5','#0f766e','#be185d','#475569'];
+
+/* 统一成 #rrggbb，认不出来返回 null */
+function normHex(v) {
+  let s = String(v == null ? '' : v).trim().toLowerCase();
+  if (/^#[0-9a-f]{3}$/.test(s)) s = '#' + s[1] + s[1] + s[2] + s[2] + s[3] + s[3];
+  return /^#[0-9a-f]{6}$/.test(s) ? s : null;
+}
+function nextTagColor(tags) {
+  const used = {};
+  tags.forEach(function(t) { used[t.color] = 1; });
+  for (let i = 0; i < TAG_COLORS.length; i++) if (!used[TAG_COLORS[i]]) return TAG_COLORS[i];
+  return TAG_COLORS[tags.length % TAG_COLORS.length];
+}
+function tagOf(ev, name) {
+  if (!name) return null;
+  return (ev.tags || []).filter(function(t) { return t.name === name; })[0] || null;
+}
 
 /* 分数一律用「十分之一整数」（tenths）存储与比较，避免 0.1/0.3 的浮点误差
    让 15.999 >= 16 这类阈值判断出错。显示时再还原。 */
@@ -929,6 +1005,7 @@ function newEvent(mode, name, matchPointEnabled) {
     id: uid(),
     name: name || (mode === 'solo' ? '单排赛' : '三排赛'),
     mode: mode,
+    locked: false,
     scoring: {
       killPoints: 1,
       placement: defaultPlacement(mode),
@@ -936,6 +1013,7 @@ function newEvent(mode, name, matchPointEnabled) {
       killCoef: defaultKillCoef()
     },
     groups: [],
+    tags: [],
     rankStyles: [],
     tieBreak: defaultTieBreak(),
     notes: '',
@@ -1005,18 +1083,39 @@ function normalize(ev) {
     seenG[g] = 1; return true;
   });
 
+  // 赛区标签：名字去重，颜色统一成 #rrggbb
+  if (!Array.isArray(ev.tags)) ev.tags = [];
+  const seenT = {};
+  ev.tags = ev.tags.filter(function(t) {
+    if (!t || typeof t !== 'object' || typeof t.name !== 'string') return false;
+    t.name = t.name.trim();
+    if (!t.name || seenT[t.name]) return false;
+    seenT[t.name] = 1;
+    t.color = normHex(t.color) || nextTagColor(ev.tags);
+    return true;
+  }).map(function(t) { return { name: t.name, color: normHex(t.color) }; });
+
   ev.competitors.forEach(function(c) {
     if (!Array.isArray(c.members)) c.members = [];
     c.group = (typeof c.group === 'string' && c.group.trim()) ? c.group.trim() : null;
+    c.tag = (typeof c.tag === 'string' && c.tag.trim()) ? c.tag.trim() : null;
     const cr = num(c.carry);
     c.carry = (cr != null && cr >= 0) ? cr : 0;
     if (c.group && ev.groups.indexOf(c.group) === -1) ev.groups.push(c.group);
+    // 标签只在选手身上出现过（导入的旧数据）就补一条同名标签，给个自动颜色
+    if (c.tag && !seenT[c.tag]) {
+      seenT[c.tag] = 1;
+      ev.tags.push({ name: c.tag, color: nextTagColor(ev.tags) });
+    }
   });
 
   ev.matches.forEach(function(m) {
     if (!m.results || typeof m.results !== 'object') m.results = {};
     if (typeof m.name !== 'string') m.name = '';
     m.type = (m.type === 'wudao') ? 'wudao' : 'tianti';
+    m.map = (typeof m.map === 'string' && m.map.trim()) ? m.map.trim() : null;
+    // 武道只有火罗国这一张图，老数据没写就补上
+    if (m.type === 'wudao' && !m.map) m.map = WUDAO_MAP;
     // 单局最高分并列时的人工裁定（compId）
     m.topPick = (typeof m.topPick === 'string' && m.topPick) ? m.topPick : null;
     if (!Array.isArray(m.groups)) m.groups = [];
@@ -1189,7 +1288,7 @@ function computeStandings(ev) {
   const matches = ev.matches.map(function(m, i) {
     return {
       id: m.id, index: i, label: '第' + cnNum(i + 1) + '局', name: m.name, type: m.type,
-      isWudao: m.type === 'wudao',
+      isWudao: m.type === 'wudao', map: m.map,
       groups: m.groups, participantIds: [], participantCount: 0,
       entered: 0, dupPlacements: 0, orphanCount: 0, dupIds: {},
       bestT: null, topId: null, decidedChampionId: null, openIds: [], championId: null
@@ -1629,6 +1728,8 @@ function renderLeaderboard(ev, S) {
   const list = ev.competitors.length === 0 ? [] : boardRows(S);
   const hasGroups = ev.groups.length > 0;
   const hasCarry = S.rows.some(function(r) { return r.carryT !== 0; });
+  // 有人标了赛区才出这一列（看全量行，避免切组榜时列忽隐忽现）
+  const hasTags = S.rows.some(function(r) { return !!r.comp.tag; });
   // 无前序、无对局时没有可折叠的中间列，简表与完整表无差别
   const canSimplify = list.length > 0 && (S.matches.length > 0 || hasCarry);
   const simple = lbSimple && canSimplify;
@@ -1660,6 +1761,7 @@ function renderLeaderboard(ev, S) {
 
   let head = '<tr><th class="num" style="width:44px">排名</th>';
   if (hasGroups) head += '<th style="width:40px">组</th>';
+  if (hasTags) head += '<th class="num" style="width:76px">赛区</th>';
   head += '<th>队伍 / 选手</th>';
   if (simple) {
     head += '<th class="num" style="width:68px">总积分</th>';
@@ -1667,7 +1769,8 @@ function renderLeaderboard(ev, S) {
     if (hasCarry) head += '<th class="num" style="width:56px">前序</th>';
     S.matches.forEach(function(meta) {
       const lab = '第' + cnNum(meta.index + 1) + '局';
-      const tip = lab + (meta.name ? ' · ' + meta.name : '') + (meta.isWudao ? '（武道对局）' : '');
+      const tip = lab + (meta.name ? ' · ' + meta.name : '') +
+        (meta.isWudao ? '（武道对局）' : '') + (meta.map ? ' · ' + meta.map : '');
       head += '<th class="num' + (meta.isWudao ? ' wd' : '') + '" title="' + esc(tip) + '">' + lab + '</th>';
     });
     head += '<th class="num" style="width:68px">总积分</th>';
@@ -1675,13 +1778,13 @@ function renderLeaderboard(ev, S) {
   if (S.usingMP) head += '<th class="num" style="width:140px">赛点状态</th>';
   head += '</tr>';
 
-  // 排名 + [组] + 队伍/选手 + [前序] + 每局 × N + 总积分 + [赛点状态]
-  const colspan = 3 + (hasGroups ? 1 : 0)
+  // 排名 + [组] + [赛区] + 队伍/选手 + [前序] + 每局 × N + 总积分 + [赛点状态]
+  const colspan = 3 + (hasGroups ? 1 : 0) + (hasTags ? 1 : 0)
                 + (simple ? 0 : (hasCarry ? 1 : 0) + S.matches.length)
                 + (S.usingMP ? 1 : 0);
 
   container.innerHTML = '<table class="lb' + (simple ? ' lb-simple' : '') + '"><thead>' + head + '</thead><tbody>' +
-    list.map(function(item) { return lbRow(item.row, item.rank, ev, S, hasGroups, hasCarry, colspan, simple); }).join('') +
+    list.map(function(item) { return lbRow(item.row, item.rank, ev, S, hasGroups, hasCarry, colspan, simple, hasTags); }).join('') +
     '</tbody></table>';
 
   syncBannerWidth();
@@ -1779,7 +1882,7 @@ function mpStatusHTML(r, S) {
     '<span>' + fmtT(r.totalT) + '/' + fmtT(S.thT) + '</span></div>';
 }
 
-function lbRow(r, rank, ev, S, hasGroups, hasCarry, colspan, simple) {
+function lbRow(r, rank, ev, S, hasGroups, hasCarry, colspan, simple, hasTags) {
   const c = r.comp;
   const carryLine = r.carryT !== 0
     ? '<div class="pm"><span>前序积分（带入）</span><span>' + fmtT(r.carryT) + ' 分</span></div>'
@@ -1813,6 +1916,13 @@ function lbRow(r, rank, ev, S, hasGroups, hasCarry, colspan, simple) {
 
   let tds = '<td class="num">' + rankBadge(rank) + '</td>';
   if (hasGroups) tds += '<td class="muted">' + esc(c.group || '—') + '</td>';
+  if (hasTags) {
+    const t = tagOf(ev, c.tag);
+    tds += '<td class="tagcell">' + (t
+      ? '<span class="tagpill" style="background:' + t.color + ';color:' + readableOn(t.color) + '"' +
+        ' title="' + esc(t.name) + '">' + esc(t.name) + '</span>'
+      : '<span class="muted">—</span>') + '</td>';
+  }
   tds += '<td class="name">' + nameHtml + members + '</td>';
   if (!simple && hasCarry) tds += '<td class="num">' + (r.carryT !== 0 ? fmtT(r.carryT) : '<span class="muted">—</span>') + '</td>';
 
@@ -1879,6 +1989,7 @@ function renderCompetitors(ev) {
     ev.groups.map(function(g) { return '<option value="' + esc(g) + '">' + esc(g) + ' 组</option>'; }).join('');
 
   renderGroupChips(ev);
+  renderTagChips(ev);
 
   updateCarrySummary(ev);
 
@@ -1894,6 +2005,7 @@ function renderCompetitors(ev) {
     });
     return h;
   };
+  const tagOptsFor = function(cur) { return tagOptionsHTML(ev, cur); };
   list.innerHTML = ev.competitors.map(function(c) {
     return '<li data-name="' + esc(c.name) + '">' +
       '<div class="c-info"><b>' + esc(c.name) + '</b>' +
@@ -1905,6 +2017,9 @@ function renderCompetitors(ev) {
       '</label>' +
       '<select class="gsel" onchange="setCompetitorGroup(\'' + c.id + '\', this.value)"' + (lock ? ' disabled' : '') + '>' +
         groupOptsFor(c.group) +
+      '</select>' +
+      '<select class="tsel" onchange="setCompetitorTag(\'' + c.id + '\', this.value)"' + (lock ? ' disabled' : '') + '>' +
+        tagOptsFor(c.tag, ev) +
       '</select>' +
       '<div class="c-actions">' +
       '<button class="ghost tiny" onclick="renameCompetitor(\'' + c.id + '\')"' + (lock ? ' disabled' : '') + '>改名</button>' +
@@ -1962,6 +2077,7 @@ function matchCardHTML(ev, m, i, S) {
   let head = '<div class="match-head" onclick="toggleMatch(\'' + m.id + '\')">' +
     '<span class="match-title">' + matchCanonicalName(m, i) + '</span>';
   if (isWudao) head += '<span class="gchip wudao">武道</span>';
+  if (m.map) head += '<span class="gchip map">' + esc(m.map) + '</span>';
   if (m.name) head += '<span class="muted" style="font-size:12px">' + esc(m.name) + '</span>';
   if (hasGroups) head += '<span class="gchip">' + esc(matchGroupLabel(m)) + '</span>';
   if (meta.championId) {
@@ -1989,7 +2105,9 @@ function matchCardHTML(ev, m, i, S) {
     '<span class="muted">类型</span>' +
     '<button class="chip' + (isWudao ? '' : ' active') + '" onclick="setMatchType(\'' + m.id + '\',\'tianti\')"' + dis + '>天人</button>' +
     '<button class="chip' + (isWudao ? ' active' : '') + '" onclick="setMatchType(\'' + m.id + '\',\'wudao\')"' + dis + '>武道</button>' +
-    '<span class="muted">' + (isWudao ? '仅排名分，无击败分' : '排名分 + 击败分') + '</span>';
+    '<span class="muted">' + (isWudao ? '仅排名分，无击败分' : '排名分 + 击败分') + '</span>' +
+    '<span class="muted" style="margin-left:12px">' + (isWudao ? '地图' : '地图天气') + '</span>' +
+    matchMapSelectHTML(m, dis);
   if (hasGroups) {
     let chips = '<button class="chip' + (m.groups.length === 0 ? ' active' : '') + '" onclick="setMatchGroups(\'' + m.id + '\',\'__all__\')"' + dis + '>全员</button>';
     chips += ev.groups.map(function(g) {
@@ -2513,6 +2631,7 @@ function confirmNewEvent() {
   const mode = document.querySelector('input[name="ne-mode"]:checked').value;
   const fmt = document.querySelector('input[name="ne-format"]:checked').value;
   const e = newEvent(mode, name, fmt === 'matchPoint');
+  normalize(e);   // 新建的赛事也走一遍，漏加字段时不会带着残缺数据进渲染
   state.events.push(e);
   state.activeEventId = e.id;
   lbFilter = { board: 'merged', group: null };
@@ -2702,15 +2821,20 @@ function renderCompBatchList(keepIds) {
       '<input type="checkbox" data-id="' + esc(c.id) + '"' +
         (lock ? ' disabled' : '') + ' onchange="updateCompBatchCount()">' +
       '<span class="bname">' + esc(c.name) + mem + '</span>' +
-      '<span class="bmeta">' + (c.group ? esc(c.group) + ' 组' : '未分组') + '</span></label>';
+      '<span class="bmeta">' + (c.group ? esc(c.group) + ' 组' : '未分组') +
+        (c.tag ? ' · ' + esc(c.tag) : '') + '</span></label>';
   }).join('');
 
   const sel = document.getElementById('cbt-group');
   sel.innerHTML = '<option value="">未分组</option>' +
     ev.groups.map(function(g) { return '<option value="' + esc(g) + '">' + esc(g) + ' 组</option>'; }).join('');
-  sel.disabled = lock;
+  const tsel = document.getElementById('cbt-tag');
+  tsel.innerHTML = tagOptionsHTML(ev, '');
+  tsel.disabled = lock;
   document.getElementById('cbt-set-btn').disabled = lock;
   document.getElementById('cbt-addgroup-btn').disabled = lock;
+  document.getElementById('cbt-settag-btn').disabled = lock;
+  document.getElementById('cbt-addtag-btn').disabled = lock;
   document.getElementById('cbt-del-btn').disabled = lock;
 
   compBatchCheckAll(false);
@@ -2776,6 +2900,44 @@ function compBatchSetGroup() {
   renderCompBatchList(ids);   // renderAll 不管这个弹窗，手动刷新并保住勾选
 }
 
+/* 批量打赛区标签（选「无赛区」就是批量清掉） */
+function compBatchSetTag() {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const ids = compBatchIds();
+  if (!ids.length) { alert('请先勾选要标赛区的参赛者。'); return; }
+
+  const t = document.getElementById('cbt-tag').value || null;
+  let moved = 0;
+  ev.competitors.forEach(function(c) {
+    if (ids.indexOf(c.id) !== -1 && c.tag !== t) { c.tag = t; moved++; }
+  });
+  if (!moved) { alert('选中的 ' + ids.length + ' 人本来就是「' + (t || '无赛区') + '」。'); return; }
+
+  saveState();
+  renderAll();
+  renderCompBatchList(ids);
+}
+
+/* 就地建标签，颜色自动从调色板里取，建完可以在标签条上改 */
+function compBatchAddTag() {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const name = prompt('赛区标签名（例如 华东、A 赛区）', '');
+  if (name == null) return;
+  const n = name.trim();
+  if (!n) return;
+
+  const keep = compBatchIds();
+  const exists = !!tagOf(ev, n);
+  if (!exists) {
+    ev.tags.push({ name: n, color: nextTagColor(ev.tags) });
+    saveState();
+    renderAll();
+  }
+  renderCompBatchList(keep);
+  document.getElementById('cbt-tag').value = n;
+  if (exists) alert('「' + n + '」已经存在，已在下方下拉里选中。');
+}
+
 function compBatchDelete() {
   const ev = getActiveEvent(); if (!ev || ev.locked) return;
   const ids = compBatchIds();
@@ -2800,6 +2962,92 @@ function compBatchDelete() {
   renderAll();
   if (ev.competitors.length === 0) closeCompBatch();
   else renderCompBatchList([]);
+}
+
+/* ---------- 赛区标签 ---------- */
+function tagOptionsHTML(ev, cur) {
+  let h = '<option value=""' + (cur ? '' : ' selected') + '>无赛区</option>';
+  ev.tags.forEach(function(t) {
+    h += '<option value="' + esc(t.name) + '"' + (cur === t.name ? ' selected' : '') + '>' + esc(t.name) + '</option>';
+  });
+  return h;
+}
+
+function renderTagChips(ev) {
+  const el = document.getElementById('tag-chips');
+  if (!el) return;
+  if (ev.tags.length === 0 && ev.competitors.length === 0) { el.innerHTML = ''; return; }
+  const lock = !!ev.locked;
+  const dis = lock ? ' disabled' : '';
+  let h = ev.tags.map(function(t) {
+    const n = ev.competitors.filter(function(c) { return c.tag === t.name; }).length;
+    const picker = lock ? '' :
+      '<input type="color" value="' + t.color + '" title="改颜色"' +
+      ' onchange="setTagColor(\'' + jsq(t.name) + '\', this.value)">';
+    const tools = lock ? '' :
+      '<span class="x" title="改名" onclick="renameTag(\'' + jsq(t.name) + '\')">✎</span>' +
+      '<span class="x" title="删除该标签" onclick="deleteTag(\'' + jsq(t.name) + '\')">✕</span>';
+    return '<span class="chip tag-chip"' +
+      ' style="border-color:' + t.color + ';background:' + tint(t.color, .14) + '">' +
+      picker + esc(t.name) + '（' + n + '）' + tools + '</span>';
+  }).join('');
+  h += '<button class="chip" onclick="addTag()"' + dis + '>+ 新建标签</button>';
+  el.innerHTML = h;
+}
+
+function addTag() {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const name = prompt('赛区标签名（例如 华东、A 赛区）', '');
+  if (name == null) return;
+  const n = name.trim();
+  if (!n) return;
+  if (tagOf(ev, n)) { alert('「' + n + '」已经存在'); return; }
+  ev.tags.push({ name: n, color: nextTagColor(ev.tags) });
+  saveState(); renderAll();
+}
+
+function renameTag(oldName) {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const t = tagOf(ev, oldName); if (!t) return;
+  const name = prompt('赛区标签名', oldName);
+  if (name == null) return;
+  const n = name.trim();
+  if (!n || n === oldName) return;
+  if (tagOf(ev, n)) { alert('「' + n + '」已经存在'); return; }
+  t.name = n;
+  ev.competitors.forEach(function(c) { if (c.tag === oldName) c.tag = n; });
+  saveState(); renderAll();
+}
+
+function deleteTag(name) {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const n = ev.competitors.filter(function(c) { return c.tag === name; }).length;
+  if (!confirm('删除赛区标签「' + name + '」？\n\n' +
+               (n ? n + ' 名参赛者会变回「无赛区」，' : '') + '比赛成绩不受影响。')) return;
+  ev.tags = ev.tags.filter(function(t) { return t.name !== name; });
+  ev.competitors.forEach(function(c) { if (c.tag === name) c.tag = null; });
+  saveState(); renderAll();
+}
+
+/* 只改颜色：不用整页重建，刷新标签条和积分榜即可 */
+function setTagColor(name, color) {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const t = tagOf(ev, name); if (!t) return;
+  const c = normHex(color);
+  if (!c || c === t.color) return;
+  t.color = c;
+  scheduleSave();
+  renderTagChips(ev);
+  renderLeaderboard(ev, computeStandings(ev));
+}
+
+function setCompetitorTag(id, tag) {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const c = ev.competitors.filter(function(x) { return x.id === id; })[0]; if (!c) return;
+  const v = tag || null;
+  if (c.tag === v) return;
+  c.tag = v;
+  saveState(); renderAll();
 }
 
 /* ---------- 组管理 ---------- */
@@ -2884,9 +3132,11 @@ function randomGroupDialog() {
 function addMatch() {
   const ev = getActiveEvent(); if (!ev) return;
   const groups = (lbFilter.board === 'group' && lbFilter.group) ? [lbFilter.group] : [];
-  // 第一局默认设为武道对局
-  const type = ev.matches.length === 0 ? 'wudao' : 'tianti';
-  ev.matches.push({ id: uid(), name: '', type: type, groups: groups, results: {} });
+  // 第 1 局默认武道（火罗国），之后按默认顺序给天人局配地图天气
+  const index = ev.matches.length;
+  const type = index === 0 ? 'wudao' : 'tianti';
+  ev.matches.push({ id: uid(), name: '', type: type, groups: groups, results: {},
+                    map: defaultMatchMap(index, type) });
   saveState(); renderAll();
 }
 
@@ -2896,7 +3146,35 @@ function setMatchType(id, t) {
   const next = (t === 'wudao') ? 'wudao' : 'tianti';
   if (m.type === next) return;
   m.type = next;
+  // 武道只有火罗国；切回天人时「火罗国」不适用了，换成该局的默认地图天气
+  if (next === 'wudao') m.map = WUDAO_MAP;
+  else if (!m.map || m.map === WUDAO_MAP) m.map = defaultMatchMap(ev.matches.indexOf(m), 'tianti');
   saveState(); renderAll();
+}
+
+function setMatchMap(id, val) {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const m = ev.matches.filter(function(x) { return x.id === id; })[0]; if (!m) return;
+  const next = (typeof val === 'string' && val.trim()) ? val.trim() : null;
+  if (m.map === next) return;
+  m.map = next;
+  saveState(); renderAll();
+}
+
+/* 地图天气下拉；导入数据里可能是不在列表中的值，原样保留一项别悄悄改掉 */
+function matchMapSelectHTML(m, dis) {
+  const isWudao = m.type === 'wudao';
+  const list = isWudao ? [WUDAO_MAP] : TIANTI_MAPS;
+  const cur = m.map || '';
+  let h = '<select class="msel" title="地图天气" onchange="setMatchMap(\'' + m.id + '\', this.value)"' + dis + '>' +
+    '<option value=""' + (cur ? '' : ' selected') + '>未指定</option>';
+  if (cur && list.indexOf(cur) === -1) {
+    h += '<option value="' + esc(cur) + '" selected>' + esc(cur) + '</option>';
+  }
+  list.forEach(function(v) {
+    h += '<option value="' + esc(v) + '"' + (cur === v ? ' selected' : '') + '>' + esc(v) + '</option>';
+  });
+  return h + '</select>';
 }
 
 function renameMatch(id) {

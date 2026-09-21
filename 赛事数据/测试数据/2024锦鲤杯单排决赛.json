@@ -157,14 +157,7 @@
           "48": 1
         }
       },
-      "groups": [
-        "Platform",
-        "NBPL",
-        "NA",
-        "AS",
-        "SEA",
-        "EU"
-      ],
+      "groups": [],
       "rankStyles": [],
       "tieBreak": {
         "points": [
@@ -179,8 +172,16 @@
         ],
         "mp": [
           {
-            "k": "carry",
-            "dir": "asc"
+            "k": "kills",
+            "dir": "desc"
+          },
+          {
+            "k": "bestScore",
+            "dir": "desc"
+          },
+          {
+            "k": "bestKills",
+            "dir": "desc"
           }
         ]
       },
@@ -189,9 +190,7 @@
         "id-mu9nfbfq-sejobi",
         "id-mu9nfbfq-3iu7bf",
         "id-mu9nfbfq-jhnc7l",
-        "id-mu9nfbfq-8x7fvi",
-        "id-mu9nfbfq-qw3n6p",
-        "id-mu9nfbfq-4r68c1"
+        "id-mu9nfbfq-8x7fvi"
       ],
       "matchPoint": {
         "enabled": true,
@@ -207,85 +206,97 @@
           "id": "id-mu9nfbfq-pnbsqp",
           "name": "Kelie",
           "members": [],
-          "group": "Platform",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "Platform"
         },
         {
           "id": "id-mu9nfbfq-sejobi",
           "name": "OUG.Mike",
           "members": [],
-          "group": "NBPL",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "NBPL"
         },
         {
           "id": "id-mu9nfbfq-jhnc7l",
           "name": "WBG.Spider",
           "members": [],
-          "group": "NBPL",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "NBPL"
         },
         {
           "id": "id-mu9nfbfq-wuupcc",
           "name": "DRG.Feng",
           "members": [],
-          "group": "NBPL",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "NBPL"
         },
         {
           "id": "id-mu9nfbfq-dk5xrm",
           "name": "JDG.Verse",
           "members": [],
-          "group": "NBPL",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "NBPL"
         },
         {
           "id": "id-mu9nfbfq-3iu7bf",
           "name": "Countryman",
           "members": [],
-          "group": "Platform",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "Platform"
         },
         {
           "id": "id-mu9nfbfq-x9j86p",
           "name": "tryhard",
           "members": [],
-          "group": "NA",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "NA"
         },
         {
           "id": "id-mu9nfbfq-8x7fvi",
           "name": "TheCow",
           "members": [],
-          "group": "Platform",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "Platform"
         },
         {
           "id": "id-mu9nfbfq-qw3n6p",
           "name": "Chuzheng",
           "members": [],
-          "group": "Platform",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "Platform"
         },
         {
           "id": "id-mu9nfbfq-4r68c1",
           "name": "Zelldincht",
           "members": [],
-          "group": "AS",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "AS"
         },
         {
           "id": "id-mu9nfbfq-zlexrb",
           "name": "LyPolaris",
           "members": [],
-          "group": "SEA",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "SEA"
         },
         {
           "id": "id-mu9nfbfq-4xiu39",
           "name": "Spinachh",
           "members": [],
-          "group": "EU",
-          "carry": 0
+          "group": null,
+          "carry": 0,
+          "tag": "EU"
         }
       ],
       "matches": [
@@ -344,7 +355,8 @@
               "placement": 5
             }
           },
-          "topPick": null
+          "topPick": null,
+          "map": null
         },
         {
           "id": "id-mu9nowvj-oaz5e1",
@@ -401,7 +413,8 @@
               "placement": 5
             }
           },
-          "topPick": null
+          "topPick": null,
+          "map": null
         },
         {
           "id": "id-mu9q3as0-aj2sa7",
@@ -457,7 +470,9 @@
               "kills": 0,
               "placement": 10
             }
-          }
+          },
+          "topPick": null,
+          "map": null
         },
         {
           "id": "id-mu9q6j5z-ecjtw9",
@@ -513,7 +528,9 @@
               "kills": 0,
               "placement": 12
             }
-          }
+          },
+          "topPick": null,
+          "map": null
         },
         {
           "id": "id-mu9q98je-mu1kuj",
@@ -569,7 +586,9 @@
               "kills": 0,
               "placement": 10
             }
-          }
+          },
+          "topPick": null,
+          "map": null
         },
         {
           "id": "id-mu9qbzum-g3wah9",
@@ -625,10 +644,38 @@
               "kills": 0,
               "placement": 7
             }
-          }
+          },
+          "topPick": null,
+          "map": null
         }
       ],
-      "locked": false
+      "locked": true,
+      "tags": [
+        {
+          "name": "NBPL",
+          "color": "#e51515"
+        },
+        {
+          "name": "SEA",
+          "color": "#c8701e"
+        },
+        {
+          "name": "EU",
+          "color": "#2bcdee"
+        },
+        {
+          "name": "AS",
+          "color": "#767e3a"
+        },
+        {
+          "name": "NA",
+          "color": "#122bed"
+        },
+        {
+          "name": "Platform",
+          "color": "#e51515"
+        }
+      ]
     }
   ],
   "activeEventId": "id-mu9n9yn2-bpcmmg"
