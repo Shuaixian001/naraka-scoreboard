@@ -213,7 +213,28 @@
   .tag.open { background: rgba(217,98,42,.18); color: var(--fire); }
   .tag.win { background: rgba(217,154,16,.18); color: var(--gold); }
   .tag.wudao { background: rgba(43,127,212,.18); color: var(--accent2); }
+  .tag.cur { background: rgba(43,127,212,.18); color: var(--accent2); }
+  .tag.lock { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
   .hidden { display: none !important; }
+
+  /* 批量管理赛事 */
+  .batch-tools { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .batch-tools .grow { flex: 1; }
+  .batch-list { max-height: 46vh; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .batch-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-bottom: 1px solid var(--border); cursor: pointer;
+  }
+  .batch-row:last-child { border-bottom: 0; }
+  .batch-row:hover { background: var(--panel2); }
+  .batch-row input { flex: none; }
+  .batch-row .bname {
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .batch-row.cur .bname { font-weight: 700; }
+  .batch-row .bmeta { flex: none; color: var(--muted); font-size: 12px; }
+  .modal-actions .grow { flex: 1; }
 
   /* 赛点 */
   .mp-name { color: var(--fire); font-weight: 600; }
@@ -605,8 +626,9 @@
         <div class="warn hidden" id="set-lock-note"></div>
         <button id="set-save" onclick="saveSettings()">保存设置</button>
         <button class="ghost" onclick="exportData()">导出本赛事</button>
-        <button class="ghost" onclick="document.getElementById('import-file').click()">导入赛事</button>
-        <input id="import-file" type="file" accept=".json" style="display:none" onchange="importData(this)">
+        <button class="ghost" onclick="document.getElementById('import-file').click()">导入赛事（可多选）</button>
+        <input id="import-file" type="file" accept=".json" multiple style="display:none" onchange="importData(this)">
+        <button class="ghost" onclick="openBatchModal()">批量管理赛事…</button>
         <button class="danger" id="set-delete" onclick="deleteEvent()">删除本赛事</button>
       </div>
     </div>
@@ -632,6 +654,27 @@
     <div class="modal-actions">
       <button class="ghost" onclick="closeNewEventModal()">取消</button>
       <button onclick="confirmNewEvent()">创建</button>
+    </div>
+  </div>
+</div>
+
+<!-- 批量管理赛事弹窗 -->
+<div class="modal hidden" id="batch-modal">
+  <div class="modal-box" style="width:560px">
+    <h3>批量管理赛事</h3>
+    <div class="batch-tools">
+      <span class="muted" id="batch-count"></span>
+      <span class="grow"></span>
+      <button class="ghost tiny" onclick="batchCheckAll(true)">全选</button>
+      <button class="ghost tiny" onclick="batchCheckAll(false)">全不选</button>
+    </div>
+    <div id="batch-list" class="batch-list"></div>
+    <div class="modal-actions">
+      <button class="ghost" onclick="closeBatchModal()">关闭</button>
+      <span class="grow"></span>
+      <button class="ghost" onclick="batchExportEach()">逐个导出</button>
+      <button onclick="batchExportOne()">导出为一个文件</button>
+      <button class="danger" onclick="batchDelete()">删除选中</button>
     </div>
   </div>
 </div>
@@ -2939,66 +2982,201 @@ function saveSettings() {
   alert('已保存');
 }
 
-/* 只导出当前赛事（外层仍用 { events: [...] } 结构，便于被导入识别） */
-function exportData() {
-  const ev = getActiveEvent(); if (!ev) return;
-  const payload = { events: [ev], activeEventId: ev.id };
+/* 下载一个 JSON 文件；文件名去掉 Windows 非法字符 */
+function safeFileName(s) {
+  return String(s == null ? '' : s).replace(/[\\/:*?"<>|]/g, '_').trim() || '赛事';
+}
+function downloadJSON(payload, filename) {
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  const safe = String(ev.name || '赛事').replace(/[\\/:*?"<>|]/g, '_').trim() || '赛事';
-  a.download = safe + '.json';
+  a.download = filename;
   a.click();
   URL.revokeObjectURL(a.href);
 }
+function dateStamp() {
+  const d = new Date();
+  const p = function(n) { return (n < 10 ? '0' : '') + n; };
+  return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate());
+}
 
-/* 导入只做追加，不覆盖现有数据（导出是单赛事，覆盖会冲掉其他赛事） */
+/* 只导出当前赛事（外层仍用 { events: [...] } 结构，便于被导入识别） */
+function exportData() {
+  const ev = getActiveEvent(); if (!ev) return;
+  downloadJSON({ events: [ev], activeEventId: ev.id }, safeFileName(ev.name) + '.json');
+}
+
+/* 从解析好的 JSON 里取出赛事数组，兼容三种结构；取不到返回 null */
+function eventsFrom(data) {
+  let list = null;
+  if (data && Array.isArray(data.events)) list = data.events;
+  else if (data && typeof data === 'object' &&
+           (Array.isArray(data.competitors) || Array.isArray(data.matches) || data.mode)) list = [data];
+  if (!list) return null;
+  // 数组里混进数字/字符串/嵌套数组时丢掉，别让 normalize 抛错
+  list = list.filter(function(x) { return x && typeof x === 'object' && !Array.isArray(x); });
+  return list.length ? list : null;
+}
+
+/* 导入只做追加，不覆盖现有数据；可一次选多个文件 */
 function importData(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function() {
-    let data;
-    try { data = JSON.parse(reader.result); }
-    catch (e) { alert('导入失败：文件不是合法的 JSON。'); return; }
+  const files = Array.prototype.slice.call(input.files || []);
+  input.value = '';           // 立刻清空，方便下次再选同一个文件
+  if (!files.length) return;
 
-    // 兼容三种：{events:[...]}（本工具导出）、单个赛事对象、早期整包导出
-    let list;
-    if (data && Array.isArray(data.events)) list = data.events;
-    else if (data && typeof data === 'object' &&
-             (Array.isArray(data.competitors) || Array.isArray(data.matches) || data.mode)) list = [data];
-    else list = null;
-
-    if (!list || list.length === 0) { alert('导入失败：文件里没有赛事数据。'); return; }
-    list.forEach(normalize);
-
-    const names = list.map(function(e) { return e.name; }).join('、');
-    if (!confirm('导入 ' + list.length + ' 个赛事：' + names + '\n\n会作为新赛事添加，现有数据不受影响。')) return;
-
-    const usedIds = {}, usedNames = {};
-    state.events.forEach(function(e) { usedIds[e.id] = 1; usedNames[e.name] = 1; });
-    list.forEach(function(e) {
-      if (usedIds[e.id]) e.id = uid();
-      usedIds[e.id] = 1;
-      if (usedNames[e.name]) {
-        let nm = e.name + '（导入）', n = 2;
-        while (usedNames[nm]) { nm = e.name + '（导入' + n + '）'; n++; }
-        e.name = nm;
-      }
-      usedNames[e.name] = 1;
-      state.events.push(e);
-    });
-
-    state.activeEventId = list[list.length - 1].id;
-    lbFilter = { board: 'merged', group: null };
-    lastChampionKey = null;
-    notesEditing = false;
-    saveState();
-    renderAll();
-    alert('已导入 ' + list.length + ' 个赛事：' + names);
+  let left = files.length;
+  const list = [], bad = [];
+  const done = function() {
+    if (--left > 0) return;
+    finishImport(list, bad);
   };
-  reader.readAsText(file);
-  input.value = '';
+  files.forEach(function(f) {
+    const reader = new FileReader();
+    reader.onload = function() {
+      let data = null;
+      try { data = JSON.parse(reader.result); } catch (e) { data = null; }
+      const got = eventsFrom(data);
+      if (got) list.push.apply(list, got); else bad.push(f.name);
+      done();
+    };
+    reader.onerror = function() { bad.push(f.name); done(); };
+    reader.readAsText(f);
+  });
+}
+
+function finishImport(list, bad) {
+  if (!list.length) {
+    alert('导入失败：' + bad.length +
+      ' 个文件都没读到赛事数据。\n\n可能是文件损坏，或不是本工具导出的 JSON。\n\n' + bad.join('\n'));
+    return;
+  }
+  list.forEach(normalize);
+
+  const names = list.map(function(e) { return e.name; }).join('、');
+  let msg = '导入 ' + list.length + ' 个赛事：\n' + names + '\n\n会作为新赛事添加，现有数据不受影响。';
+  if (bad.length) msg += '\n\n另有 ' + bad.length + ' 个文件读不了，将跳过：\n' + bad.join('\n');
+  if (!confirm(msg)) return;
+
+  const usedIds = {}, usedNames = {};
+  state.events.forEach(function(e) { usedIds[e.id] = 1; usedNames[e.name] = 1; });
+  list.forEach(function(e) {
+    if (usedIds[e.id]) e.id = uid();
+    usedIds[e.id] = 1;
+    if (usedNames[e.name]) {
+      let nm = e.name + '（导入）', n = 2;
+      while (usedNames[nm]) { nm = e.name + '（导入' + n + '）'; n++; }
+      e.name = nm;
+    }
+    usedNames[e.name] = 1;
+    state.events.push(e);
+  });
+
+  state.activeEventId = list[list.length - 1].id;
+  lbFilter = { board: 'merged', group: null };
+  lastChampionKey = null;
+  notesEditing = false;
+  saveState();
+  renderAll();
+  alert('已导入 ' + list.length + ' 个赛事：\n' + names);
+}
+
+/* ==========================================================================
+   批量管理赛事：勾选后一次性导出 / 删除
+   ========================================================================== */
+function openBatchModal() {
+  renderBatchList();
+  document.getElementById('batch-modal').className = 'modal';
+}
+function closeBatchModal() {
+  document.getElementById('batch-modal').className = 'modal hidden';
+}
+function renderBatchList() {
+  const box = document.getElementById('batch-list');
+  if (!box) return;
+  // 勾选状态直接读 DOM，不另存一份，省得和列表不同步
+  box.innerHTML = state.events.map(function(e) {
+    const meta = (e.mode === 'solo' ? '单排' : '三排') + ' · ' +
+      (e.matchPoint.enabled ? '赛点制' : '积分制') + ' · ' +
+      e.competitors.length + ' 人 · ' + e.matches.length + ' 局';
+    const cur = e.id === state.activeEventId ? '<span class="tag cur">当前</span>' : '';
+    const lock = e.locked ? '<span class="tag lock">🔒 已结束</span>' : '';
+    return '<label class="batch-row' + (e.id === state.activeEventId ? ' cur' : '') + '">' +
+      '<input type="checkbox" data-id="' + esc(e.id) + '" onchange="updateBatchCount()">' +
+      '<span class="bname">' + esc(e.name) + cur + lock + '</span>' +
+      '<span class="bmeta">' + meta + '</span></label>';
+  }).join('');
+  updateBatchCount();
+}
+function batchBoxes() {
+  return Array.prototype.slice.call(document.querySelectorAll('#batch-list input[type=checkbox]'));
+}
+function batchCheckAll(on) {
+  batchBoxes().forEach(function(cb) { cb.checked = on; });
+  updateBatchCount();
+}
+function batchSelectedEvents() {
+  return batchBoxes().filter(function(cb) { return cb.checked; })
+    .map(function(cb) {
+      const id = cb.getAttribute('data-id');
+      return state.events.filter(function(e) { return e.id === id; })[0];
+    }).filter(Boolean);
+}
+function updateBatchCount() {
+  const el = document.getElementById('batch-count');
+  if (el) el.textContent = state.events.length + ' 个赛事，已选 ' + batchSelectedEvents().length + ' 个';
+}
+
+/* 选中赛事打包进一个文件（{events:[...]}，之后导入可一次全部还原） */
+function batchExportOne() {
+  const list = batchSelectedEvents();
+  if (!list.length) { alert('请先勾选要导出的赛事。'); return; }
+  const base = list.length === 1 ? safeFileName(list[0].name)
+                                 : '赛事导出_' + list.length + '个_' + dateStamp();
+  downloadJSON({ events: list, activeEventId: list[list.length - 1].id }, base + '.json');
+}
+
+/* 逐个导出：每个赛事一个文件。浏览器可能弹「是否允许下载多个文件」 */
+function batchExportEach() {
+  const list = batchSelectedEvents();
+  if (!list.length) { alert('请先勾选要导出的赛事。'); return; }
+  if (list.length > 1 &&
+      !confirm('将依次下载 ' + list.length + ' 个文件，每个赛事一个。\n\n' +
+               '浏览器可能会在开头询问「是否允许下载多个文件」，请选「允许」。\n\n确定继续吗？')) return;
+  list.forEach(function(e, i) {
+    setTimeout(function() {
+      downloadJSON({ events: [e], activeEventId: e.id }, safeFileName(e.name) + '.json');
+    }, i * 250);   // 拉开间隔，否则浏览器会拦掉后续下载
+  });
+}
+
+function batchDelete() {
+  const list = batchSelectedEvents();
+  if (!list.length) { alert('请先勾选要删除的赛事。'); return; }
+
+  const names = list.map(function(e) { return e.name; }).join('、');
+  const lockedN = list.filter(function(e) { return e.locked; }).length;
+  let msg = '确定删除这 ' + list.length + ' 个赛事？\n\n' + names + '\n\n此操作不可恢复，建议先导出备份。';
+  if (lockedN) msg += '\n\n（其中 ' + lockedN + ' 个已「结束积分」）';
+  if (!confirm(msg)) return;
+
+  // 全删是灾难性操作，再确认一次
+  if (list.length >= state.events.length &&
+      !confirm('⚠️ 这是全部 ' + state.events.length + ' 个赛事。\n\n' +
+               '删除后会自动建一个空的「默认赛事」。真的要全部删掉吗？')) return;
+
+  const del = {};
+  list.forEach(function(e) { del[e.id] = 1; });
+  state.events = state.events.filter(function(e) { return !del[e.id]; });
+  if (state.events.length === 0) state.events.push(newEvent('trio', '默认赛事', true));
+  if (!state.events.some(function(e) { return e.id === state.activeEventId; })) {
+    state.activeEventId = state.events[0].id;
+  }
+  lbFilter = { board: 'merged', group: null };
+  lastChampionKey = null;
+  notesEditing = false;
+  saveState();
+  closeBatchModal();
+  renderAll();
 }
 
 /* 点哪张卡片，哪张浮到上层（窄屏下两张卡片可能重叠） */
