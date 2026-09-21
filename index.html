@@ -234,6 +234,7 @@
   }
   .batch-row.cur .bname { font-weight: 700; }
   .batch-row .bmeta { flex: none; color: var(--muted); font-size: 12px; }
+  .batch-row .bname .mem { color: var(--muted); font-size: 11px; font-weight: 400; margin-left: 6px; }
   .modal-actions .grow { flex: 1; }
 
   /* 赛点 */
@@ -514,6 +515,7 @@
       <div class="chips" id="group-chips"></div>
       <div class="chips">
         <button class="chip" id="carry-bulk-toggle" onclick="toggleCarryBulk()">批量填写前序积分</button>
+        <button class="chip" id="comp-batch-open" onclick="openCompBatch()">批量管理 / 删除</button>
         <span class="muted" id="carry-summary"></span>
       </div>
       <div id="carry-bulk" class="hidden" style="margin-bottom:12px">
@@ -654,6 +656,31 @@
     <div class="modal-actions">
       <button class="ghost" onclick="closeNewEventModal()">取消</button>
       <button onclick="confirmNewEvent()">创建</button>
+    </div>
+  </div>
+</div>
+
+<!-- 批量管理参赛者弹窗 -->
+<div class="modal hidden" id="comp-batch-modal">
+  <div class="modal-box" style="width:520px">
+    <h3>批量管理参赛者</h3>
+    <div class="batch-tools">
+      <span class="muted" id="cbt-count"></span>
+      <span class="grow"></span>
+      <button class="ghost tiny" onclick="compBatchCheckAll(true)">全选</button>
+      <button class="ghost tiny" onclick="compBatchCheckAll(false)">全不选</button>
+    </div>
+    <div id="cbt-list" class="batch-list"></div>
+    <div class="batch-tools" style="margin:10px 0 0">
+      <span class="muted">把选中的加入</span>
+      <select id="cbt-group" style="width:auto;min-width:110px"></select>
+      <button class="small" id="cbt-set-btn" onclick="compBatchSetGroup()">应用分组</button>
+      <button class="ghost small" id="cbt-addgroup-btn" onclick="compBatchAddGroup()">+ 新建组</button>
+    </div>
+    <div class="modal-actions">
+      <button class="danger" id="cbt-del-btn" onclick="compBatchDelete()">删除选中</button>
+      <span class="grow"></span>
+      <button class="ghost" onclick="closeCompBatch()">关闭</button>
     </div>
   </div>
 </div>
@@ -1821,6 +1848,7 @@ function renderCompetitors(ev) {
   document.getElementById('carry-bulk-toggle').disabled = lock;
   document.getElementById('carry-bulk-text').disabled = lock;
   document.getElementById('carry-bulk-apply').disabled = lock;
+  document.getElementById('comp-batch-open').disabled = lock;
 
   const sel = document.getElementById('comp-bulk-group');
   sel.innerHTML = '<option value="">不指定组</option>' +
@@ -2627,6 +2655,128 @@ function deleteCompetitor(id) {
   ev.matches.forEach(function(m) { delete m.results[id]; });
   if (ev.matchPoint.championOverride && ev.matchPoint.championOverride.compId === id) ev.matchPoint.championOverride = null;
   saveState(); renderAll();
+}
+
+/* ---------- 参赛者批量管理 ---------- */
+function openCompBatch() {
+  const ev = getActiveEvent(); if (!ev) return;
+  if (ev.competitors.length === 0) { alert('还没有参赛者，先在上面的框里批量添加。'); return; }
+  renderCompBatchList([]);
+  document.getElementById('comp-batch-modal').className = 'modal';
+}
+function closeCompBatch() {
+  document.getElementById('comp-batch-modal').className = 'modal hidden';
+}
+
+/* keepIds：重建列表后要恢复勾选的那些人（改分组 / 删除后不丢选择） */
+function renderCompBatchList(keepIds) {
+  const ev = getActiveEvent(); if (!ev) return;
+  const lock = !!ev.locked;
+  const box = document.getElementById('cbt-list');
+  box.innerHTML = ev.competitors.map(function(c) {
+    const mem = c.members.length ? '<span class="mem">' + esc(c.members.join(' / ')) + '</span>' : '';
+    return '<label class="batch-row">' +
+      '<input type="checkbox" data-id="' + esc(c.id) + '"' +
+        (lock ? ' disabled' : '') + ' onchange="updateCompBatchCount()">' +
+      '<span class="bname">' + esc(c.name) + mem + '</span>' +
+      '<span class="bmeta">' + (c.group ? esc(c.group) + ' 组' : '未分组') + '</span></label>';
+  }).join('');
+
+  const sel = document.getElementById('cbt-group');
+  sel.innerHTML = '<option value="">未分组</option>' +
+    ev.groups.map(function(g) { return '<option value="' + esc(g) + '">' + esc(g) + ' 组</option>'; }).join('');
+  sel.disabled = lock;
+  document.getElementById('cbt-set-btn').disabled = lock;
+  document.getElementById('cbt-addgroup-btn').disabled = lock;
+  document.getElementById('cbt-del-btn').disabled = lock;
+
+  compBatchCheckAll(false);
+  if (keepIds && keepIds.length) {
+    compBatchBoxes().forEach(function(cb) {
+      if (keepIds.indexOf(cb.getAttribute('data-id')) !== -1) cb.checked = true;
+    });
+  }
+  updateCompBatchCount();
+}
+function compBatchBoxes() {
+  return Array.prototype.slice.call(document.querySelectorAll('#cbt-list input[type=checkbox]'));
+}
+function compBatchCheckAll(on) {
+  compBatchBoxes().forEach(function(cb) { if (!cb.disabled) cb.checked = on; });
+  updateCompBatchCount();
+}
+function compBatchIds() {
+  return compBatchBoxes().filter(function(cb) { return cb.checked; })
+    .map(function(cb) { return cb.getAttribute('data-id'); });
+}
+function updateCompBatchCount() {
+  const el = document.getElementById('cbt-count');
+  const ev = getActiveEvent();
+  if (el) el.textContent = '共 ' + (ev ? ev.competitors.length : 0) + ' 人，已选 ' + compBatchIds().length + ' 人';
+}
+
+/* 就地建组，省得关掉弹窗去组 chips 那边建 */
+function compBatchAddGroup() {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const name = prompt('新组名（例如 C、东部赛区）', GROUPS[ev.groups.length] || '');
+  if (name == null) return;
+  const g = name.trim();
+  if (!g) return;
+
+  const keep = compBatchIds();          // renderAll 会重建面板，先把勾选记下来
+  const exists = ev.groups.indexOf(g) !== -1;
+  if (!exists) {
+    ev.groups.push(g);
+    saveState();
+    renderAll();
+  }
+  renderCompBatchList(keep);
+  document.getElementById('cbt-group').value = g;   // 新组直接选好，接着点「应用分组」即可
+  if (exists) alert('「' + g + '」组已经存在，已在下方下拉里选中。');
+}
+
+/* 把选中的参赛者归到同一个组（或「未分组」） */
+function compBatchSetGroup() {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const ids = compBatchIds();
+  if (!ids.length) { alert('请先勾选要分组的参赛者。'); return; }
+
+  const g = document.getElementById('cbt-group').value || null;
+  let moved = 0;
+  ev.competitors.forEach(function(c) {
+    if (ids.indexOf(c.id) !== -1 && c.group !== g) { c.group = g; moved++; }
+  });
+  if (!moved) { alert('选中的 ' + ids.length + ' 人本来就在「' + (g ? g + ' 组' : '未分组') + '」。'); return; }
+
+  saveState();
+  renderAll();
+  renderCompBatchList(ids);   // renderAll 不管这个弹窗，手动刷新并保住勾选
+}
+
+function compBatchDelete() {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const ids = compBatchIds();
+  if (!ids.length) { alert('请先勾选要删除的参赛者。'); return; }
+
+  const picked = ev.competitors.filter(function(c) { return ids.indexOf(c.id) !== -1; });
+  const names = picked.map(function(c) { return c.name; }).join('、');
+  if (!confirm('确定删除这 ' + ids.length + ' 人？\n\n' + names +
+               '\n\n他们在所有对局里的成绩也会一并删除，不可恢复。')) return;
+
+  ev.competitors = ev.competitors.filter(function(c) { return ids.indexOf(c.id) === -1; });
+  ev.matches.forEach(function(m) {
+    ids.forEach(function(id) { delete m.results[id]; });
+  });
+  // 人工裁定和手动指定冠军里可能还留着这些人的 id
+  ev.manualOrder = (ev.manualOrder || []).filter(function(id) { return ids.indexOf(id) === -1; });
+  if (ev.matchPoint.championOverride && ids.indexOf(ev.matchPoint.championOverride.compId) !== -1) {
+    ev.matchPoint.championOverride = null;
+  }
+
+  saveState();
+  renderAll();
+  if (ev.competitors.length === 0) closeCompBatch();
+  else renderCompBatchList([]);
 }
 
 /* ---------- 组管理 ---------- */
