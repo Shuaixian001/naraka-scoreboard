@@ -726,7 +726,7 @@
       <span class="muted">赛区标为</span>
       <select id="cbt-tag" style="width:auto;min-width:110px"></select>
       <button class="small" id="cbt-settag-btn" onclick="compBatchSetTag()">应用赛区</button>
-      <button class="ghost small" id="cbt-addtag-btn" onclick="compBatchAddTag()">+ 新建标签</button>
+      <button class="ghost small" id="cbt-addtag-btn" onclick="compBatchAddTag()">+ 新建赛区标签</button>
     </div>
     <div class="modal-actions">
       <button class="danger" id="cbt-del-btn" onclick="compBatchDelete()">删除选中</button>
@@ -1970,9 +1970,11 @@ function renderPanel(S) {
 function renderCompetitors(ev) {
   const isTrio = ev.mode === 'trio';
   const bulk = document.getElementById('comp-bulk');
+  const prefixHint = '可选前缀：[A] 分组，小括号或大括号写赛区（两者顺序随意）\n';
   bulk.placeholder = isTrio
-    ? '每行一支队伍，格式：\n队伍名 / 成员1 / 成员2 / 成员3\n可选组前缀：[A] 队伍名 / 成员1 / 成员2 / 成员3'
-    : '每行一名选手：\n选手名\n可选组前缀：[A] 选手名';
+    ? '每行一支队伍，格式：\n队伍名 / 成员1 / 成员2 / 成员3\n' + prefixHint +
+      '例：[A] (华东) 队伍名 / 成员1 / 成员2 / 成员3'
+    : '每行一名选手：\n选手名\n' + prefixHint + '例：[A] (华东) 选手名　或　{华东} 选手名';
   document.getElementById('comp-count').textContent = '共 ' + ev.competitors.length + ' 人';
 
   const lock = !!ev.locked;
@@ -2664,13 +2666,20 @@ function parseBulk(text, mode) {
   text.split('\n').forEach(function(line) {
     let s = line.trim();
     if (!s || s.charAt(0) === '#') { blank++; return; }
-    let group = null;
-    const gm = s.match(/^\[([^\]]+)\]\s*(.*)$/);
-    if (gm) { group = gm[1].trim() || null; s = gm[2].trim(); }
+    /* 前缀：[A] 是分组，(华东)/{华东} 是赛区；都可有可无，先后顺序随意 */
+    let group = null, tag = null, m;
+    for (let guard = 0; guard < 4; guard++) {
+      m = s.match(/^\[([^\]]+)\]\s*/);
+      if (m && group === null) { group = m[1].trim() || null; s = s.slice(m[0].length); continue; }
+      m = s.match(/^[（({｛]([^）)}｝]*)[）)}｝]\s*/);
+      if (m && tag === null) { tag = m[1].trim() || null; s = s.slice(m[0].length); continue; }
+      break;
+    }
+    s = s.trim();
     if (!s) { blank++; return; }
     const parts = s.split(/[\/,，、\t]+/).map(function(x) { return x.trim(); }).filter(Boolean);
     if (!parts.length) { blank++; return; }
-    out.push({ name: parts[0], members: mode === 'trio' ? parts.slice(1, 4) : [], group: group });
+    out.push({ name: parts[0], members: mode === 'trio' ? parts.slice(1, 4) : [], group: group, tag: tag });
   });
   return { list: out, blank: blank };
 }
@@ -2702,13 +2711,20 @@ function addCompetitorsBulk() {
     .filter(function(g) { return g && ev.groups.indexOf(g) === -1; })
     .filter(function(g, i, a) { return a.indexOf(g) === i; });
   if (newGroups.length) msg += '，自动新建组 ' + newGroups.join('、');
+  const newTags = added.map(function(x) { return x.tag; })
+    .filter(function(t) { return t && !tagOf(ev, t); })
+    .filter(function(t, i, a) { return a.indexOf(t) === i; });
+  if (newTags.length) msg += '，自动新建赛区标签 ' + newTags.join('、');
   msg += '。确认？';
   if (!confirm(msg)) return;
 
   added.forEach(function(item) {
     const g = item.group || defaultGroup;
     if (g && ev.groups.indexOf(g) === -1) ev.groups.push(g);
-    ev.competitors.push({ id: uid(), name: item.name, members: item.members, group: g || null, carry: 0 });
+    const t = item.tag || null;
+    if (t && !tagOf(ev, t)) ev.tags.push({ name: t, color: nextTagColor(ev.tags) });
+    ev.competitors.push({ id: uid(), name: item.name, members: item.members,
+                          group: g || null, carry: 0, tag: t });
   });
   document.getElementById('comp-bulk').value = '';
   saveState();
@@ -2991,7 +3007,7 @@ function renderTagChips(ev) {
       ' style="border-color:' + t.color + ';background:' + tint(t.color, .14) + '">' +
       picker + esc(t.name) + '（' + n + '）' + tools + '</span>';
   }).join('');
-  h += '<button class="chip" onclick="addTag()"' + dis + '>+ 新建标签</button>';
+  h += '<button class="chip" onclick="addTag()"' + dis + '>+ 新建赛区标签</button>';
   el.innerHTML = h;
 }
 
