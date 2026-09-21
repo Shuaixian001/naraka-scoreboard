@@ -445,6 +445,11 @@
   .pick-row input { width: 15px; height: 15px; accent-color: var(--accent2); flex: none; }
   .pick-row b { flex: none; min-width: 72px; }
   .pick-row span { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+  /* 一个赛事都没有时的空状态：外边距对齐 .layout 的内边距 */
+  #card-empty { text-align: center; padding: 56px 20px; margin: 16px 20px 40px; }
+  #card-empty .big { font-size: 17px; font-weight: 600; margin-bottom: 18px; }
+  #card-empty .empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 </style>
 </head>
 <body>
@@ -457,7 +462,7 @@
 </div>
 <div id="lock-banner" class="hidden"></div>
 
-<div class="layout">
+<div class="layout" id="layout">
   <!-- 左：积分榜 -->
   <section class="card expanded" id="card-lb">
     <h2>实时积分榜 <span class="hint" id="lb-meta"></span>
@@ -659,6 +664,16 @@
     </div>
   </div>
 </div>
+
+<!-- 一个赛事都没有时的空状态 -->
+<section class="card hidden" id="card-empty">
+  <div class="big">还没有赛事，尝试新建赛事或导入赛事吧</div>
+  <div class="empty-actions">
+    <button onclick="openNewEventModal()">+ 新建赛事</button>
+    <button class="ghost" onclick="document.getElementById('import-file-empty').click()">导入赛事（可多选）</button>
+    <input id="import-file-empty" type="file" accept=".json" multiple style="display:none" onchange="importData(this)">
+  </div>
+</section>
 
 <!-- 批量管理参赛者弹窗 -->
 <div class="modal hidden" id="comp-batch-modal">
@@ -1023,17 +1038,15 @@ function loadState() {
 function init() {
   const raw = localStorage.getItem(STORAGE_KEY);
   state = loadState();
-  if (!state || !Array.isArray(state.events) || state.events.length === 0) {
-    const e = newEvent('trio', '默认赛事', true);
-    state = { events: [e], activeEventId: e.id };
-  }
+  // 允许一个赛事都没有：空状态会提示新建或导入，不再自动塞一个「默认赛事」
+  if (!state || !Array.isArray(state.events)) state = { events: [], activeEventId: null };
   // 首次升级前留一份原始备份，避免迁移事故
   if (raw && !localStorage.getItem(BACKUP_KEY)) {
     try { localStorage.setItem(BACKUP_KEY, raw); } catch (e) {}
   }
   state.events.forEach(normalize);
   if (!state.events.some(function(e) { return e.id === state.activeEventId; })) {
-    state.activeEventId = state.events[0].id;
+    state.activeEventId = state.events.length ? state.events[0].id : null;
   }
   writeState();
   renderAll();
@@ -1430,13 +1443,17 @@ function renderAll() {
   const ev = getActiveEvent();
   renderTopbar();
   if (!ev) {
-    document.getElementById('leaderboard-container').innerHTML = '<div class="empty">请先新建一个赛事</div>';
+    // 一个赛事都没有：整块换成空状态，提示新建或导入
+    document.getElementById('layout').className = 'layout hidden';
+    document.getElementById('card-empty').className = 'card';
     document.getElementById('mp-banner').innerHTML = '';
     document.getElementById('lb-filters').innerHTML = '';
     document.getElementById('lb-meta').textContent = '';
     renderPanel(null);
     return;
   }
+  document.getElementById('layout').className = 'layout';
+  document.getElementById('card-empty').className = 'card hidden';
   const S = computeStandings(ev);
   renderLeaderboard(ev, S);
   renderNotes(ev);
@@ -1445,16 +1462,23 @@ function renderAll() {
 
 function renderTopbar() {
   const sel = document.getElementById('event-select');
-  sel.innerHTML = state.events.map(function(e) {
-    const mode = e.mode === 'solo' ? '单排' : '三排';
-    const fmtTag = e.matchPoint.enabled ? '赛点制' : '积分制';
-    return '<option value="' + e.id + '"' + (e.id === state.activeEventId ? ' selected' : '') + '>' +
-      esc(e.name) + '（' + mode + '·' + fmtTag + '）</option>';
-  }).join('');
+  if (state.events.length === 0) {
+    sel.innerHTML = '<option>还没有赛事</option>';
+    sel.disabled = true;
+  } else {
+    sel.disabled = false;
+    sel.innerHTML = state.events.map(function(e) {
+      const mode = e.mode === 'solo' ? '单排' : '三排';
+      const fmtTag = e.matchPoint.enabled ? '赛点制' : '积分制';
+      return '<option value="' + e.id + '"' + (e.id === state.activeEventId ? ' selected' : '') + '>' +
+        esc(e.name) + '（' + mode + '·' + fmtTag + '）</option>';
+    }).join('');
+  }
 
   const ev = getActiveEvent();
   const btn = document.getElementById('lock-btn');
   const banner = document.getElementById('lock-banner');
+  btn.disabled = !ev;
   if (ev && ev.locked) {
     btn.textContent = '🔒 已结束积分 · 点击继续记分';
     btn.className = 'lock-on';
@@ -2504,8 +2528,7 @@ function deleteEvent() {
   const ev = getActiveEvent(); if (!ev) return;
   if (!confirm('确定删除赛事「' + ev.name + '」？此操作不可恢复。')) return;
   state.events = state.events.filter(function(e) { return e.id !== ev.id; });
-  if (state.events.length === 0) state.events.push(newEvent('trio', '默认赛事', true));
-  state.activeEventId = state.events[0].id;
+  state.activeEventId = state.events.length ? state.events[0].id : null;
   lbFilter = { board: 'merged', group: null };
   lastChampionKey = null;
   notesEditing = false;
@@ -3312,14 +3335,13 @@ function batchDelete() {
   // 全删是灾难性操作，再确认一次
   if (list.length >= state.events.length &&
       !confirm('⚠️ 这是全部 ' + state.events.length + ' 个赛事。\n\n' +
-               '删除后会自动建一个空的「默认赛事」。真的要全部删掉吗？')) return;
+               '删完就一个赛事都不剩了，首页会回到「还没有赛事」的空状态。真的要全部删掉吗？')) return;
 
   const del = {};
   list.forEach(function(e) { del[e.id] = 1; });
   state.events = state.events.filter(function(e) { return !del[e.id]; });
-  if (state.events.length === 0) state.events.push(newEvent('trio', '默认赛事', true));
   if (!state.events.some(function(e) { return e.id === state.activeEventId; })) {
-    state.activeEventId = state.events[0].id;
+    state.activeEventId = state.events.length ? state.events[0].id : null;
   }
   lbFilter = { board: 'merged', group: null };
   lastChampionKey = null;
