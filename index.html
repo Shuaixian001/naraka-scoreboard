@@ -845,6 +845,8 @@ function esc(s) {
 function num(v) { const n = Number(v); return isFinite(n) ? n : null; }
 /* 把用户输入的字符串安全地嵌进「双引号属性里的单引号 JS 字符串」*/
 function jsq(s) { return esc(String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'")); }
+/* 三排的每个参赛者是一支队伍、单排是选手，计数单位跟着模式走 */
+function unitOf(ev) { return (ev && ev.mode === 'trio') ? '队' : '人'; }
 
 let state = null;
 let currentPanel = 'record';
@@ -938,11 +940,11 @@ const PLACEMENT_PRESETS = {
   tianti: [
     { name: '官方 8 人 · 单排 2.5/1/0.5/0.5', mode: 'solo',
       values: [2.5, 1, 0.5, 0.5, 0, 0, 0, 0] },
-    { name: '官方 8 人 · 三排 4/2/1/1', mode: 'trio',
+    { name: '官方 8 队 · 三排 4/2/1/1', mode: 'trio',
       values: [4, 2, 1, 1, 0, 0, 0, 0] },
     { name: '官方 12 人 · 单排 3/2/1.5/1.5/1/1/0.5/0.5/0.5', mode: 'solo',
       values: [3, 2, 1.5, 1.5, 1, 1, 0.5, 0.5, 0.5, 0, 0, 0] },
-    { name: '官方 12 人 · 三排 4/2.5/2/1.5/1.5/1/1/0.5/0.5/0.5', mode: 'trio',
+    { name: '官方 12 队 · 三排 4/2.5/2/1.5/1.5/1/1/0.5/0.5/0.5', mode: 'trio',
       values: [4, 2.5, 2, 1.5, 1.5, 1, 1, 0.5, 0.5, 0.5, 0, 0] },
     { name: '16 人梯度（示例，非官方）', mode: null,
       values: [10,8,6,5,4,3,3,3,2,2,2,2,1,1,1,1] },
@@ -1722,7 +1724,7 @@ function renderLeaderboard(ev, S) {
   const modeTxt = ev.mode === 'solo' ? '单排' : '三排';
   const fmtTxt = S.usingMP ? '赛点制' : '积分制';
   const groupTxt = (lbFilter.board === 'group' && lbFilter.group) ? ' · ' + lbFilter.group + '组' : ' · 合并总榜';
-  meta.textContent = modeTxt + ' · ' + fmtTxt + ' · ' + ev.competitors.length + ' 人 · ' +
+  meta.textContent = modeTxt + ' · ' + fmtTxt + ' · ' + ev.competitors.length + ' ' + unitOf(ev) + ' · ' +
     ev.matches.length + ' 局' + (ev.groups.length ? groupTxt : '');
 
   const list = ev.competitors.length === 0 ? [] : boardRows(S);
@@ -1975,7 +1977,7 @@ function renderCompetitors(ev) {
     ? '每行一支队伍，格式：\n队伍名 / 成员1 / 成员2 / 成员3\n' + prefixHint +
       '例：[A] (华东) 队伍名 / 成员1 / 成员2 / 成员3'
     : '每行一名选手：\n选手名\n' + prefixHint + '例：[A] (华东) 选手名　或　{华东} 选手名';
-  document.getElementById('comp-count').textContent = '共 ' + ev.competitors.length + ' 人';
+  document.getElementById('comp-count').textContent = '共 ' + ev.competitors.length + ' ' + unitOf(ev);
 
   const lock = !!ev.locked;
   bulk.disabled = lock;
@@ -2087,12 +2089,12 @@ function matchCardHTML(ev, m, i, S) {
     head += '<span class="mp-badge win">🏆 本局决出冠军' + (c ? '：' + esc(c.name) : '') + '</span>';
   }
   if (meta.openIds.length) {
-    head += '<span class="mp-badge">🔥 本局开启赛点 ' + meta.openIds.length + ' 人</span>';
+    head += '<span class="mp-badge">🔥 本局开启赛点 ' + meta.openIds.length + ' ' + unitOf(ev) + '</span>';
   }
   if (meta.bestT != null && meta.tiedIds.length > 1) {
     head += '<button class="pick-chip' + (meta.topPick ? ' done' : '') + '" title="本局最高分有并列，点击裁定高亮哪一个"' +
       ' onclick="event.stopPropagation(); openTopPick(\'' + m.id + '\')">' +
-      (meta.topPick ? '✔ 最高分已裁定' : '⚠️ 最高分并列 ' + meta.tiedIds.length + ' 人') + '</button>';
+      (meta.topPick ? '✔ 最高分已裁定' : '⚠️ 最高分并列 ' + meta.tiedIds.length + ' ' + unitOf(ev)) + '</button>';
   }
   head += '<span class="stats" id="stat-' + m.id + '">' + matchStatsText(meta) + '</span>';
   head += '<span class="spacer"></span>' +
@@ -2279,7 +2281,7 @@ function updatePlacementWarn() {
   let maxNonZero = 0;
   for (let i = 1; i <= MAX_RANK; i++) { if (T(pl[i]) > 0) maxNonZero = i; }
   if (ev.competitors.length > maxNonZero) {
-    el.textContent = '⚠️ 参赛者 ' + ev.competitors.length + ' 人，但' + TABLE_LABEL[placeTarget] +
+    el.textContent = '⚠️ 参赛者 ' + ev.competitors.length + ' ' + unitOf(ev) + '，但' + TABLE_LABEL[placeTarget] +
       '表只有前 ' + maxNonZero + ' 名有分，其余名次得 0 分。';
   } else {
     el.textContent = '';
@@ -2309,7 +2311,7 @@ function renderTiePanel(ev, S) {
     const nPicked = g.ids.filter(function(id) { return picked.indexOf(id) !== -1; }).length;
     h += '<div class="tie-group">' +
       '<div class="tie-group-head' + (g.resolved ? ' done' : '') + '">' +
-      g.ids.length + ' 人规则同分 · ' + (g.resolved ? '已裁定' : '待裁定') + '</div>';
+      g.ids.length + ' ' + unitOf(ev) + '规则同分 · ' + (g.resolved ? '已裁定' : '待裁定') + '</div>';
     g.ids.forEach(function(id, mi) {
       const r = S.byId[id];
       if (!r) return;
@@ -2388,10 +2390,10 @@ function renderTieRules(ev, S) {
     }).join('');
   }
   el.innerHTML = h;
-  updateTieWarn(S);
+  updateTieWarn(S, ev);
 }
 
-function updateTieWarn(S) {
+function updateTieWarn(S, ev) {
   const el = document.getElementById('tb-warn');
   if (!S) { el.textContent = ''; return; }
   let groups = 0, people = 0, i = 0;
@@ -2402,7 +2404,7 @@ function updateTieWarn(S) {
     i = j + 1;
   }
   el.textContent = groups
-    ? '⚠️ 按现行规则有 ' + groups + ' 组（共 ' + people + ' 人）分不出先后，需人工评定。'
+    ? '⚠️ 按现行规则有 ' + groups + ' 组（共 ' + people + ' ' + unitOf(ev) + '）分不出先后，需人工评定。'
     : '';
 }
 
@@ -2425,7 +2427,7 @@ function onTieRuleInput(el) {
   scheduleSave();
   const S = computeStandings(ev);
   renderLeaderboard(ev, S);
-  updateTieWarn(S);
+  updateTieWarn(S, ev);
 }
 
 function addTieRule() {
@@ -2704,7 +2706,7 @@ function addCompetitorsBulk() {
     alert('没有可添加的参赛者（' + dupNames.length + ' 个重名，' + parsed.blank + ' 行空）');
     return;
   }
-  let msg = '将添加 ' + added.length + ' 人';
+  let msg = '将添加 ' + added.length + ' ' + unitOf(ev);
   if (dupNames.length) msg += '，跳过 ' + dupNames.length + ' 个重名（' + dupNames.slice(0, 3).join('、') + (dupNames.length > 3 ? '…' : '') + '）';
   if (parsed.blank) msg += '，跳过 ' + parsed.blank + ' 行空';
   const newGroups = added.map(function(x) { return x.group; })
@@ -2747,7 +2749,7 @@ function updateCarrySummary(ev) {
   const el = document.getElementById('carry-summary');
   if (!el) return;
   const n = ev.competitors.filter(function(c) { return c.carry > 0; }).length;
-  el.textContent = n ? '已为 ' + n + ' 人设置前序积分' : '当前无人设置前序积分';
+  el.textContent = n ? '已为 ' + n + ' ' + unitOf(ev) + '设置前序积分' : '当前无人设置前序积分';
 }
 
 function toggleCarryBulk() {
@@ -2775,7 +2777,7 @@ function applyCarryBulk() {
     alert('没有匹配到任何参赛者。\n格式应为每行「名称 分数」，例如：TC 8');
     return;
   }
-  let msg = '已更新 ' + hit + ' 人的前序积分。';
+  let msg = '已更新 ' + hit + ' ' + unitOf(ev) + '的前序积分。';
   if (missed.length) msg += '\n未匹配到 ' + missed.length + ' 个名称：' + missed.slice(0, 5).join('、') + (missed.length > 5 ? ' 等' : '');
   if (bad) msg += '\n有 ' + bad + ' 行格式不对，已跳过。';
   saveState();
@@ -2875,7 +2877,8 @@ function compBatchIds() {
 function updateCompBatchCount() {
   const el = document.getElementById('cbt-count');
   const ev = getActiveEvent();
-  if (el) el.textContent = '共 ' + (ev ? ev.competitors.length : 0) + ' 人，已选 ' + compBatchIds().length + ' 人';
+  if (el) el.textContent = '共 ' + (ev ? ev.competitors.length : 0) + ' ' + unitOf(ev) +
+    '，已选 ' + compBatchIds().length + ' ' + unitOf(ev);
 }
 
 /* 就地建组，省得关掉弹窗去组 chips 那边建 */
@@ -2909,7 +2912,7 @@ function compBatchSetGroup() {
   ev.competitors.forEach(function(c) {
     if (ids.indexOf(c.id) !== -1 && c.group !== g) { c.group = g; moved++; }
   });
-  if (!moved) { alert('选中的 ' + ids.length + ' 人本来就在「' + (g ? g + ' 组' : '未分组') + '」。'); return; }
+  if (!moved) { alert('选中的 ' + ids.length + ' ' + unitOf(ev) + '本来就在「' + (g ? g + ' 组' : '未分组') + '」。'); return; }
 
   saveState();
   renderAll();
@@ -2927,7 +2930,7 @@ function compBatchSetTag() {
   ev.competitors.forEach(function(c) {
     if (ids.indexOf(c.id) !== -1 && c.tag !== t) { c.tag = t; moved++; }
   });
-  if (!moved) { alert('选中的 ' + ids.length + ' 人本来就是「' + (t || '无赛区') + '」。'); return; }
+  if (!moved) { alert('选中的 ' + ids.length + ' ' + unitOf(ev) + '本来就是「' + (t || '无赛区') + '」。'); return; }
 
   saveState();
   renderAll();
@@ -2961,7 +2964,7 @@ function compBatchDelete() {
 
   const picked = ev.competitors.filter(function(c) { return ids.indexOf(c.id) !== -1; });
   const names = picked.map(function(c) { return c.name; }).join('、');
-  if (!confirm('确定删除这 ' + ids.length + ' 人？\n\n' + names +
+  if (!confirm('确定删除这 ' + ids.length + ' ' + unitOf(ev) + '？\n\n' + names +
                '\n\n他们在所有对局里的成绩也会一并删除，不可恢复。')) return;
 
   ev.competitors = ev.competitors.filter(function(c) { return ids.indexOf(c.id) === -1; });
@@ -3095,7 +3098,7 @@ function renameGroup(oldName) {
 function deleteGroup(name) {
   const ev = getActiveEvent(); if (!ev) return;
   const n = ev.competitors.filter(function(c) { return c.group === name; }).length;
-  if (!confirm('删除「' + name + ' 组」？组内 ' + n + ' 人将变为未分组，其历史成绩保留。')) return;
+  if (!confirm('删除「' + name + ' 组」？组内 ' + n + ' ' + unitOf(ev) + '将变为未分组，其历史成绩保留。')) return;
   ev.groups = ev.groups.filter(function(g) { return g !== name; });
   ev.competitors.forEach(function(c) { if (c.group === name) c.group = null; });
   ev.matches.forEach(function(m) { m.groups = m.groups.filter(function(g) { return g !== name; }); });
@@ -3110,7 +3113,7 @@ function randomGroupDialog() {
   if (input == null) return;
   const n = Math.floor(Number(input));
   if (!(n >= 2 && n <= 12)) { alert('组数需在 2-12 之间'); return; }
-  if (n > ev.competitors.length) { alert('组数不能超过参赛人数'); return; }
+  if (n > ev.competitors.length) { alert('组数不能超过参赛' + unitOf(ev) + '数'); return; }
   if (!confirm('将随机平均分为 ' + n + ' 组，覆盖现有分组。确认？')) return;
 
   // 目标组名：优先沿用现有名字，不够再新建
@@ -3268,7 +3271,7 @@ function openTopPick(matchId) {
 
   document.getElementById('pick-title').textContent = '裁定「' + meta.label + '」的单局最高分';
   document.getElementById('pick-desc').innerHTML =
-    '本局最高分 <b>' + fmtT(meta.bestT) + '</b> 分，共 <b>' + meta.tiedIds.length + '</b> 人并列。<br>' +
+    '本局最高分 <b>' + fmtT(meta.bestT) + '</b> 分，共 <b>' + meta.tiedIds.length + '</b> ' + unitOf(ev) + '并列。<br>' +
     '选择要高亮的那一个。官方同分顺序为「单局总分 → 击败分 → 生存排名」，已默认选中符合该顺序的人。<br>' +
     '<span class="muted">此项只影响积分榜每局列的高亮显示，不参与冠军判定。</span>';
 
@@ -3564,7 +3567,7 @@ function renderBatchList() {
   box.innerHTML = state.events.map(function(e) {
     const meta = (e.mode === 'solo' ? '单排' : '三排') + ' · ' +
       (e.matchPoint.enabled ? '赛点制' : '积分制') + ' · ' +
-      e.competitors.length + ' 人 · ' + e.matches.length + ' 局';
+      e.competitors.length + ' ' + unitOf(e) + ' · ' + e.matches.length + ' 局';
     const cur = e.id === state.activeEventId ? '<span class="tag cur">当前</span>' : '';
     const lock = e.locked ? '<span class="tag lock">🔒 已结束</span>' : '';
     return '<label class="batch-row' + (e.id === state.activeEventId ? ' cur' : '') + '">' +
