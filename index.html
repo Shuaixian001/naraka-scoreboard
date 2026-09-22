@@ -163,14 +163,18 @@
   /* 积分榜 */
   table.lb { width: 100%; border-collapse: collapse; }
   table.lb th, table.lb td {
-    padding: 8px 8px; text-align: left;
+    padding: var(--lb-py, 8px) var(--lb-px, 8px); text-align: left;
     border-bottom: 1px solid var(--border);
     white-space: nowrap;
   }
+  table.lb td { font-size: var(--lb-fs, 14px); }
   table.lb thead th {
-    color: var(--muted); font-weight: 600; font-size: 12px;
+    color: var(--muted); font-weight: 600; font-size: calc(var(--lb-fs, 14px) - 2px);
     position: sticky; top: 0; background: var(--panel); z-index: 2;
   }
+  /* 有自定义列宽时用固定布局，列宽才按设置生效；超出的内容裁掉不挤列 */
+  table.lb.lb-fixed { table-layout: fixed; }
+  table.lb.lb-fixed td { overflow: hidden; text-overflow: ellipsis; }
   table.lb .num { text-align: center; font-variant-numeric: tabular-nums; }
   table.lb td.mh { color: var(--gold); font-weight: 700; background: rgba(217,154,16,.13); }
   /* 名次着色（淘汰赛）：背景画在 tr 上，td 自身的背景（最高分高亮、冠军行）会盖在上面 */
@@ -179,13 +183,23 @@
   table.lb tbody tr.rs:hover td { background: var(--rs-bg2); }
   table.lb tbody tr.rs td .badge { background: var(--rs); color: var(--rs-fg); }
   table.lb th.wd { color: var(--accent2); }
-  table.lb .total { font-weight: 700; color: var(--accent); font-size: 16px; }
+  table.lb .total { font-weight: 700; color: var(--accent); font-size: calc(var(--lb-fs, 14px) + 2px); }
   table.lb td.name { white-space: normal; min-width: 110px; }
   /* 简表：不铺满，表格按内容收拢，分数紧挨着名字，不给姓名列留拉伸的余量 */
   table.lb.lb-simple { width: auto; }
   /* 不给姓名列设下限，列宽 = 名字/队名的实际宽度（表头「队伍 / 选手」不换行，已是最低下限） */
   table.lb.lb-simple td.name { min-width: 0; }
-  table.lb.lb-simple .total { font-size: 18px; }
+  table.lb.lb-simple .total { font-size: calc(var(--lb-fs, 14px) + 4px); }
+  /* 积分榜显示设置：每列一行（← → 排序、显示开关、宽度） */
+  .lbcfg-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; border-bottom: 1px solid var(--border);
+  }
+  .lbcfg-row:last-child { border-bottom: 0; }
+  .lbcfg-row:focus { background: var(--panel2); outline: none; }
+  .lbcfg-row .lbcfg-name { flex: 1; min-width: 0; }
+  .lbcfg-row input[type=number] { width: 70px; }
+  .lbcfg-row .muted { font-size: 12px; }
   /* 简表：横幅宽度由 JS 量出表格宽度后写死，别被长文案顶破 */
   #card-lb.simple #mp-banner { max-width: 100%; }
   .lb-row { cursor: pointer; }
@@ -495,6 +509,7 @@
   <!-- 左：积分榜 -->
   <section class="card expanded" id="card-lb">
     <h2>实时积分榜 <span class="hint" id="lb-meta"></span>
+      <button class="ghost tiny" id="lb-cfg-btn" onclick="openLbCfg()">显示设置</button>
       <button class="ghost tiny hidden" id="lb-view" onclick="toggleLbView()">简表</button>
       <button class="ghost tiny hidden" id="lb-expand" onclick="toggleLbExpand()">展开全部</button>
     </h2>
@@ -551,6 +566,7 @@
       <div class="chips">
         <button class="chip" id="carry-bulk-toggle" onclick="toggleCarryBulk()">批量填写前序积分</button>
         <button class="chip" id="comp-batch-open" onclick="openCompBatch()">批量管理 / 删除</button>
+        <button class="chip" id="official-open" onclick="openOfficialRoster()">+ 添加官方战队</button>
         <span class="muted" id="carry-summary"></span>
       </div>
       <div id="carry-bulk" class="hidden" style="margin-bottom:12px">
@@ -643,19 +659,9 @@
         <div class="set-actions" style="margin-top:8px">
           <button class="ghost small" onclick="addTieRule()">+ 添加比较项</button>
           <button class="ghost small" onclick="resetTieRules()">恢复默认</button>
+          <button class="ghost small" onclick="clearTieRules()">清空</button>
         </div>
         <div class="warn" id="tb-warn"></div>
-      </div>
-
-      <div class="section-title">名次着色（淘汰赛）</div>
-      <div class="set-row">
-        <label>按积分榜上的名次给整行着色，用来标出晋级 / 淘汰</label>
-        <div id="rs-list"></div>
-        <div class="set-actions" style="margin-top:8px">
-          <button class="ghost small" onclick="addRankStyle()">+ 添加规则</button>
-          <button class="ghost small" onclick="applyRankStylePreset()">填入常用（5-8 名灰色）</button>
-        </div>
-        <div class="warn" id="rs-warn"></div>
       </div>
 
       <div class="section-title">数据</div>
@@ -770,6 +776,97 @@
   </div>
 </div>
 
+<!-- 添加官方战队弹窗 -->
+<div class="modal hidden" id="official-modal">
+  <div class="modal-box" style="width:560px">
+    <h3>添加官方战队</h3>
+    <div class="muted" style="font-size:12px;margin:-8px 0 10px;line-height:1.7">
+      <span id="off-season"></span> 官网战队名单（换赛季需要重新抓取）。单排赛事一位选手一行，
+      录入成「战队名.选手名」，想只挑几个人也行；三排赛事每队一条，队伍成员就是该队的三排选手 + 灵活选手。
+    </div>
+    <div class="batch-tools">
+      <span class="muted" id="off-count"></span>
+      <span class="grow"></span>
+      <button class="ghost tiny" onclick="officialCheckAll(true)">全选</button>
+      <button class="ghost tiny" onclick="officialCheckAll(false)">全不选</button>
+    </div>
+    <div class="batch-tools" style="margin:8px 0 0">
+      <span class="muted">名字写法</span>
+      <div class="radio-row">
+        <label><input type="radio" name="off-name" value="id" checked onchange="renderOfficialList()"> 官方 ID</label>
+        <label><input type="radio" name="off-name" value="nick" onchange="renderOfficialList()"> 中文昵称</label>
+      </div>
+    </div>
+    <div id="off-list" class="batch-list"></div>
+    <div class="modal-actions">
+      <button class="ghost" onclick="closeOfficialRoster()">取消</button>
+      <button onclick="confirmOfficialRoster()">添加选中</button>
+    </div>
+  </div>
+</div>
+
+<!-- 积分榜显示设置弹窗 -->
+<div class="modal hidden" id="lbcfg-modal">
+  <div class="modal-box" style="width:600px">
+    <h3>积分榜显示设置</h3>
+    <div class="muted" style="font-size:12px;margin:-8px 0 10px;line-height:1.7">
+      列、单元格、名次着色都是每个赛事单独一套，跟着赛事导出。<b>排名</b>和<b>队伍 / 选手</b>固定显示；
+      宽度留空就是自动，改动立刻生效。
+    </div>
+    <div id="lbcfg-cols"></div>
+    <div class="section-title" style="margin-top:14px">单元格</div>
+    <div class="set-row">
+      <label>上下留白</label>
+      <div class="inline">
+        <input type="range" id="lbcfg-py" min="0" max="24" step="1" style="flex:1" oninput="onLbCellInput()">
+        <span class="muted" id="lbcfg-py-v" style="width:52px;text-align:right"></span>
+      </div>
+    </div>
+    <div class="set-row">
+      <label>左右留白</label>
+      <div class="inline">
+        <input type="range" id="lbcfg-px" min="2" max="32" step="1" style="flex:1" oninput="onLbCellInput()">
+        <span class="muted" id="lbcfg-px-v" style="width:52px;text-align:right"></span>
+      </div>
+    </div>
+    <div class="set-row">
+      <label>字号</label>
+      <div class="inline">
+        <input type="range" id="lbcfg-fs" min="10" max="24" step="1" style="flex:1" oninput="onLbCellInput()">
+        <span class="muted" id="lbcfg-fs-v" style="width:52px;text-align:right"></span>
+      </div>
+    </div>
+    <div class="section-title" style="margin-top:14px">名次着色（淘汰赛）</div>
+    <div class="set-row">
+      <label>按积分榜上的名次给整行着色，用来标出晋级 / 淘汰</label>
+      <div id="rs-list"></div>
+      <div class="set-actions" style="margin-top:8px">
+        <button class="ghost small" onclick="addRankStyle()">+ 添加规则</button>
+        <button class="ghost small" onclick="applyRankStylePreset()">填入常用（5-8 名灰色）</button>
+      </div>
+      <div class="warn" id="rs-warn"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="ghost" onclick="resetLbCfg()">恢复默认</button>
+      <span class="grow"></span>
+      <button onclick="closeLbCfg()">完成</button>
+    </div>
+  </div>
+</div>
+
+<!-- 本局战神选择弹窗 -->
+<div class="modal hidden" id="mvp-modal">
+  <div class="modal-box" style="width:420px">
+    <h3 id="mvp-title">选择本局战神</h3>
+    <div id="mvp-desc" class="muted" style="font-size:13px;margin-bottom:12px;line-height:1.7"></div>
+    <div id="mvp-options"></div>
+    <div class="modal-actions">
+      <button class="ghost" onclick="closeMvpPick()">取消</button>
+      <button onclick="confirmMvpPick()">确定</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ==========================================================================
    常量与工具
@@ -797,6 +894,117 @@ function defaultMatchMap(index, type) {
   if (type === 'wudao') return WUDAO_MAP;
   return DEFAULT_MAP_SEQUENCE[index - 1] || null;
 }
+
+/* NBPL 2026 秋季赛 16 支官方战队与选手名单（2026-09-22 取自赛事官网「战队系统」接口）
+   [官方 ID, 中文昵称, 类型]，类型沿用官方口径：1 单排选手 / 2 三排选手 / 3 灵活选手
+   灵活选手单排、三排都上；三排的队伍成员 = 类型 2 + 3，单排的选手 = 类型 1 + 3 */
+const NBPL_SEASON = 'NBPL 2026 秋季赛';
+const NBPL_TEAMS = [
+  { name: '成都Wolves', players: [
+    ['NHq', '奈河桥', 2],
+    ['Xn', '小楠', 2],
+    ['ZK', '扎克', 2],
+    ['RAN', '然', 1],
+  ]},
+  { name: 'ALL', players: [
+    ['Paste', '佩斯特', 3],
+    ['Revenge', '虚幻', 2],
+    ['YouMa', '有马', 2],
+    ['RuoShui', '若水', 2],
+    ['Henry', '野猪亨利', 1],
+  ]},
+  { name: 'FPX.ZQ', players: [
+    ['Azhao', '阿照', 1],
+    ['Z11', '贞一', 2],
+    ['Xint', '心痛', 2],
+    ['Js1', '洁世一', 2],
+  ]},
+  { name: '成都GG', players: [
+    ['330', '三三零', 2],
+    ['Lxm', '李鑫淼', 2],
+    ['Cjs', '陈姜声', 2],
+    ['CHEN', '鬼火', 1],
+    ['Yuyi', '羽衣', 2],
+  ]},
+  { name: 'SSONE', players: [
+    ['Luoye', '落叶', 2],
+    ['Frozt', '孝龙', 1],
+    ['Fu', '小富', 2],
+    ['Over', '欧沃', 2],
+  ]},
+  { name: 'OUG', players: [
+    ['Mike', '麦克', 1],
+    ['7N', '青柠', 2],
+    ['peak', '匹克', 2],
+    ['BabyYu', '小豫宝', 2],
+    ['duck', '冬日川', 3],
+  ]},
+  { name: '北京DRG', players: [
+    ['Kakaxi', '卡卡西', 2],
+    ['Ruo', '小若', 1],
+    ['My', '明月', 2],
+    ['Zen', 'plmm2.泽恩', 2],
+  ]},
+  { name: '北京WBG', players: [
+    ['vvv', '小伟', 2],
+    ['PiPi', '皮皮', 2],
+    ['Verse', '周子耀', 1],
+    ['Xuan', '小炫', 2],
+  ]},
+  { name: 'YZG', players: [
+    ['QGG', '钱滚滚', 2],
+    ['kuku2', '酷酷', 2],
+    ['17s', '17少', 2],
+    ['T225', '二二五', 1],
+  ]},
+  { name: '深圳TE溯', players: [
+    ['XeM', '小恶魔', 2],
+    ['1Feng', '晚枫', 2],
+    ['TXJ', '谭栩杰', 2],
+    ['WF', '无风', 1],
+    ['yc', '银钗', 2],
+    ['nue', '阮裕杰', 2],
+  ]},
+  { name: 'VN.521', players: [
+    ['PhatMilk', '牛奶哥', 2],
+    ['Pampy', '潘皮', 2],
+    ['Akame', '赤目', 2],
+    ['Yin', '音', 2],
+    ['Polaris', '北极星', 1],
+  ]},
+  { name: 'SR', players: [
+    ['Yagami', '八神会', 1],
+    ['Spider', '小蜘蛛', 1],
+    ['Riko', '小懒', 2],
+    ['Xhao', '小豪', 2],
+    ['Ny7', '男友7', 2],
+    ['Blue', '小达', 2],
+  ]},
+  { name: 'WFG', players: [
+    ['XiaoWen', '小温', 2],
+    ['Mist', '江东', 2],
+    ['Water', '阿水', 2],
+    ['xuanyuan', '宣园', 1],
+  ]},
+  { name: 'XKG', players: [
+    ['TuTyc', '图图', 2],
+    ['ARano', '阿然', 1],
+    ['Junxian', '俊贤', 2],
+    ['zxl', '张星澜', 2],
+  ]},
+  { name: '上海iG美团', players: [
+    ['Wangliang', '王梁', 1],
+    ['Han', '小韩', 2],
+    ['keke', '柯柯', 2],
+    ['L1N', '理念', 2],
+  ]},
+  { name: 'RW侠', players: [
+    ['Yuan', '方源', 2],
+    ['ab', '白鹿', 2],
+    ['Youth', '李梓泷', 2],
+    ['HuiMou', '回眸', 1],
+  ]},
+];
 
 /* 赛区标签：名字自己起，颜色从这套里自动轮着给，之后可以逐条改 */
 const TAG_COLORS = ['#2b7fd4','#d9622a','#1f9d5a','#b8790a','#8b5cf6','#d93b3b',
@@ -851,10 +1059,10 @@ function unitOf(ev) { return (ev && ev.mode === 'trio') ? '队' : '人'; }
 let state = null;
 let currentPanel = 'record';
 let lbFilter = { board: 'merged', group: null };
-let lbSimple = false;         // 简表：折叠「前序 + 每局」中间列，只留排名/组/队伍/总分
 let placeTarget = 'tianti';   // 当前编辑的排名分表：天人 / 武道
 let placeDraft = null;        // 设置面板打开期间的暂存，保存时一次写回
 let pickCtx = null;           // 单局最高分并列裁定的上下文
+let mvpCtx = null;            // 本局战神选择的上下文
 let notesEditing = false;     // 备注是否处于编辑态
 let lastChampionKey = null;
 let saveTimer = null;
@@ -1019,6 +1227,7 @@ function newEvent(mode, name, matchPointEnabled) {
     rankStyles: [],
     tieBreak: defaultTieBreak(),
     notes: '',
+    lb: defaultLbCfg(),
     manualOrder: [],
     matchPoint: Object.assign(defaultMatchPoint(mode), { enabled: !!matchPointEnabled }),
     competitors: [],
@@ -1047,6 +1256,7 @@ function normalizeMatchPoint(ev) {
 function normalize(ev) {
   ev.locked = !!ev.locked;
   ev.notes = typeof ev.notes === 'string' ? ev.notes : '';
+  ev.lb = normalizeLbCfg(ev.lb);
   if (!Array.isArray(ev.manualOrder)) ev.manualOrder = [];
   ev.manualOrder = ev.manualOrder.filter(function(id) { return typeof id === 'string'; });
   normalizeRankStyles(ev);
@@ -1120,6 +1330,10 @@ function normalize(ev) {
     if (m.type === 'wudao' && !m.map) m.map = WUDAO_MAP;
     // 单局最高分并列时的人工裁定（compId）
     m.topPick = (typeof m.topPick === 'string' && m.topPick) ? m.topPick : null;
+    // 本局战神：只存「哪支队伍 + 哪名选手」，队伍仍然是按最高分实时算的
+    m.mvp = (m.mvp && typeof m.mvp === 'object' && typeof m.mvp.compId === 'string' && m.mvp.compId)
+      ? { compId: m.mvp.compId, member: (typeof m.mvp.member === 'string' && m.mvp.member) ? m.mvp.member : null }
+      : null;
     if (!Array.isArray(m.groups)) m.groups = [];
     m.groups = m.groups.filter(function(g, i, arr) {
       return typeof g === 'string' && g && arr.indexOf(g) === i;
@@ -1203,6 +1417,7 @@ const TIE_CRITERIA = [
   { k: 'firstScore', label: '第一局积分',   def: 'desc' },
   { k: 'firstPlace', label: '第一局名次',   def: 'asc'  },
   { k: 'lastScore',  label: '最后一局积分', def: 'desc' },
+  { k: 'lastKills',  label: '最后一局击败', def: 'desc' },
   { k: 'lastPlace',  label: '最后一局名次', def: 'asc'  }
 ];
 function tieCriterion(k) {
@@ -1210,9 +1425,29 @@ function tieCriterion(k) {
 }
 function defaultTieBreak() {
   return {
-    points: [{ k: 'firstScore', dir: 'asc' }, { k: 'kills', dir: 'desc' }],
-    mp:     [{ k: 'carry', dir: 'asc' }]
+    // 积分制：前序少的在前 → 第一局积分升序 → …依次比到最后一局名次；全同则并列，人工评定
+    points: [
+      { k: 'carry',      dir: 'asc'  },
+      { k: 'firstScore', dir: 'asc'  },
+      { k: 'kills',      dir: 'desc' },
+      { k: 'bestScore',  dir: 'desc' },
+      { k: 'bestKills',  dir: 'desc' },
+      { k: 'lastScore',  dir: 'desc' },
+      { k: 'lastKills',  dir: 'desc' },
+      { k: 'lastPlace',  dir: 'asc'  }
+    ],
+    mp: [{ k: 'carry', dir: 'asc' }]
   };
+}
+/* 老数据里没动过的积分制默认规则（第一局积分升序 + 击败分降序）顺带升级成新默认 */
+function upgradeLegacyTieBreak(ev) {
+  const legacy = [{ k: 'firstScore', dir: 'asc' }, { k: 'kills', dir: 'desc' }];
+  const pts = ev.tieBreak.points;
+  if (pts.length !== legacy.length) return;
+  for (let i = 0; i < legacy.length; i++) {
+    if (pts[i].k !== legacy[i].k || pts[i].dir !== legacy[i].dir) return;
+  }
+  ev.tieBreak.points = defaultTieBreak().points.map(function(x) { return { k: x.k, dir: x.dir }; });
 }
 function normalizeTieBreak(ev) {
   const d = defaultTieBreak();
@@ -1230,6 +1465,7 @@ function normalizeTieBreak(ev) {
       return { k: c.k, dir: (r.dir === 'asc' || r.dir === 'desc') ? r.dir : c.def };
     }).filter(Boolean);
   });
+  upgradeLegacyTieBreak(ev);
 }
 function tieRulesFor(ev) {
   return (ev.matchPoint && ev.matchPoint.enabled ? ev.tieBreak.mp : ev.tieBreak.points) || [];
@@ -1252,6 +1488,7 @@ function tieValue(r, k) {
     case 'firstScore': { const g = first(); return g ? g.totalT : null; }
     case 'firstPlace': { const g = first(); return (g && g.placement != null) ? g.placement : null; }
     case 'lastScore':  { const g = last();  return g ? g.totalT : null; }
+    case 'lastKills':  { const g = last();  return g ? g.kills : null; }
     case 'lastPlace':  { const g = last();  return (g && g.placement != null) ? g.placement : null; }
     default: return null;
   }
@@ -1699,6 +1936,169 @@ function renderBanner(ev, S) {
 }
 
 /* ==========================================================================
+   积分榜列设置（每个赛事一套，存在 ev.lb 里，跟着赛事一起导出）
+   ========================================================================== */
+const LB_COL_DEF = {
+  rank:  { label: '排名',        cls: 'num', w: 44,  must: true },
+  group: { label: '组',          cls: '',    w: 40 },
+  tag:   { label: '赛区',        cls: 'num', w: 76 },
+  name:  { label: '队伍 / 选手', cls: '',    w: 0,   must: true },
+  carry: { label: '前序',        cls: 'num', w: 56 },
+  games: { label: '每局',        cls: 'num', w: 0 },
+  total: { label: '总积分',      cls: 'num', w: 68 },
+  mp:    { label: '赛点状态',    cls: 'num', w: 140 }
+};
+const LB_COL_ORDER = ['rank', 'group', 'tag', 'name', 'carry', 'games', 'total', 'mp'];
+const LB_CELL_DEF = { py: 8, px: 8, fs: 14 };
+
+function defaultLbCfg() {
+  const show = {}, width = {};
+  LB_COL_ORDER.forEach(function(k) { show[k] = true; width[k] = LB_COL_DEF[k].w; });
+  return { order: LB_COL_ORDER.slice(), show: show, width: width,
+           cell: { py: LB_CELL_DEF.py, px: LB_CELL_DEF.px, fs: LB_CELL_DEF.fs } };
+}
+
+function normalizeLbCfg(raw) {
+  const cfg = defaultLbCfg();
+  if (!raw || typeof raw !== 'object') return cfg;
+  if (Array.isArray(raw.order)) {
+    const seen = {}, order = [];
+    raw.order.forEach(function(k) {
+      if (LB_COL_DEF[k] && !seen[k]) { seen[k] = 1; order.push(k); }
+    });
+    LB_COL_ORDER.forEach(function(k) { if (!seen[k]) order.push(k); });
+    cfg.order = order;
+  }
+  LB_COL_ORDER.forEach(function(k) {
+    if (raw.show && typeof raw.show[k] === 'boolean') cfg.show[k] = raw.show[k];
+    const w = Number(raw.width ? raw.width[k] : NaN);
+    if (isFinite(w)) cfg.width[k] = Math.max(0, Math.min(600, Math.round(w)));
+  });
+  if (raw.cell && typeof raw.cell === 'object') {
+    const clamp = function(v, lo, hi, dft) {
+      const n = Number(v);
+      return isFinite(n) ? Math.max(lo, Math.min(hi, Math.round(n))) : dft;
+    };
+    cfg.cell = { py: clamp(raw.cell.py, 0, 24, LB_CELL_DEF.py),
+                 px: clamp(raw.cell.px, 2, 32, LB_CELL_DEF.px),
+                 fs: clamp(raw.cell.fs, 10, 24, LB_CELL_DEF.fs) };
+  }
+  return cfg;
+}
+
+function lbCfgOf(ev) {
+  if (!ev.lb) ev.lb = defaultLbCfg();
+  return ev.lb;
+}
+/* 列设置改了：存盘 + 重画榜单（设置弹窗的列表由调用方自己刷） */
+function refreshLb() {
+  const ev = getActiveEvent(); if (!ev) return;
+  saveState();
+  renderLeaderboard(ev, computeStandings(ev));
+}
+/* 列宽改过才切固定布局：没动过宽度时外观和以前一模一样 */
+function lbFixedLayout(cfg) {
+  return LB_COL_ORDER.some(function(k) { return cfg.width[k] !== LB_COL_DEF[k].w; });
+}
+/* 按设置算出这局赛事实际显示哪些列（缺数据的列自动跳过） */
+function lbVisibleCols(ev, S, cfg) {
+  return cfg.order.filter(function(k) {
+    if (!cfg.show[k]) return false;
+    if (k === 'group') return ev.groups.length > 0;
+    if (k === 'tag') return S.rows.some(function(r) { return !!r.comp.tag; });
+    if (k === 'carry') return S.rows.some(function(r) { return r.carryT !== 0; });
+    if (k === 'games') return S.matches.length > 0;
+    if (k === 'mp') return S.usingMP;
+    return true;
+  });
+}
+
+/* ---------- 显示设置弹窗 ---------- */
+function openLbCfg() {
+  const ev = getActiveEvent(); if (!ev) return;
+  renderLbCfg();
+  document.getElementById('lbcfg-modal').className = 'modal';
+}
+function closeLbCfg() {
+  document.getElementById('lbcfg-modal').className = 'modal hidden';
+}
+function renderLbCfg() {
+  const ev = getActiveEvent(); if (!ev) return;
+  const cfg = lbCfgOf(ev);
+  const box = document.getElementById('lbcfg-cols'); if (!box) return;
+  box.innerHTML = cfg.order.map(function(k, i) {
+    const def = LB_COL_DEF[k];
+    const label = (k === 'games') ? def.label + '（' + ev.matches.length + ' 列）' : def.label;
+    return '<div class="lbcfg-row" tabindex="0" data-k="' + k + '" onkeydown="onLbCfgKey(event)">' +
+      '<button class="ghost tiny" title="左移" ' + (i === 0 ? 'disabled ' : '') +
+        'onclick="moveLbCol(\'' + k + '\',-1)">←</button>' +
+      '<button class="ghost tiny" title="右移" ' + (i === cfg.order.length - 1 ? 'disabled ' : '') +
+        'onclick="moveLbCol(\'' + k + '\',1)">→</button>' +
+      '<span class="lbcfg-name">' + esc(label) + '</span>' +
+      (def.must
+        ? '<span class="muted">固定显示</span>'
+        : '<label class="muted"><input type="checkbox" ' + (cfg.show[k] ? 'checked ' : '') +
+          'onchange="setLbColShow(\'' + k + '\', this.checked)"> 显示</label>') +
+      '<span class="muted">宽度</span>' +
+      '<input type="number" min="0" max="600" placeholder="自动" value="' + (cfg.width[k] > 0 ? cfg.width[k] : '') + '"' +
+        ' onchange="setLbColWidth(\'' + k + '\', this.value)"> px' +
+      '</div>';
+  }).join('');
+  ['py', 'px', 'fs'].forEach(function(f) {
+    document.getElementById('lbcfg-' + f).value = cfg.cell[f];
+    document.getElementById('lbcfg-' + f + '-v').textContent = cfg.cell[f] + ' px';
+  });
+  renderRankStyles(ev);
+}
+function moveLbCol(k, dir) {
+  const ev = getActiveEvent(); if (!ev) return;
+  const cfg = lbCfgOf(ev);
+  const i = cfg.order.indexOf(k), j = i + dir;
+  if (i < 0 || j < 0 || j >= cfg.order.length) return;
+  cfg.order.splice(i, 1);
+  cfg.order.splice(j, 0, k);
+  renderLbCfg();
+  refreshLb();
+}
+function setLbColShow(k, on) {
+  const ev = getActiveEvent(); if (!ev) return;
+  lbCfgOf(ev).show[k] = !!on;
+  refreshLb();
+}
+function setLbColWidth(k, v) {
+  const ev = getActiveEvent(); if (!ev) return;
+  const raw = String(v == null ? '' : v).trim();
+  const n = Number(raw);
+  lbCfgOf(ev).width[k] = (raw !== '' && isFinite(n) && n > 0)
+    ? Math.max(20, Math.min(600, Math.round(n))) : 0;
+  refreshLb();
+}
+function onLbCellInput() {
+  const ev = getActiveEvent(); if (!ev) return;
+  const cfg = lbCfgOf(ev);
+  ['py', 'px', 'fs'].forEach(function(f) {
+    cfg.cell[f] = Number(document.getElementById('lbcfg-' + f).value);
+    document.getElementById('lbcfg-' + f + '-v').textContent = cfg.cell[f] + ' px';
+  });
+  refreshLb();
+}
+/* 行上按 ← → 换位置；↑ ↓ 效果等同（列是横着排的） */
+function onLbCfgKey(e) {
+  if (e.target && e.target.tagName === 'INPUT') return;   // 在宽度输入框里让方向键正常用
+  const row = e.target && e.target.closest ? e.target.closest('.lbcfg-row') : null;
+  if (!row) return;
+  const k = row.getAttribute('data-k');
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { moveLbCol(k, -1); e.preventDefault(); }
+  else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { moveLbCol(k, 1); e.preventDefault(); }
+}
+function resetLbCfg() {
+  const ev = getActiveEvent(); if (!ev) return;
+  ev.lb = defaultLbCfg();
+  renderLbCfg();
+  refreshLb();
+}
+
+/* ==========================================================================
    渲染：积分榜
    ========================================================================== */
 function boardRows(S) {
@@ -1732,9 +2132,11 @@ function renderLeaderboard(ev, S) {
   const hasCarry = S.rows.some(function(r) { return r.carryT !== 0; });
   // 有人标了赛区才出这一列（看全量行，避免切组榜时列忽隐忽现）
   const hasTags = S.rows.some(function(r) { return !!r.comp.tag; });
+  const cfg = lbCfgOf(ev);
   // 无前序、无对局时没有可折叠的中间列，简表与完整表无差别
   const canSimplify = list.length > 0 && (S.matches.length > 0 || hasCarry);
-  const simple = lbSimple && canSimplify;
+  // 「每局」收起时就当简表：表格按内容收拢、总分放大
+  const simple = canSimplify && !cfg.show.games;
 
   // 两个按钮的状态必须在提前返回之前更新，否则空榜时会残留上一次的显示
   const cardEl = document.getElementById('card-lb');
@@ -1743,7 +2145,7 @@ function renderLeaderboard(ev, S) {
   const viewBtn = document.getElementById('lb-view');
   if (viewBtn) {
     viewBtn.className = 'ghost tiny' + (canSimplify ? '' : ' hidden');
-    viewBtn.textContent = lbSimple ? '完整表' : '简表';
+    viewBtn.textContent = cfg.show.games ? '简表' : '完整表';
     viewBtn.classList.toggle('on', simple);
   }
   const expBtn = document.getElementById('lb-expand');
@@ -1761,32 +2163,35 @@ function renderLeaderboard(ev, S) {
     return;
   }
 
-  let head = '<tr><th class="num" style="width:44px">排名</th>';
-  if (hasGroups) head += '<th style="width:40px">组</th>';
-  if (hasTags) head += '<th class="num" style="width:76px">赛区</th>';
-  head += '<th>队伍 / 选手</th>';
-  if (simple) {
-    head += '<th class="num" style="width:68px">总积分</th>';
-  } else {
-    if (hasCarry) head += '<th class="num" style="width:56px">前序</th>';
-    S.matches.forEach(function(meta) {
-      const lab = '第' + cnNum(meta.index + 1) + '局';
-      const tip = lab + (meta.name ? ' · ' + meta.name : '') +
-        (meta.isWudao ? '（武道对局）' : '') + (meta.map ? ' · ' + meta.map : '');
-      head += '<th class="num' + (meta.isWudao ? ' wd' : '') + '" title="' + esc(tip) + '">' + lab + '</th>';
-    });
-    head += '<th class="num" style="width:68px">总积分</th>';
-  }
-  if (S.usingMP) head += '<th class="num" style="width:140px">赛点状态</th>';
+  // 按设置拼表头：顺序、显示与否、列宽都听 ev.lb
+  const cols = lbVisibleCols(ev, S, cfg);
+  let head = '<tr>';
+  cols.forEach(function(k) {
+    const def = LB_COL_DEF[k];
+    const w = cfg.width[k] > 0 ? ' style="width:' + cfg.width[k] + 'px"' : '';
+    if (k === 'games') {
+      S.matches.forEach(function(meta) {
+        const lab = '第' + cnNum(meta.index + 1) + '局';
+        const tip = lab + (meta.name ? ' · ' + meta.name : '') +
+          (meta.isWudao ? '（武道对局）' : '') + (meta.map ? ' · ' + meta.map : '');
+        head += '<th class="num' + (meta.isWudao ? ' wd' : '') + '"' + w + ' title="' + esc(tip) + '">' + lab + '</th>';
+      });
+      return;
+    }
+    head += '<th class="' + def.cls + '"' + w + '>' + def.label + '</th>';
+  });
   head += '</tr>';
 
-  // 排名 + [组] + [赛区] + 队伍/选手 + [前序] + 每局 × N + 总积分 + [赛点状态]
-  const colspan = 3 + (hasGroups ? 1 : 0) + (hasTags ? 1 : 0)
-                + (simple ? 0 : (hasCarry ? 1 : 0) + S.matches.length)
-                + (S.usingMP ? 1 : 0);
+  // 物理列数：每局那一块是 N 列
+  const colspan = cols.length + (cols.indexOf('games') !== -1 ? S.matches.length - 1 : 0);
+  const fixed = lbFixedLayout(cfg) && !simple;
+  const cellVar = '--lb-py:' + cfg.cell.py + 'px;--lb-px:' + cfg.cell.px + 'px;--lb-fs:' + cfg.cell.fs + 'px';
+  const ctx = { cols: cols, colspan: colspan };
 
-  container.innerHTML = '<table class="lb' + (simple ? ' lb-simple' : '') + '"><thead>' + head + '</thead><tbody>' +
-    list.map(function(item) { return lbRow(item.row, item.rank, ev, S, hasGroups, hasCarry, colspan, simple, hasTags); }).join('') +
+  container.innerHTML =
+    '<table class="lb' + (simple ? ' lb-simple' : '') + (fixed ? ' lb-fixed' : '') + '" style="' + cellVar + '">' +
+    '<thead>' + head + '</thead><tbody>' +
+    list.map(function(item) { return lbRow(item.row, item.rank, ev, S, ctx); }).join('') +
     '</tbody></table>';
 
   syncBannerWidth();
@@ -1832,11 +2237,16 @@ function toggleLbExpand() {
   if (!on && box) box.scrollTop = 0;
 }
 
-/* 简表 / 完整表：只折叠「前序 + 每局」中间列，总分与赛点状态照旧 */
+/* 简表 / 完整表：一键收起或展开「前序 + 每局」两列（等价于显示设置里的两个开关） */
 function toggleLbView() {
-  lbSimple = !lbSimple;
+  const ev = getActiveEvent(); if (!ev) return;
+  const cfg = lbCfgOf(ev);
+  const fold = cfg.show.games;          // 现在是完整表 → 收起；已是简表 → 展开
+  cfg.show.games = !fold;
+  cfg.show.carry = !fold;
   const box = document.getElementById('leaderboard-container');
   if (box) box.scrollTop = 0;
+  saveState();
   refreshDerived();
 }
 
@@ -1884,7 +2294,7 @@ function mpStatusHTML(r, S) {
     '<span>' + fmtT(r.totalT) + '/' + fmtT(S.thT) + '</span></div>';
 }
 
-function lbRow(r, rank, ev, S, hasGroups, hasCarry, colspan, simple, hasTags) {
+function lbRow(r, rank, ev, S, ctx) {
   const c = r.comp;
   const carryLine = r.carryT !== 0
     ? '<div class="pm"><span>前序积分（带入）</span><span>' + fmtT(r.carryT) + ' 分</span></div>'
@@ -1916,30 +2326,32 @@ function lbRow(r, rank, ev, S, hasGroups, hasCarry, colspan, simple, hasTags) {
   const nameHtml = esc(c.name) + (r.tied ? ' <span class="muted" style="font-size:12px">并列</span>' : '');
   const members = c.members.length ? '<span class="members">' + esc(c.members.join(' / ')) + '</span>' : '';
 
-  let tds = '<td class="num">' + rankBadge(rank) + '</td>';
-  if (hasGroups) tds += '<td class="muted">' + esc(c.group || '—') + '</td>';
-  if (hasTags) {
-    const t = tagOf(ev, c.tag);
-    tds += '<td class="tagcell">' + (t
-      ? '<span class="tagpill" style="background:' + t.color + ';color:' + readableOn(t.color) + '"' +
-        ' title="' + esc(t.name) + '">' + esc(t.name) + '</span>'
-      : '<span class="muted">—</span>') + '</td>';
-  }
-  tds += '<td class="name">' + nameHtml + members + '</td>';
-  if (!simple && hasCarry) tds += '<td class="num">' + (r.carryT !== 0 ? fmtT(r.carryT) : '<span class="muted">—</span>') + '</td>';
+  const cells = {};
+  cells.rank = '<td class="num">' + rankBadge(rank) + '</td>';
+  cells.group = '<td class="muted">' + esc(c.group || '—') + '</td>';
+  const tg = tagOf(ev, c.tag);
+  cells.tag = '<td class="tagcell">' + (tg
+    ? '<span class="tagpill" style="background:' + tg.color + ';color:' + readableOn(tg.color) + '"' +
+      ' title="' + esc(tg.name) + '">' + esc(tg.name) + '</span>'
+    : '<span class="muted">—</span>') + '</td>';
+  cells.name = '<td class="name">' + nameHtml + members + '</td>';
+  cells.carry = '<td class="num">' + (r.carryT !== 0 ? fmtT(r.carryT) : '<span class="muted">—</span>') + '</td>';
+  cells.total = '<td class="num total">' + fmtT(r.totalT) + '</td>';
+  cells.mp = '<td class="num">' + mpStatusHTML(r, S) + '</td>';
 
-  if (!simple) S.matches.forEach(function(meta, i) {
-    const g = r.games[i];
-    if (!g || !g.participated) { tds += '<td class="num muted">·</td>'; return; }
-    if (!g.hasResult) { tds += '<td class="num muted">—</td>'; return; }
-    // 本局全场最高分高亮；并列时以人工裁定为准
-    const isTop = meta.topPick ? (c.id === meta.topPick)
-                               : (meta.bestT != null && g.totalT === meta.bestT);
-    tds += '<td class="num' + (isTop ? ' mh' : '') + '">' + fmtT(g.totalT) + '</td>';
+  let tds = '';
+  ctx.cols.forEach(function(k) {
+    if (k !== 'games') { tds += cells[k] || ''; return; }
+    S.matches.forEach(function(meta, i) {
+      const g = r.games[i];
+      if (!g || !g.participated) { tds += '<td class="num muted">·</td>'; return; }
+      if (!g.hasResult) { tds += '<td class="num muted">—</td>'; return; }
+      // 本局全场最高分高亮；并列时以人工裁定为准
+      const isTop = meta.topPick ? (c.id === meta.topPick)
+                                 : (meta.bestT != null && g.totalT === meta.bestT);
+      tds += '<td class="num' + (isTop ? ' mh' : '') + '">' + fmtT(g.totalT) + '</td>';
+    });
   });
-
-  tds += '<td class="num total">' + fmtT(r.totalT) + '</td>';
-  if (S.usingMP) tds += '<td class="num">' + mpStatusHTML(r, S) + '</td>';
 
   // 淘汰赛名次着色：按榜单上显示的名次取第一条命中的规则
   const rs = rankStyleFor(ev.rankStyles || [], rank);
@@ -1950,7 +2362,7 @@ function lbRow(r, rank, ev, S, hasGroups, hasCarry, colspan, simple, hasTags) {
     : '';
 
   return '<tr class="lb-row' + (r.isChampion ? ' champion' : '') + rsCls + '"' + rsAttr + ' onclick="toggleDetail(\'' + c.id + '\')">' + tds + '</tr>' +
-    '<tr class="detail-row hidden" id="detail-' + c.id + '"><td colspan="' + colspan + '">' + detail + '</td></tr>';
+    '<tr class="detail-row hidden" id="detail-' + c.id + '"><td colspan="' + ctx.colspan + '">' + detail + '</td></tr>';
 }
 
 /* ==========================================================================
@@ -1987,6 +2399,7 @@ function renderCompetitors(ev) {
   document.getElementById('carry-bulk-text').disabled = lock;
   document.getElementById('carry-bulk-apply').disabled = lock;
   document.getElementById('comp-batch-open').disabled = lock;
+  document.getElementById('official-open').disabled = lock;
 
   const sel = document.getElementById('comp-bulk-group');
   sel.innerHTML = '<option value="">不指定组</option>' +
@@ -2053,6 +2466,34 @@ function renderGroupChips(ev) {
 /* ---------- 比赛录入 ---------- */
 function matchCanonicalName(m, i) { return '第' + cnNum(i + 1) + '局'; }
 
+/* 本局最高分对应的队伍 id（并列未裁定时返回 null） */
+function topCompId(meta) {
+  if (!meta || meta.bestT == null) return null;
+  if (meta.topPick) return meta.topPick;
+  return (meta.tiedIds && meta.tiedIds.length === 1) ? meta.tiedIds[0] : null;
+}
+/* 本局战神：单排就是单局最高分本人；三排是最高分战队里的一名选手，
+   没点选（或该队没录成员）时先用战队名代替。并列最高分跟随 topPick 裁定。
+   武道那局只有冠军头衔，不选选手，三排也只写战队名。 */
+function mvpInfo(ev, m, meta) {
+  if (!meta || meta.bestT == null) return null;
+  const wudao = m.type === 'wudao';
+  const label = wudao ? '武道冠军' : '战神';
+  const topId = topCompId(meta);
+  if (!topId) return { pending: true, tied: (meta.tiedIds || []).length, label: label };
+  const comp = ev.competitors.filter(function(c) { return c.id === topId; })[0];
+  if (!comp) return null;
+  if (wudao || ev.mode === 'solo') {
+    return { comp: comp, name: comp.name, label: label, pickable: false };
+  }
+  const members = comp.members || [];
+  const picked = (m.mvp && m.mvp.compId === topId && m.mvp.member &&
+                  members.indexOf(m.mvp.member) !== -1) ? m.mvp.member : null;
+  // 选到具体选手就写成「战队.选手」，没选/没录成员就只写战队名
+  return { comp: comp, name: picked ? (comp.name + '.' + picked) : comp.name,
+           label: label, picked: !!picked, pickable: members.length > 0 };
+}
+
 function renderMatches(ev, S) {
   const addBtn = document.getElementById('add-match-btn');
   if (addBtn) {
@@ -2095,6 +2536,18 @@ function matchCardHTML(ev, m, i, S) {
     head += '<button class="pick-chip' + (meta.topPick ? ' done' : '') + '" title="本局最高分有并列，点击裁定高亮哪一个"' +
       ' onclick="event.stopPropagation(); openTopPick(\'' + m.id + '\')">' +
       (meta.topPick ? '✔ 最高分已裁定' : '⚠️ 最高分并列 ' + meta.tiedIds.length + ' ' + unitOf(ev)) + '</button>';
+  }
+  const mvp = mvpInfo(ev, m, meta);
+  if (mvp) {
+    if (mvp.pending) {
+      head += '<button class="pick-chip" title="本局最高分并列，先裁定高分的是哪队才能定' + mvp.label + '"' +
+        ' onclick="event.stopPropagation(); openTopPick(\'' + m.id + '\')">⚔️ ' + mvp.label + '：待裁定</button>';
+    } else if (mvp.pickable) {
+      head += '<button class="pick-chip' + (mvp.picked ? ' done' : '') + '" title="点击选择本局战神选手"' +
+        ' onclick="event.stopPropagation(); openMvpPick(\'' + m.id + '\')">⚔️ ' + mvp.label + '：' + esc(mvp.name) + '</button>';
+    } else {
+      head += '<span class="mp-badge">⚔️ ' + mvp.label + '：' + esc(mvp.name) + '</span>';
+    }
   }
   head += '<span class="stats" id="stat-' + m.id + '">' + matchStatsText(meta) + '</span>';
   head += '<span class="spacer"></span>' +
@@ -2219,7 +2672,6 @@ function renderSettings(ev, S) {
     coef: Object.assign({}, ev.scoring.killCoef)
   };
   renderPlaceEditor();
-  renderRankStyles(ev);
   renderTieRules(ev, S);
 }
 
@@ -2469,6 +2921,17 @@ function resetTieRules() {
   renderAll();
 }
 
+/* 一键清空比较项：总分相同的直接并列，靠人工评定分先后 */
+function clearTieRules() {
+  const ev = getActiveEvent(); if (!ev) return;
+  if (ev.locked) { alert('本赛事已结束积分，需先在顶部解锁才能修改设置。'); return; }
+  const fmt = ev.matchPoint.enabled ? '赛点制' : '积分制';
+  if (!confirm('清空' + fmt + '的全部比较项？\n\n总分相同的直接并列，需要人工评定。')) return;
+  ev.tieBreak[tieBranch(ev)] = [];
+  saveState();
+  renderAll();
+}
+
 /* ---------- 名次着色规则编辑 ---------- */
 function renderRankStyles(ev) {
   const el = document.getElementById('rs-list');
@@ -2532,6 +2995,7 @@ function addRankStyle() {
   });
   saveState();
   renderAll();
+  renderRankStyles(ev);   // 着色编辑器在显示设置弹窗里，renderAll 管不到
 }
 
 function removeRankStyle(i) {
@@ -2539,6 +3003,7 @@ function removeRankStyle(i) {
   ev.rankStyles.splice(i, 1);
   saveState();
   renderAll();
+  renderRankStyles(ev);
 }
 
 function applyRankStylePreset() {
@@ -2548,6 +3013,7 @@ function applyRankStylePreset() {
   ev.rankStyles = [{ from: 5, to: 8, color: RS_GRAY }];
   saveState();
   renderAll();
+  renderRankStyles(ev);
 }
 
 function renderPlacementGrid(pl) {
@@ -2815,6 +3281,117 @@ function deleteCompetitor(id) {
   ev.matches.forEach(function(m) { delete m.results[id]; });
   if (ev.matchPoint.championOverride && ev.matchPoint.championOverride.compId === id) ev.matchPoint.championOverride = null;
   saveState(); renderAll();
+}
+
+/* ---------- 官方战队名单 ---------- */
+function officialStyle() {
+  const el = document.querySelector('input[name="off-name"]:checked');
+  return el ? el.value : 'id';
+}
+/* 单排选手 = 类型 1 + 3（灵活）；三排队员 = 类型 2 + 3 */
+function officialSoloList(t) { return t.players.filter(function(p) { return p[2] === 1 || p[2] === 3; }); }
+function officialTrioList(t) { return t.players.filter(function(p) { return p[2] === 2 || p[2] === 3; }); }
+function officialPlayerName(p, style) { return style === 'nick' ? p[1] : p[0]; }
+function officialFindPlayer(tName, pid) {
+  const t = NBPL_TEAMS.filter(function(x) { return x.name === tName; })[0];
+  return (t && pid) ? t.players.filter(function(p) { return p[0] === pid; })[0] : null;
+}
+
+function openOfficialRoster() {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  document.getElementById('off-season').textContent = NBPL_SEASON;
+  renderOfficialList();
+  document.getElementById('official-modal').className = 'modal';
+}
+function closeOfficialRoster() {
+  document.getElementById('official-modal').className = 'modal hidden';
+}
+function renderOfficialList() {
+  const ev = getActiveEvent(); if (!ev) return;
+  const box = document.getElementById('off-list'); if (!box) return;
+  const solo = ev.mode === 'solo';
+  const style = officialStyle();
+  // 切换「名字写法」会重绘，先把勾选状态记下来（单排按 战队 + 选手 id 记）
+  const keep = {};
+  Array.prototype.forEach.call(box.querySelectorAll('input[type=checkbox]'), function(cb) {
+    keep[cb.getAttribute('data-team') + '\t' + (cb.getAttribute('data-pid') || '')] = cb.checked;
+  });
+  const on = function(t, pid) { return keep[t + '\t' + (pid || '')] !== false; };
+  let n = 0;
+  box.innerHTML = NBPL_TEAMS.map(function(t) {
+    if (solo) {
+      // 单排一个选手一行，想只挑某几个人也行；灵活选手也在这列里
+      return officialSoloList(t).map(function(p) {
+        n++;
+        return '<label class="batch-row">' +
+          '<input type="checkbox" data-team="' + esc(t.name) + '" data-pid="' + esc(p[0]) + '"' +
+            (on(t.name, p[0]) ? ' checked' : '') + '>' +
+          '<span class="bname">' + esc(t.name + '.' + officialPlayerName(p, style)) + '</span>' +
+          '<span class="bmeta">' + esc(t.name) + (p[2] === 3 ? ' · 灵活' : '') + '</span></label>';
+      }).join('');
+    }
+    // 三排一支战队一行，勾选就是整队录入
+    const list = officialTrioList(t);
+    n += list.length;
+    const names = list.map(function(p) { return esc(officialPlayerName(p, style)); }).join(' / ');
+    return '<label class="batch-row">' +
+      '<input type="checkbox" data-team="' + esc(t.name) + '"' + (on(t.name, '') ? ' checked' : '') + '>' +
+      '<span class="bname">' + esc(t.name) + '</span>' +
+      '<span class="bmeta">' + names + '</span></label>';
+  }).join('');
+  document.getElementById('off-count').textContent = solo
+    ? '共 ' + n + ' 名选手（含灵活）'
+    : '共 ' + NBPL_TEAMS.length + ' 支战队 · ' + n + ' 名队员（含灵活）';
+}
+function officialCheckAll(on) {
+  Array.prototype.forEach.call(document.querySelectorAll('#off-list input[type=checkbox]'),
+    function(cb) { cb.checked = on; });
+}
+function confirmOfficialRoster() {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const style = officialStyle();
+  const solo = ev.mode === 'solo';
+  const picked = Array.prototype.slice.call(document.querySelectorAll('#off-list input[type=checkbox]'))
+    .filter(function(cb) { return cb.checked; });
+  if (!picked.length) { alert(solo ? '还没勾选任何选手。' : '还没勾选任何战队。'); return; }
+
+  const existing = {};
+  ev.competitors.forEach(function(c) { existing[c.name] = 1; });
+  const added = [], dup = [];
+  if (solo) {
+    // 单排一行就是一位选手，直接按行录入
+    picked.forEach(function(cb) {
+      const tName = cb.getAttribute('data-team');
+      const p = officialFindPlayer(tName, cb.getAttribute('data-pid'));
+      if (!p) return;
+      const nm = tName + '.' + officialPlayerName(p, style);
+      if (existing[nm]) { dup.push(nm); return; }
+      existing[nm] = 1;
+      added.push({ name: nm, members: [], group: null, carry: 0, tag: null });
+    });
+  } else {
+    NBPL_TEAMS.filter(function(t) {
+      return picked.some(function(cb) { return cb.getAttribute('data-team') === t.name; });
+    }).forEach(function(t) {
+      if (existing[t.name]) { dup.push(t.name); return; }
+      existing[t.name] = 1;
+      added.push({ name: t.name, group: null, carry: 0, tag: null,
+                   members: officialTrioList(t).map(function(p) { return officialPlayerName(p, style); }) });
+    });
+  }
+  if (!added.length) { alert('选中的都已经添加过了。'); return; }
+
+  let msg = '将添加 ' + added.length + ' ' + (solo ? '名选手' : '支战队') + '：\n' +
+            added.slice(0, 8).map(function(a) { return a.name; }).join('、') +
+            (added.length > 8 ? ' 等' : '');
+  if (dup.length) msg += '\n（跳过 ' + dup.length + ' 个已存在的）';
+  msg += '\n\n确认？';
+  if (!confirm(msg)) return;
+
+  added.forEach(function(c) { c.id = uid(); ev.competitors.push(c); });
+  closeOfficialRoster();
+  saveState();
+  renderAll();
 }
 
 /* ---------- 参赛者批量管理 ---------- */
@@ -3306,6 +3883,65 @@ function confirmTopPick() {
   closeTopPick();
   if (!m) return;
   m.topPick = v || null;
+  saveState();
+  renderAll();
+}
+
+/* ---------- 本局战神 ---------- */
+function openMvpPick(matchId) {
+  const ev = getActiveEvent(); if (!ev) return;
+  const m = ev.matches.filter(function(x) { return x.id === matchId; })[0]; if (!m) return;
+  const S = computeStandings(ev);
+  const i = S.matches.findIndex(function(x) { return x.id === matchId; });
+  if (i < 0) return;
+  const meta = S.matches[i];
+  const topId = topCompId(meta);
+  if (!topId) { alert('本局最高分还有并列没裁定。先在卡片上点「最高分并列」定下来，再来选战神。'); return; }
+  const comp = ev.competitors.filter(function(c) { return c.id === topId; })[0];
+  if (!comp) return;
+  const members = comp.members || [];
+  if (!members.length) {
+    alert('「' + comp.name + '」还没录选手，先用战队名代替。\n' +
+          '要选战神的话，在「参赛者」里按「队伍名 / 成员1 / 成员2」把成员补上。');
+    return;
+  }
+  const cur = (m.mvp && m.mvp.compId === topId && m.mvp.member &&
+               members.indexOf(m.mvp.member) !== -1) ? m.mvp.member : '';
+  mvpCtx = { matchId: matchId };
+
+  document.getElementById('mvp-title').textContent = '「' + matchCanonicalName(m, i) + '」的战神选手';
+  document.getElementById('mvp-desc').innerHTML =
+    '本局最高分是 <b>' + esc(comp.name) + '</b>（' + fmtT(meta.bestT) + ' 分），' +
+    '从这支队伍的选手里选一名当战神；不选就显示战队名。';
+  document.getElementById('mvp-options').innerHTML = members.map(function(nm) {
+    return '<label class="pick-row">' +
+      '<input type="radio" name="mvp-opt" value="' + esc(nm) + '"' + (nm === cur ? ' checked' : '') + '>' +
+      '<b>' + esc(nm) + '</b></label>';
+  }).join('') +
+    '<label class="pick-row">' +
+    '<input type="radio" name="mvp-opt" value=""' + (cur ? '' : ' checked') + '>' +
+    '<b class="muted">战队名</b><span>' + esc(comp.name) + '</span></label>';
+  document.getElementById('mvp-modal').className = 'modal';
+}
+
+function closeMvpPick() {
+  mvpCtx = null;
+  document.getElementById('mvp-modal').className = 'modal hidden';
+}
+
+function confirmMvpPick() {
+  if (!mvpCtx) return;
+  const ev = getActiveEvent(); if (!ev) return;
+  const m = ev.matches.filter(function(x) { return x.id === mvpCtx.matchId; })[0];
+  const el = document.querySelector('input[name="mvp-opt"]:checked');
+  const v = el ? el.value : '';
+  closeMvpPick();
+  if (!m) return;
+  // 队伍按当前分数重算一次，避免裁定后改了比分导致存下的队伍过时
+  const S = computeStandings(ev);
+  const i = S.matches.findIndex(function(x) { return x.id === m.id; });
+  const topId = i >= 0 ? topCompId(S.matches[i]) : null;
+  m.mvp = (v && topId) ? { compId: topId, member: v } : null;
   saveState();
   renderAll();
 }
