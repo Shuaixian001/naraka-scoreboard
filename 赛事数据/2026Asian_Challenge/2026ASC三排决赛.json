@@ -1,0 +1,644 @@
+{
+  "events": [
+    {
+      "id": "id-musjjh19-ww6wsb",
+      "name": "2026ASC三排决赛",
+      "mode": "trio",
+      "locked": true,
+      "scoring": {
+        "killPoints": 1,
+        "placement": {
+          "1": 4,
+          "2": 2,
+          "3": 1,
+          "4": 1,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "wudaoPlacement": {
+          "1": 8,
+          "2": 4,
+          "3": 2,
+          "4": 2,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "killCoef": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1,
+          "10": 1,
+          "11": 1,
+          "12": 1,
+          "13": 1,
+          "14": 1,
+          "15": 1,
+          "16": 1,
+          "17": 1,
+          "18": 1,
+          "19": 1,
+          "20": 1,
+          "21": 1,
+          "22": 1,
+          "23": 1,
+          "24": 1,
+          "25": 1,
+          "26": 1,
+          "27": 1,
+          "28": 1,
+          "29": 1,
+          "30": 1,
+          "31": 1,
+          "32": 1,
+          "33": 1,
+          "34": 1,
+          "35": 1,
+          "36": 1,
+          "37": 1,
+          "38": 1,
+          "39": 1,
+          "40": 1,
+          "41": 1,
+          "42": 1,
+          "43": 1,
+          "44": 1,
+          "45": 1,
+          "46": 1,
+          "47": 1,
+          "48": 1
+        }
+      },
+      "groups": [],
+      "tags": [
+        {
+          "name": "SEA",
+          "color": "#f0be0a"
+        },
+        {
+          "name": "AS",
+          "color": "#1549e5"
+        }
+      ],
+      "rankStyles": [
+        {
+          "from": 1,
+          "to": 5,
+          "color": "#ebe40a"
+        }
+      ],
+      "tieBreak": {
+        "points": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          },
+          {
+            "k": "firstScore",
+            "dir": "asc"
+          },
+          {
+            "k": "kills",
+            "dir": "desc"
+          },
+          {
+            "k": "bestScore",
+            "dir": "desc"
+          },
+          {
+            "k": "bestKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastScore",
+            "dir": "desc"
+          },
+          {
+            "k": "lastKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastPlace",
+            "dir": "asc"
+          }
+        ],
+        "mp": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          }
+        ]
+      },
+      "matchTie": [
+        {
+          "k": "kill",
+          "dir": "desc"
+        },
+        {
+          "k": "place",
+          "dir": "asc"
+        }
+      ],
+      "notes": "前五晋级劫杯入围赛。\n武道：RUE 2:0 7oo; Luigi 2:1 MVP; 521 2:0 MG5; 28 2:1 WE\n          28 2:1 RUE; 521 2:0 Luigi\n          521 2:0 28",
+      "lb": {
+        "order": [
+          "rank",
+          "group",
+          "tag",
+          "name",
+          "carry",
+          "games",
+          "total",
+          "mp"
+        ],
+        "show": {
+          "rank": true,
+          "group": true,
+          "tag": true,
+          "name": true,
+          "carry": true,
+          "games": true,
+          "total": true,
+          "mp": true
+        },
+        "width": {
+          "rank": 44,
+          "group": 40,
+          "tag": 76,
+          "name": 0,
+          "carry": 56,
+          "games": 0,
+          "total": 68,
+          "mp": 140
+        },
+        "logo": false,
+        "hideMembers": false,
+        "showTitle": true,
+        "title": "",
+        "cell": {
+          "py": 8,
+          "px": 8,
+          "fs": 14
+        }
+      },
+      "manualOrder": [],
+      "matchPoint": {
+        "enabled": false,
+        "threshold": 40,
+        "maxMatches": 8,
+        "bonusEnabled": true,
+        "bonusStep": 1,
+        "sameGameCanWin": false,
+        "championOverride": null
+      },
+      "competitors": [
+        {
+          "id": "id-musjkj2p-n5ju7w",
+          "name": "Warriors Esports",
+          "members": [
+            "Shin",
+            "AzBonn",
+            "Minds"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "SEA",
+          "logo": null
+        },
+        {
+          "id": "id-musjkj2p-vqc61h",
+          "name": "Lobby28",
+          "members": [
+            "D229",
+            "CBB",
+            "Guitar",
+            "Loves"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "SEA",
+          "logo": null
+        },
+        {
+          "id": "id-musjkj2p-7ddhtv",
+          "name": "RUE Esports",
+          "members": [
+            "神zzz",
+            "lilPeanut",
+            "Ka"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "SEA",
+          "logo": null
+        },
+        {
+          "id": "id-musjkj2p-gfha9r",
+          "name": "7oo",
+          "members": [
+            "Choice",
+            "XianMM",
+            "Echo"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "AS",
+          "logo": null
+        },
+        {
+          "id": "id-musjkj2p-mfwywr",
+          "name": "Luigi",
+          "members": [
+            "Xiaochen",
+            "Kui",
+            "Hong"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "AS",
+          "logo": null
+        },
+        {
+          "id": "id-musjkj2p-qamux7",
+          "name": "MG5",
+          "members": [
+            "Matt",
+            "MaMa",
+            "Yuan"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "AS",
+          "logo": null
+        },
+        {
+          "id": "id-musjkj2p-duivt7",
+          "name": "MVP",
+          "members": [
+            "ShiYun",
+            "Kaimao",
+            "LTZ"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "AS",
+          "logo": null
+        },
+        {
+          "name": "VN.521",
+          "group": null,
+          "carry": 0,
+          "tag": "SEA",
+          "logo": "data:image/webp;base64,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",
+          "members": [
+            "PhatMilk",
+            "Pampy",
+            "Akame",
+            "Yin"
+          ],
+          "id": "id-musjkxjp-nadpud"
+        }
+      ],
+      "matches": [
+        {
+          "id": "id-mutlqjkm-1quz2y",
+          "name": "",
+          "type": "wudao",
+          "groups": [],
+          "results": {
+            "id-musjkj2p-n5ju7w": {
+              "kills": null,
+              "placement": 5
+            },
+            "id-musjkj2p-vqc61h": {
+              "kills": null,
+              "placement": 2
+            },
+            "id-musjkj2p-gfha9r": {
+              "kills": null,
+              "placement": 8
+            },
+            "id-musjkj2p-mfwywr": {
+              "kills": null,
+              "placement": 3
+            },
+            "id-musjkj2p-qamux7": {
+              "kills": null,
+              "placement": 6
+            },
+            "id-musjkj2p-duivt7": {
+              "kills": null,
+              "placement": 7
+            },
+            "id-musjkxjp-nadpud": {
+              "kills": null,
+              "placement": 1
+            },
+            "id-musjkj2p-7ddhtv": {
+              "kills": null,
+              "placement": 4
+            }
+          },
+          "map": "火罗国",
+          "finished": false
+        },
+        {
+          "id": "id-mutmu3og-2m5hfl",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-musjkj2p-vqc61h": {
+              "kills": 18,
+              "placement": 1
+            },
+            "id-musjkj2p-n5ju7w": {
+              "kills": 3,
+              "placement": 8
+            },
+            "id-musjkj2p-7ddhtv": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-musjkj2p-gfha9r": {
+              "kills": 4,
+              "placement": 4
+            },
+            "id-musjkj2p-mfwywr": {
+              "kills": 0,
+              "placement": 6
+            },
+            "id-musjkj2p-qamux7": {
+              "kills": 4,
+              "placement": 3
+            },
+            "id-musjkj2p-duivt7": {
+              "kills": 2,
+              "placement": 5
+            },
+            "id-musjkxjp-nadpud": {
+              "kills": 19,
+              "placement": 2
+            }
+          },
+          "map": "聚窟州·早晨",
+          "finished": true
+        },
+        {
+          "id": "id-mutpbkxt-2svfe6",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-musjkj2p-vqc61h": {
+              "kills": 18,
+              "placement": 1
+            },
+            "id-musjkj2p-n5ju7w": {
+              "kills": 18,
+              "placement": 2
+            },
+            "id-musjkj2p-7ddhtv": {
+              "kills": 0,
+              "placement": 4
+            },
+            "id-musjkj2p-duivt7": {
+              "kills": 4,
+              "placement": 5
+            },
+            "id-musjkxjp-nadpud": {
+              "kills": 16,
+              "placement": 3
+            },
+            "id-musjkj2p-gfha9r": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-musjkj2p-mfwywr": {
+              "kills": 1,
+              "placement": 7
+            },
+            "id-musjkj2p-qamux7": {
+              "kills": 1,
+              "placement": 6
+            }
+          },
+          "map": "火罗国·阴天"
+        },
+        {
+          "id": "id-mutplgsm-eibk5l",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-musjkj2p-vqc61h": {
+              "kills": 14,
+              "placement": 1
+            },
+            "id-musjkxjp-nadpud": {
+              "kills": 11,
+              "placement": 3
+            },
+            "id-musjkj2p-n5ju7w": {
+              "kills": 8,
+              "placement": 2
+            },
+            "id-musjkj2p-duivt7": {
+              "kills": 6,
+              "placement": 4
+            },
+            "id-musjkj2p-gfha9r": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-musjkj2p-qamux7": {
+              "kills": 1,
+              "placement": 5
+            },
+            "id-musjkj2p-mfwywr": {
+              "kills": 1,
+              "placement": 6
+            },
+            "id-musjkj2p-7ddhtv": {
+              "kills": 0,
+              "placement": 8
+            }
+          },
+          "map": "龙隐洞天·朝露"
+        },
+        {
+          "id": "id-mutr6jh5-19d5te",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-musjkxjp-nadpud": {
+              "kills": 16,
+              "placement": 1
+            },
+            "id-musjkj2p-vqc61h": {
+              "kills": 13,
+              "placement": 3
+            },
+            "id-musjkj2p-n5ju7w": {
+              "kills": 15,
+              "placement": 2
+            },
+            "id-musjkj2p-mfwywr": {
+              "kills": 3,
+              "placement": 4
+            },
+            "id-musjkj2p-7ddhtv": {
+              "kills": 4,
+              "placement": 5
+            },
+            "id-musjkj2p-gfha9r": {
+              "kills": 3,
+              "placement": 6
+            },
+            "id-musjkj2p-qamux7": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-musjkj2p-duivt7": {
+              "kills": 1,
+              "placement": 8
+            }
+          },
+          "map": "聚窟州·正午"
+        },
+        {
+          "id": "id-mutsgng5-s96bwf",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-musjkj2p-vqc61h": {
+              "kills": 13,
+              "placement": 1
+            },
+            "id-musjkj2p-n5ju7w": {
+              "kills": 10,
+              "placement": 2
+            },
+            "id-musjkj2p-mfwywr": {
+              "kills": 4,
+              "placement": 3
+            },
+            "id-musjkxjp-nadpud": {
+              "kills": 14,
+              "placement": 4
+            },
+            "id-musjkj2p-duivt7": {
+              "kills": 5,
+              "placement": 5
+            },
+            "id-musjkj2p-gfha9r": {
+              "kills": 6,
+              "placement": 8
+            },
+            "id-musjkj2p-qamux7": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-musjkj2p-7ddhtv": {
+              "kills": 1,
+              "placement": 6
+            }
+          },
+          "map": "火罗国·星夜"
+        }
+      ]
+    }
+  ],
+  "activeEventId": "id-musjjh19-ww6wsb"
+}

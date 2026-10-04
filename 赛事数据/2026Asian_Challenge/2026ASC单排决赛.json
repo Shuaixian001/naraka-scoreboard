@@ -1,0 +1,626 @@
+{
+  "events": [
+    {
+      "id": "id-mupnp4j4-s8y07h",
+      "name": "2026ASC单排决赛",
+      "mode": "solo",
+      "locked": true,
+      "scoring": {
+        "killPoints": 1,
+        "placement": {
+          "1": 2.5,
+          "2": 1,
+          "3": 0.5,
+          "4": 0.5,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "wudaoPlacement": {
+          "1": 2,
+          "2": 1,
+          "3": 0.5,
+          "4": 0.5,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "killCoef": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1,
+          "10": 1,
+          "11": 1,
+          "12": 1,
+          "13": 1,
+          "14": 1,
+          "15": 1,
+          "16": 1,
+          "17": 1,
+          "18": 1,
+          "19": 1,
+          "20": 1,
+          "21": 1,
+          "22": 1,
+          "23": 1,
+          "24": 1,
+          "25": 1,
+          "26": 1,
+          "27": 1,
+          "28": 1,
+          "29": 1,
+          "30": 1,
+          "31": 1,
+          "32": 1,
+          "33": 1,
+          "34": 1,
+          "35": 1,
+          "36": 1,
+          "37": 1,
+          "38": 1,
+          "39": 1,
+          "40": 1,
+          "41": 1,
+          "42": 1,
+          "43": 1,
+          "44": 1,
+          "45": 1,
+          "46": 1,
+          "47": 1,
+          "48": 1
+        }
+      },
+      "groups": [],
+      "tags": [
+        {
+          "name": "AS",
+          "color": "#1549e5"
+        },
+        {
+          "name": "SEA",
+          "color": "#f0be0a"
+        }
+      ],
+      "rankStyles": [
+        {
+          "from": 1,
+          "to": 5,
+          "color": "#ebe40a"
+        }
+      ],
+      "tieBreak": {
+        "points": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          },
+          {
+            "k": "firstScore",
+            "dir": "asc"
+          },
+          {
+            "k": "kills",
+            "dir": "desc"
+          },
+          {
+            "k": "bestScore",
+            "dir": "desc"
+          },
+          {
+            "k": "bestKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastScore",
+            "dir": "desc"
+          },
+          {
+            "k": "lastKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastPlace",
+            "dir": "asc"
+          }
+        ],
+        "mp": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          }
+        ]
+      },
+      "matchTie": [
+        {
+          "k": "kill",
+          "dir": "desc"
+        },
+        {
+          "k": "place",
+          "dir": "asc"
+        }
+      ],
+      "notes": "前五晋级劫杯预选赛，拉麵卷就是Zelldincht。\n武道：Froztivus 2:1 神zzz; LyPolaris 2:1 Choice; 小秘书 2:1 Kkra; Noxerch 2:1 拉麵卷\n          LyPolaris 2:1 Froztivus; 小秘书 2:1 Noxerch\n          LyPolaris 2:1 小秘书",
+      "lb": {
+        "order": [
+          "rank",
+          "group",
+          "tag",
+          "name",
+          "carry",
+          "games",
+          "total",
+          "mp"
+        ],
+        "show": {
+          "rank": true,
+          "group": true,
+          "tag": true,
+          "name": true,
+          "carry": true,
+          "games": true,
+          "total": true,
+          "mp": true
+        },
+        "width": {
+          "rank": 44,
+          "group": 40,
+          "tag": 76,
+          "name": 0,
+          "carry": 56,
+          "games": 0,
+          "total": 68,
+          "mp": 140
+        },
+        "logo": false,
+        "hideMembers": false,
+        "showTitle": true,
+        "title": "",
+        "cell": {
+          "py": 8,
+          "px": 8,
+          "fs": 14
+        }
+      },
+      "manualOrder": [],
+      "matchPoint": {
+        "enabled": false,
+        "threshold": 16,
+        "maxMatches": 8,
+        "bonusEnabled": true,
+        "bonusStep": 0.5,
+        "sameGameCanWin": false,
+        "championOverride": null
+      },
+      "competitors": [
+        {
+          "name": "Froztivus",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "SEA",
+          "logo": "data:image/webp;base64,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",
+          "id": "id-mupntz55-3axrbz"
+        },
+        {
+          "id": "id-muqluthb-tblb44",
+          "name": "BSC.Kkra",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "AS",
+          "logo": null
+        },
+        {
+          "id": "id-muqluthb-312fyr",
+          "name": "VN84.LyPolaris",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "SEA",
+          "logo": null
+        },
+        {
+          "id": "id-muqluthb-wx5df6",
+          "name": "28.Noxerch",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "SEA",
+          "logo": null
+        },
+        {
+          "id": "id-muqluthb-i0sdc2",
+          "name": "RUE.神zzz",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "SEA",
+          "logo": null
+        },
+        {
+          "id": "id-muqluthb-b3fidu",
+          "name": "小秘书",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "AS",
+          "logo": null
+        },
+        {
+          "id": "id-muqluthb-99k14b",
+          "name": "7oo.Choice",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "AS",
+          "logo": null
+        },
+        {
+          "id": "id-muqluthb-9vhp4f",
+          "name": "拉麵卷",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "AS",
+          "logo": null
+        }
+      ],
+      "matches": [
+        {
+          "id": "id-mus6ir1q-6a10nh",
+          "name": "",
+          "type": "wudao",
+          "groups": [],
+          "results": {
+            "id-mupntz55-3axrbz": {
+              "kills": null,
+              "placement": 4
+            },
+            "id-muqluthb-tblb44": {
+              "kills": null,
+              "placement": 6
+            },
+            "id-muqluthb-312fyr": {
+              "kills": null,
+              "placement": 1
+            },
+            "id-muqluthb-wx5df6": {
+              "kills": null,
+              "placement": 3
+            },
+            "id-muqluthb-b3fidu": {
+              "kills": null,
+              "placement": 2
+            },
+            "id-muqluthb-99k14b": {
+              "kills": null,
+              "placement": 7
+            },
+            "id-muqluthb-9vhp4f": {
+              "kills": null,
+              "placement": 5
+            },
+            "id-muqluthb-i0sdc2": {
+              "kills": null,
+              "placement": 8
+            }
+          },
+          "map": "火罗国",
+          "finished": false,
+          "topPick": null,
+          "mvp": null
+        },
+        {
+          "id": "id-mus7jbwf-vzybex",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mupntz55-3axrbz": {
+              "kills": 3,
+              "placement": 6
+            },
+            "id-muqluthb-tblb44": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-muqluthb-312fyr": {
+              "kills": 3,
+              "placement": 4
+            },
+            "id-muqluthb-wx5df6": {
+              "kills": 2,
+              "placement": 2
+            },
+            "id-muqluthb-b3fidu": {
+              "kills": 1,
+              "placement": 1
+            },
+            "id-muqluthb-99k14b": {
+              "kills": 3,
+              "placement": 5
+            },
+            "id-muqluthb-9vhp4f": {
+              "kills": 5,
+              "placement": 3
+            },
+            "id-muqluthb-i0sdc2": {
+              "kills": 0,
+              "placement": 8
+            }
+          },
+          "map": "聚窟州·早晨",
+          "finished": false,
+          "topPick": null,
+          "mvp": null
+        },
+        {
+          "id": "id-mus9j07m-wqan6m",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mupntz55-3axrbz": {
+              "kills": 4,
+              "placement": 1
+            },
+            "id-muqluthb-tblb44": {
+              "kills": 0,
+              "placement": 6
+            },
+            "id-muqluthb-312fyr": {
+              "kills": 3,
+              "placement": 4
+            },
+            "id-muqluthb-i0sdc2": {
+              "kills": 3,
+              "placement": 2
+            },
+            "id-muqluthb-b3fidu": {
+              "kills": 1,
+              "placement": 5
+            },
+            "id-muqluthb-99k14b": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-muqluthb-9vhp4f": {
+              "kills": 7,
+              "placement": 3
+            },
+            "id-muqluthb-wx5df6": {
+              "kills": 0,
+              "placement": 8
+            }
+          },
+          "map": "火罗国·阴天",
+          "finished": false,
+          "topPick": null,
+          "mvp": null
+        },
+        {
+          "id": "id-musalhtp-w2dtvt",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mupntz55-3axrbz": {
+              "kills": 3,
+              "placement": 3
+            },
+            "id-muqluthb-312fyr": {
+              "kills": 6,
+              "placement": 1
+            },
+            "id-muqluthb-wx5df6": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-muqluthb-i0sdc2": {
+              "kills": 1,
+              "placement": 6
+            },
+            "id-muqluthb-b3fidu": {
+              "kills": 0,
+              "placement": 5
+            },
+            "id-muqluthb-99k14b": {
+              "kills": 3,
+              "placement": 4
+            },
+            "id-muqluthb-9vhp4f": {
+              "kills": 4,
+              "placement": 2
+            },
+            "id-muqluthb-tblb44": {
+              "kills": 0,
+              "placement": 8
+            }
+          },
+          "map": "龙隐洞天·朝露",
+          "finished": false,
+          "topPick": null,
+          "mvp": null
+        },
+        {
+          "id": "id-musb6gv0-1tegcv",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-muqluthb-wx5df6": {
+              "kills": 1,
+              "placement": 4
+            },
+            "id-muqluthb-i0sdc2": {
+              "kills": 5,
+              "placement": 3
+            },
+            "id-muqluthb-99k14b": {
+              "kills": 4,
+              "placement": 2
+            },
+            "id-muqluthb-tblb44": {
+              "kills": 0,
+              "placement": 6
+            },
+            "id-muqluthb-312fyr": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-muqluthb-b3fidu": {
+              "kills": 1,
+              "placement": 5
+            },
+            "id-muqluthb-9vhp4f": {
+              "kills": 5,
+              "placement": 1
+            },
+            "id-mupntz55-3axrbz": {
+              "kills": 0,
+              "placement": 8
+            }
+          },
+          "map": "聚窟州·正午",
+          "finished": false,
+          "topPick": null,
+          "mvp": null
+        },
+        {
+          "id": "id-muscb4ps-opowoy",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-muqluthb-312fyr": {
+              "kills": 4,
+              "placement": 5
+            },
+            "id-muqluthb-i0sdc2": {
+              "kills": 1,
+              "placement": 7
+            },
+            "id-muqluthb-tblb44": {
+              "kills": 2,
+              "placement": 6
+            },
+            "id-muqluthb-99k14b": {
+              "kills": 1,
+              "placement": 4
+            },
+            "id-mupntz55-3axrbz": {
+              "kills": 7,
+              "placement": 2
+            },
+            "id-muqluthb-wx5df6": {
+              "kills": 0,
+              "placement": 3
+            },
+            "id-muqluthb-9vhp4f": {
+              "kills": 2,
+              "placement": 1
+            },
+            "id-muqluthb-b3fidu": {
+              "kills": 0,
+              "placement": 8
+            }
+          },
+          "map": "火罗国·星夜",
+          "finished": false,
+          "topPick": null,
+          "mvp": null
+        }
+      ]
+    }
+  ],
+  "activeEventId": "id-mupnp4j4-s8y07h"
+}
