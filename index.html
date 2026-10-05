@@ -541,6 +541,11 @@
 
 <div class="topbar">
   <h1>永劫无间 <small>赛事积分表</small></h1>
+  <select id="event-mode-filter" onchange="onEventModeFilter(this.value)" title="只看单排或三排赛事">
+    <option value="">全部</option>
+    <option value="solo">单排</option>
+    <option value="trio">三排</option>
+  </select>
   <select id="event-select" onchange="onSelectEvent(this.value)"></select>
   <button id="lock-btn" class="ghost" onclick="toggleLock()"></button>
   <button onclick="openNewEventModal()">+ 新建赛事</button>
@@ -1214,6 +1219,7 @@ function unitOf(ev) { return (ev && ev.mode === 'trio') ? '队' : '人'; }
 let state = null;
 let currentPanel = 'record';
 let lbFilter = { board: 'merged', group: null };
+let eventModeFilter = '';     // 顶栏赛事下拉的筛选：'' 全部 / 'solo' 单排 / 'trio' 三排
 let placeTarget = 'tianti';   // 当前编辑的排名分表：天人 / 武道
 let placeDraft = null;        // 设置面板打开期间的暂存，保存时一次写回
 let pickCtx = null;           // 单局最高分并列裁定的上下文
@@ -2031,17 +2037,23 @@ function renderAll() {
 
 function renderTopbar() {
   const sel = document.getElementById('event-select');
+  const mf = document.getElementById('event-mode-filter');
+  if (mf) mf.value = eventModeFilter;
   if (state.events.length === 0) {
     sel.innerHTML = '<option>还没有赛事</option>';
     sel.disabled = true;
   } else {
-    sel.disabled = false;
-    sel.innerHTML = state.events.map(function(e) {
+    // 顶上那个「全部 / 单排 / 三排」筛选只影响这里列哪些赛事
+    const list = state.events.filter(function(e) {
+      return !eventModeFilter || e.mode === eventModeFilter;
+    });
+    sel.disabled = list.length === 0;
+    sel.innerHTML = list.length ? list.map(function(e) {
       const mode = e.mode === 'solo' ? '单排' : '三排';
       const fmtTag = e.matchPoint.enabled ? '赛点制' : '积分制';
       return '<option value="' + e.id + '"' + (e.id === state.activeEventId ? ' selected' : '') + '>' +
         esc(e.name) + '（' + mode + '·' + fmtTag + '）</option>';
-    }).join('');
+    }).join('') : '<option>该类型下还没有赛事</option>';
   }
 
   const ev = getActiveEvent();
@@ -3629,11 +3641,11 @@ function switchPanel(name) {
   renderPanel(getActiveEvent() ? computeStandings(getActiveEvent()) : null);
 }
 function onSelectEvent(id) {
-  if (id === state.activeEventId) return;
+  if (id === state.activeEventId) return true;
   if (!confirmDiscardUnsaved('切换赛事')) {
     const sel = document.getElementById('event-select');
     if (sel) sel.value = state.activeEventId || '';
-    return;
+    return false;
   }
   state.activeEventId = id;
   lbFilter = { board: 'merged', group: null };
@@ -3644,6 +3656,30 @@ function onSelectEvent(id) {
   updateDirtyNote();
   saveState();
   renderAll();
+  return true;
+}
+/* 顶部只看某一类赛事：当前赛事不符合就切到第一个符合的（切换本身照旧会问未保存） */
+function onEventModeFilter(v) {
+  const ev = getActiveEvent();
+  const prev = eventModeFilter;
+  eventModeFilter = (v === 'solo' || v === 'trio') ? v : '';
+  const label = eventModeFilter === 'solo' ? '单排' : '三排';
+  if (eventModeFilter && ev && ev.mode !== eventModeFilter) {
+    const first = state.events.filter(function(e) { return e.mode === eventModeFilter; })[0];
+    if (!first) {
+      alert('还没有' + label + '赛事。');
+      eventModeFilter = prev;
+      renderTopbar();
+      return;
+    }
+    if (!onSelectEvent(first.id)) {      // 未保存提醒里点了取消 → 筛选也退回原样
+      eventModeFilter = prev;
+      renderTopbar();
+      return;
+    }
+    return;                              // 切换成功，renderAll 里会重画顶栏
+  }
+  renderTopbar();
 }
 function toggleDetail(id) {
   const el = document.getElementById('detail-' + id);
