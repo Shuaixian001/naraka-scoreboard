@@ -723,6 +723,7 @@
       <div class="section-title">数据</div>
       <div class="set-actions">
         <div class="warn hidden" id="set-lock-note"></div>
+        <div class="warn hidden" id="set-dirty-note"></div>
         <button id="set-save" onclick="saveSettings()">保存设置</button>
         <button class="ghost" onclick="exportData()">导出本赛事</button>
         <button class="ghost" onclick="document.getElementById('import-file').click()">导入赛事（可多选）</button>
@@ -1219,6 +1220,7 @@ let pickCtx = null;           // 单局最高分并列裁定的上下文
 let mvpCtx = null;            // 本局战神选择的上下文
 let mtieCtx = null;           // 单局同分裁定的上下文
 let notesEditing = false;     // 备注是否处于编辑态
+let setDirty = false;         // 设置面板里有改过但没点「保存设置」
 let lastChampionKey = null;
 let saveTimer = null;
 
@@ -1491,6 +1493,8 @@ function normalize(ev) {
     m.topPick = (typeof m.topPick === 'string' && m.topPick) ? m.topPick : null;
     // 对局结束标记：结束录入淘汰后不再给淘汰的选手置灰
     m.finished = !!m.finished;
+    // 手改名次 / 导入来的老数据都算「手动录入」，点击淘汰停用（新的一局没有任何名次，才走点击）
+    m.typedRank = m.typedRank === true ? true : matchHasPlacement(m);
     // 本局战神：只存「哪支队伍 + 哪名选手」，队伍仍然是按最高分实时算的
     m.mvp = (m.mvp && typeof m.mvp === 'object' && typeof m.mvp.compId === 'string' && m.mvp.compId)
       ? { compId: m.mvp.compId, member: (typeof m.mvp.member === 'string' && m.mvp.member) ? m.mvp.member : null }
@@ -1538,6 +1542,48 @@ function scheduleSave() {
   saveTimer = setTimeout(function() { saveTimer = null; writeState(); }, 200);
 }
 window.addEventListener('beforeunload', function() { if (state) writeState(); });
+
+/* ---------- 未保存提醒 ---------- */
+/* 备注还在编辑态、且内容跟已保存的不一样 */
+function notesDirty() {
+  if (!notesEditing) return false;
+  const ta = document.getElementById('notes-text');
+  const ev = getActiveEvent();
+  return !!(ta && ev && ta.value !== (ev.notes || ''));
+}
+function hasUnsaved() { return setDirty || notesDirty(); }
+function updateDirtyNote() {
+  const el = document.getElementById('set-dirty-note');
+  if (!el) return;
+  el.className = setDirty ? 'warn' : 'warn hidden';
+  el.textContent = setDirty ? '⚠️ 设置里改过但还没点「保存设置」，这些改动还没生效。' : '';
+}
+function markSettingsDirty() {
+  if (!setDirty) { setDirty = true; updateDirtyNote(); }
+}
+/* 设置面板里任何输入都算改动 */
+document.addEventListener('input', function(e) {
+  if (e.target && e.target.closest && e.target.closest('#panel-settings')) markSettingsDirty();
+});
+document.addEventListener('change', function(e) {
+  if (e.target && e.target.closest && e.target.closest('#panel-settings')) markSettingsDirty();
+});
+/* 跳转前问一声：会丢就别悄悄丢 */
+function confirmDiscardUnsaved(action) {
+  if (!hasUnsaved()) return true;
+  const bits = [];
+  if (setDirty) bits.push('设置里改过但没点「保存设置」');
+  if (notesDirty()) bits.push('备注还在编辑、没保存');
+  return confirm('还有没保存的内容：' + bits.join('；') + '。\n\n' +
+    '・点「确定」= 这些改动不要了，继续' + action + '（丢掉就找不回来了）\n' +
+    '・点「取消」= 先停下不' + action + '，回去把改动保存好\n\n' +
+    '保存位置：设置面板底部的「保存设置」；备注框里的「保存」。');
+}
+window.addEventListener('beforeunload', function(e) {
+  if (!hasUnsaved()) return;
+  e.preventDefault();
+  e.returnValue = '还有没保存的设置 / 备注，确定离开吗？';
+});
 
 function getActiveEvent() {
   if (!state) return null;
@@ -2926,6 +2972,7 @@ function matchGridHTML(ev, m, i, S) {
   const byId = {};
   parts.forEach(function(c) { byId[c.id] = c; });
   const elim = matchElimState(m, parts);
+  const canElim = !ev.locked && !m.typedRank;   // 手填过名次就停用点击淘汰
 
   const evtAttrs = ' oninput="onResultInput(this)" onkeydown="onCellKeydown(event,this)" onfocus="this.select()"';
   const rows = matchGridOrder(parts, rankInfo).map(function(id) {
@@ -2947,9 +2994,12 @@ function matchGridHTML(ev, m, i, S) {
     if (!elim.done && elim.vals[c.id] > elim.aliveRank) cls.push('out');
     return '<tr data-comp="' + c.id + '"' + (cls.length ? ' class="' + cls.join(' ') + '"' : '') + '>' +
       '<td class="num">' + (rk ? rankBadge(rk.rank) : '<span class="muted">—</span>') + '</td>' +
-      '<td class="cname' + (ev.locked ? '' : ' eli') + '"' +
-        (ev.locked ? '' : ' title="点击 = 淘汰（拿当前最差名次，其余人 -1）；再点一次撤销"' +
-                     ' onclick="toggleEliminate(\'' + m.id + '\',\'' + c.id + '\')"') + '>' + esc(c.name) +
+      '<td class="cname' + (canElim ? ' eli' : '') + '"' +
+        (canElim
+          ? ' title="点击 = 淘汰（拿当前最差名次，其余人 -1）；再点一次撤销"' +
+            ' onclick="toggleEliminate(\'' + m.id + '\',\'' + c.id + '\')"'
+          : (m.typedRank && !ev.locked ? ' title="本局已手动录入名次，点击淘汰已停用；想用点击就先「清空」本局"' : '')) +
+        '>' + esc(c.name) +
         // 单独一个 span，打字途中可以就地改，不用重建整格
         '<span class="tie-mark muted" style="font-size:11px;margin-left:4px"' +
           (elim.done && rk && rk.tied ? '' : ' hidden') + '>并列</span>' +
@@ -3024,26 +3074,34 @@ function scoreCellHTML(g) {
 
 /* ---------- 设置 ---------- */
 function renderSettings(ev, S) {
-  document.getElementById('set-name').value = ev.name;
+  // 模式 / 锁定状态这些永远跟赛事走
   document.getElementById('set-mode').value = ev.mode === 'solo' ? '单排' : '三排';
-  document.querySelector('input[name="set-format"][value="' + (ev.matchPoint.enabled ? 'matchPoint' : 'points') + '"]').checked = true;
-  document.getElementById('set-mp-block').className = ev.matchPoint.enabled ? '' : 'hidden';
 
-  const mp = ev.matchPoint;
-  document.getElementById('set-mp-threshold').value = mp.threshold;
-  document.getElementById('set-mp-max').value = mp.maxMatches;
-  document.getElementById('set-mp-bonus').checked = mp.bonusEnabled;
-  document.getElementById('set-mp-step').value = mp.bonusStep;
-  document.getElementById('set-mp-same').checked = mp.sameGameCanWin;
-
+  // 手动指定冠军下拉：永远重建（参赛者可能变了），但有没保存的改动时保住用户当前选的那项
   const ov = document.getElementById('set-mp-override');
+  const mp = ev.matchPoint;
+  const keepOv = setDirty ? ov.value : null;
   ov.innerHTML = '<option value="">（无，自动判定）</option>' +
     ev.competitors.map(function(c) {
-      const sel = (mp.championOverride && mp.championOverride.compId === c.id) ? ' selected' : '';
+      const sel = (!setDirty && mp.championOverride && mp.championOverride.compId === c.id) ? ' selected' : '';
       return '<option value="' + c.id + '"' + sel + '>' + esc(c.name) + '</option>';
     }).join('');
+  if (keepOv && Array.prototype.some.call(ov.options, function(o) { return o.value === keepOv; })) {
+    ov.value = keepOv;
+  }
 
-  document.getElementById('set-kill').value = ev.scoring.killPoints;
+  // 其余输入项：有没保存的改动就别用赛事里的旧值覆盖用户改的内容
+  if (!setDirty) {
+    document.getElementById('set-name').value = ev.name;
+    document.querySelector('input[name="set-format"][value="' + (mp.enabled ? 'matchPoint' : 'points') + '"]').checked = true;
+    document.getElementById('set-mp-block').className = mp.enabled ? '' : 'hidden';
+    document.getElementById('set-mp-threshold').value = mp.threshold;
+    document.getElementById('set-mp-max').value = mp.maxMatches;
+    document.getElementById('set-mp-bonus').checked = mp.bonusEnabled;
+    document.getElementById('set-mp-step').value = mp.bonusStep;
+    document.getElementById('set-mp-same').checked = mp.sameGameCanWin;
+    document.getElementById('set-kill').value = ev.scoring.killPoints;
+  }
 
   document.getElementById('set-save').disabled = !!ev.locked;
   document.getElementById('set-delete').disabled = !!ev.locked;
@@ -3051,11 +3109,15 @@ function renderSettings(ev, S) {
   lockNote.className = ev.locked ? 'warn' : 'warn hidden';
   lockNote.textContent = ev.locked ? '🔒 本赛事已结束积分，需先在顶部解锁才能保存修改。' : '';
 
-  placeDraft = {
-    tianti: Object.assign({}, ev.scoring.placement),
-    wudao: Object.assign({}, ev.scoring.wudaoPlacement),
-    coef: Object.assign({}, ev.scoring.killCoef)
-  };
+  // 有还没保存的改动就别用赛事里的旧值把草稿盖掉
+  if (!setDirty || !placeDraft) {
+    placeDraft = {
+      tianti: Object.assign({}, ev.scoring.placement),
+      wudao: Object.assign({}, ev.scoring.wudaoPlacement),
+      coef: Object.assign({}, ev.scoring.killCoef)
+    };
+  }
+  updateDirtyNote();
   renderPlaceEditor();
   renderTieRules(ev, S);
   renderMatchTieList(ev);
@@ -3550,12 +3612,36 @@ function parsePlacement(text) {
 /* ==========================================================================
    交互：赛事
    ========================================================================== */
-function switchPanel(name) { currentPanel = name; renderPanel(getActiveEvent() ? computeStandings(getActiveEvent()) : null); }
+/* 离开设置面板时，若还有没保存的改动，先问一声要不要顺手保存 */
+function leaveSettingsCheck(name) {
+  if (currentPanel !== 'settings' || name === 'settings' || !setDirty) return true;
+  const label = { record: '比赛录入', comp: '参赛者', settings: '设置' }[name] || name;
+  const save = confirm('设置里改过东西，但还没点「保存设置」。\n\n' +
+    '・点「确定」= 先保存，再切到「' + label + '」\n' +
+    '・点「取消」= 这次不保存，直接切过去（改动会留在设置里，回来还能接着改）');
+  if (!save) return true;                 // 不保存也允许切走，草稿不会丢
+  return saveSettings(true);              // 保存失败（数值不合法）就别切走，先改对
+}
+function switchPanel(name) {
+  if (name === currentPanel) return;
+  if (!leaveSettingsCheck(name)) return;
+  currentPanel = name;
+  renderPanel(getActiveEvent() ? computeStandings(getActiveEvent()) : null);
+}
 function onSelectEvent(id) {
+  if (id === state.activeEventId) return;
+  if (!confirmDiscardUnsaved('切换赛事')) {
+    const sel = document.getElementById('event-select');
+    if (sel) sel.value = state.activeEventId || '';
+    return;
+  }
   state.activeEventId = id;
   lbFilter = { board: 'merged', group: null };
   lastChampionKey = null;
   notesEditing = false;
+  setDirty = false;
+  placeDraft = null;          // 让新赛事的设置重新铺开
+  updateDirtyNote();
   saveState();
   renderAll();
 }
@@ -3584,6 +3670,7 @@ function confirmNewEvent() {
   const name = document.getElementById('ne-name').value.trim();
   const mode = document.querySelector('input[name="ne-mode"]:checked').value;
   const fmt = document.querySelector('input[name="ne-format"]:checked').value;
+  if (!confirmDiscardUnsaved('新建赛事')) return;
   const fromEl = document.querySelector('input[name="ne-lb"]:checked');
   const src = (fromEl && fromEl.value === 'current') ? getActiveEvent() : null;
   const e = newEvent(mode, name, fmt === 'matchPoint');
@@ -3606,6 +3693,7 @@ function confirmNewEvent() {
 
 function deleteEvent() {
   const ev = getActiveEvent(); if (!ev) return;
+  if (!confirmDiscardUnsaved('删除本赛事')) return;
   if (!confirm('确定删除赛事「' + ev.name + '」？此操作不可恢复。')) return;
   state.events = state.events.filter(function(e) { return e.id !== ev.id; });
   state.activeEventId = state.events.length ? state.events[0].id : null;
@@ -4579,6 +4667,7 @@ function clearMatch(id) {
   const m = ev.matches.filter(function(x) { return x.id === id; })[0]; if (!m) return;
   if (!confirm('清空本局已录入的成绩？')) return;
   m.results = {};
+  m.typedRank = false;      // 清空后回到「点名字淘汰」模式
   saveState(); renderAll();
 }
 
@@ -4852,6 +4941,10 @@ function reopenMatch(matchId) {
 function toggleEliminate(matchId, compId) {
   const ev = getActiveEvent(); if (!ev || ev.locked) return;
   const m = ev.matches.filter(function(x) { return x.id === matchId; })[0]; if (!m) return;
+  if (m.typedRank) {
+    alert('这局已经手动录入了名次，点击淘汰已停用。\n\n想改用点击方式就先「清空」本局。');
+    return false;
+  }
   const parts = ev.competitors.filter(function(c) { return participates(m, c); });
   const N = parts.length;
   if (N < 2) return;
@@ -4862,7 +4955,7 @@ function toggleEliminate(matchId, compId) {
   m.finished = false;   // 又点名字了 = 重新进入淘汰录入
 
   if (vals[compId] === aliveRank) {
-    if (aliveCount < 2) { alert('只剩最后一个人，他是冠军，不能再淘汰。'); return; }
+    if (aliveCount < 2) { alert('只剩最后一个人了，不能再淘汰。'); return; }
     parts.forEach(function(c) {
       if (c.id !== compId && vals[c.id] === aliveRank) setResultPlacement(m, c.id, aliveRank - 1);
     });
@@ -4888,8 +4981,35 @@ function onResultInput(el) {
   const raw = el.value.trim();
   m.results[compId][field] = raw === '' ? null : Number(raw);
 
+  // 手工填了名次就不再走「点名字淘汰」：两套录法别混着用，免得互相打乱
+  if (field === 'placement') {
+    const was = !!m.typedRank;
+    m.typedRank = (raw !== '') ? true : matchHasPlacement(m);
+    if (was !== !!m.typedRank) updateElimAffordance(matchId, m);   // 打字途中也要马上变灰/变回可点
+  }
+
   scheduleSave();
   refreshDerived();
+}
+
+/* 手动录入模式切换时，就地改名字格的可点击样式（不重建 DOM，免得丢焦点） */
+function updateElimAffordance(matchId, m) {
+  const ev = getActiveEvent(); if (!ev) return;
+  const can = !ev.locked && !m.typedRank;
+  document.querySelectorAll('#matchbody-' + matchId + ' tbody tr td.cname').forEach(function(td) {
+    td.classList.toggle('eli', can);
+    if (can) td.title = '点击 = 淘汰（拿当前最差名次，其余人 -1）；再点一次撤销';
+    else if (m.typedRank && !ev.locked) td.title = '本局已手动录入名次，点击淘汰已停用；想用点击就先「清空」本局';
+    else td.title = '';
+  });
+}
+
+/* 这局有没有任何已填的名次 */
+function matchHasPlacement(m) {
+  return Object.keys(m.results || {}).some(function(id) {
+    const v = m.results[id] ? Number(m.results[id].placement) : NaN;
+    return isFinite(v) && v >= 1;
+  });
 }
 
 /* 定点更新：绝不重建带有输入框的 DOM（否则丢焦点）。
@@ -4995,18 +5115,18 @@ function jumpToPending(mid) {
 /* ==========================================================================
    交互：设置
    ========================================================================== */
-function saveSettings() {
-  const ev = getActiveEvent(); if (!ev) return;
+function saveSettings(silent) {
+  const ev = getActiveEvent(); if (!ev) return false;
   ev.name = document.getElementById('set-name').value.trim() || ev.name;
 
   const fmt = document.querySelector('input[name="set-format"]:checked').value;
   ev.matchPoint.enabled = (fmt === 'matchPoint');
   if (ev.matchPoint.enabled) {
     const th = num(document.getElementById('set-mp-threshold').value);
-    if (th == null || th <= 0) { alert('赛点分数需大于 0'); return; }
+    if (th == null || th <= 0) { alert('赛点分数需大于 0'); return false; }
     ev.matchPoint.threshold = th;
     const mx = num(document.getElementById('set-mp-max').value);
-    if (mx == null || mx < 1) { alert('最多局数需 ≥ 1'); return; }
+    if (mx == null || mx < 1) { alert('最多局数需 ≥ 1'); return false; }
     ev.matchPoint.maxMatches = Math.floor(mx);
     ev.matchPoint.bonusEnabled = document.getElementById('set-mp-bonus').checked;
     const st = num(document.getElementById('set-mp-step').value);
@@ -5017,7 +5137,7 @@ function saveSettings() {
   }
 
   const kp = num(document.getElementById('set-kill').value);
-  if (kp == null || kp < 0) { alert('击败分需 ≥ 0'); return; }
+  if (kp == null || kp < 0) { alert('击败分需 ≥ 0'); return false; }
   ev.scoring.killPoints = kp;
 
   commitPlaceEditor();
@@ -5026,9 +5146,12 @@ function saveSettings() {
   ev.scoring.killCoef = placeDraft.coef;
 
   normalize(ev);
+  setDirty = false;
+  updateDirtyNote();
   saveState();
   renderAll();
-  alert('已保存');
+  if (!silent) alert('已保存');
+  return true;
 }
 
 /* 下载一个 JSON 文件；文件名去掉 Windows 非法字符 */
@@ -5100,6 +5223,7 @@ function finishImport(list, bad) {
     return;
   }
   list.forEach(normalize);
+  if (!confirmDiscardUnsaved('导入并切到新赛事')) return;
 
   const names = list.map(function(e) { return e.name; }).join('、');
   let msg = '导入 ' + list.length + ' 个赛事：\n' + names + '\n\n会作为新赛事添加，现有数据不受影响。';
