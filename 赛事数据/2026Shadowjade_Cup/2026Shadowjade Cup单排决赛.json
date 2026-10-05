@@ -1,0 +1,610 @@
+{
+  "events": [
+    {
+      "id": "id-mutdxyvg-kei9om",
+      "name": "2026Shadowjade Cup单排决赛",
+      "mode": "solo",
+      "locked": true,
+      "scoring": {
+        "killPoints": 1,
+        "placement": {
+          "1": 2.5,
+          "2": 1,
+          "3": 0.5,
+          "4": 0.5,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "wudaoPlacement": {
+          "1": 2,
+          "2": 1,
+          "3": 0.5,
+          "4": 0.5,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "killCoef": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1,
+          "10": 1,
+          "11": 1,
+          "12": 1,
+          "13": 1,
+          "14": 1,
+          "15": 1,
+          "16": 1,
+          "17": 1,
+          "18": 1,
+          "19": 1,
+          "20": 1,
+          "21": 1,
+          "22": 1,
+          "23": 1,
+          "24": 1,
+          "25": 1,
+          "26": 1,
+          "27": 1,
+          "28": 1,
+          "29": 1,
+          "30": 1,
+          "31": 1,
+          "32": 1,
+          "33": 1,
+          "34": 1,
+          "35": 1,
+          "36": 1,
+          "37": 1,
+          "38": 1,
+          "39": 1,
+          "40": 1,
+          "41": 1,
+          "42": 1,
+          "43": 1,
+          "44": 1,
+          "45": 1,
+          "46": 1,
+          "47": 1,
+          "48": 1
+        }
+      },
+      "groups": [],
+      "tags": [
+        {
+          "name": "EU",
+          "color": "#89f505"
+        }
+      ],
+      "rankStyles": [
+        {
+          "from": 1,
+          "to": 2,
+          "color": "#e1fa29"
+        }
+      ],
+      "tieBreak": {
+        "points": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          },
+          {
+            "k": "firstScore",
+            "dir": "asc"
+          },
+          {
+            "k": "kills",
+            "dir": "desc"
+          },
+          {
+            "k": "bestScore",
+            "dir": "desc"
+          },
+          {
+            "k": "bestKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastScore",
+            "dir": "desc"
+          },
+          {
+            "k": "lastKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastPlace",
+            "dir": "asc"
+          }
+        ],
+        "mp": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          }
+        ]
+      },
+      "matchTie": [
+        {
+          "k": "kill",
+          "dir": "desc"
+        },
+        {
+          "k": "place",
+          "dir": "asc"
+        }
+      ],
+      "notes": "前二晋级劫杯入围赛",
+      "lb": {
+        "order": [
+          "rank",
+          "group",
+          "tag",
+          "name",
+          "carry",
+          "games",
+          "total",
+          "mp"
+        ],
+        "show": {
+          "rank": true,
+          "group": true,
+          "tag": true,
+          "name": true,
+          "carry": true,
+          "games": true,
+          "total": true,
+          "mp": true
+        },
+        "width": {
+          "rank": 44,
+          "group": 40,
+          "tag": 76,
+          "name": 0,
+          "carry": 56,
+          "games": 0,
+          "total": 68,
+          "mp": 140
+        },
+        "logo": true,
+        "hideMembers": false,
+        "showTitle": true,
+        "title": "",
+        "cell": {
+          "py": 8,
+          "px": 8,
+          "fs": 14
+        }
+      },
+      "manualOrder": [],
+      "matchPoint": {
+        "enabled": false,
+        "threshold": 16,
+        "maxMatches": 8,
+        "bonusEnabled": true,
+        "bonusStep": 0.5,
+        "sameGameCanWin": false,
+        "championOverride": null
+      },
+      "competitors": [
+        {
+          "id": "id-mutfj418-qpjajf",
+          "name": "BWG.Bgreen",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "EU",
+          "logo": null
+        },
+        {
+          "id": "id-mutfj418-zoyk6g",
+          "name": "estate",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "EU",
+          "logo": null
+        },
+        {
+          "id": "id-mutfj418-2plps0",
+          "name": "HEX.LLExNN",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "EU",
+          "logo": null
+        },
+        {
+          "id": "id-mutfj418-nyv30g",
+          "name": "BWG.Zay",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "EU",
+          "logo": null
+        },
+        {
+          "id": "id-mutfj418-3r0pdw",
+          "name": "Moosie",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "EU",
+          "logo": null
+        },
+        {
+          "id": "id-mutfj418-m6iog3",
+          "name": "KFL.Yak",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "EU",
+          "logo": null
+        },
+        {
+          "id": "id-mutfj418-54uoyg",
+          "name": "HEX.Woowie",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "EU",
+          "logo": null
+        },
+        {
+          "id": "id-mutfj418-xucqwd",
+          "name": "EFN.Trex",
+          "members": [],
+          "group": null,
+          "carry": 0,
+          "tag": "EU",
+          "logo": null
+        }
+      ],
+      "matches": [
+        {
+          "id": "id-muv0zu9y-4jifbt",
+          "name": "",
+          "type": "wudao",
+          "groups": [],
+          "results": {
+            "id-mutfj418-qpjajf": {
+              "kills": null,
+              "placement": 1
+            },
+            "id-mutfj418-zoyk6g": {
+              "kills": null,
+              "placement": 4
+            },
+            "id-mutfj418-2plps0": {
+              "kills": null,
+              "placement": 5
+            },
+            "id-mutfj418-nyv30g": {
+              "kills": null,
+              "placement": 2
+            },
+            "id-mutfj418-3r0pdw": {
+              "kills": null,
+              "placement": 6
+            },
+            "id-mutfj418-m6iog3": {
+              "kills": null,
+              "placement": 7
+            },
+            "id-mutfj418-54uoyg": {
+              "kills": null,
+              "placement": 3
+            },
+            "id-mutfj418-xucqwd": {
+              "kills": null,
+              "placement": 8
+            }
+          },
+          "map": "火罗国",
+          "finished": false
+        },
+        {
+          "id": "id-muv153bb-613k47",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mutfj418-54uoyg": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-mutfj418-qpjajf": {
+              "kills": 4,
+              "placement": 4
+            },
+            "id-mutfj418-zoyk6g": {
+              "kills": 4,
+              "placement": 3
+            },
+            "id-mutfj418-2plps0": {
+              "kills": 3,
+              "placement": 2
+            },
+            "id-mutfj418-nyv30g": {
+              "kills": 3,
+              "placement": 1
+            },
+            "id-mutfj418-3r0pdw": {
+              "kills": 1,
+              "placement": 5
+            },
+            "id-mutfj418-m6iog3": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mutfj418-xucqwd": {
+              "kills": 1,
+              "placement": 6
+            }
+          },
+          "map": "聚窟州·早晨",
+          "finished": false
+        },
+        {
+          "id": "id-muv1c2tn-mvgpte",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mutfj418-zoyk6g": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-mutfj418-qpjajf": {
+              "kills": 3,
+              "placement": 3
+            },
+            "id-mutfj418-2plps0": {
+              "kills": 3,
+              "placement": 4
+            },
+            "id-mutfj418-nyv30g": {
+              "kills": 2,
+              "placement": 5
+            },
+            "id-mutfj418-3r0pdw": {
+              "kills": 1,
+              "placement": 6
+            },
+            "id-mutfj418-m6iog3": {
+              "kills": 2,
+              "placement": 2
+            },
+            "id-mutfj418-54uoyg": {
+              "kills": 1,
+              "placement": 7
+            },
+            "id-mutfj418-xucqwd": {
+              "kills": 4,
+              "placement": 1
+            }
+          },
+          "map": "火罗国·阴天",
+          "finished": false
+        },
+        {
+          "id": "id-muv1hihf-ck08t7",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mutfj418-3r0pdw": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-mutfj418-qpjajf": {
+              "kills": 3,
+              "placement": 2
+            },
+            "id-mutfj418-zoyk6g": {
+              "kills": 3,
+              "placement": 3
+            },
+            "id-mutfj418-2plps0": {
+              "kills": 3,
+              "placement": 5
+            },
+            "id-mutfj418-nyv30g": {
+              "kills": 2,
+              "placement": 4
+            },
+            "id-mutfj418-m6iog3": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mutfj418-54uoyg": {
+              "kills": 5,
+              "placement": 1
+            },
+            "id-mutfj418-xucqwd": {
+              "kills": 3,
+              "placement": 6
+            }
+          },
+          "map": "龙隐洞天·朝露",
+          "finished": false
+        },
+        {
+          "id": "id-muv1knh7-e453jo",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mutfj418-3r0pdw": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-mutfj418-qpjajf": {
+              "kills": 1,
+              "placement": 6
+            },
+            "id-mutfj418-zoyk6g": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mutfj418-2plps0": {
+              "kills": 1,
+              "placement": 5
+            },
+            "id-mutfj418-nyv30g": {
+              "kills": 3,
+              "placement": 3
+            },
+            "id-mutfj418-m6iog3": {
+              "kills": 0,
+              "placement": 4
+            },
+            "id-mutfj418-54uoyg": {
+              "kills": 9,
+              "placement": 1
+            },
+            "id-mutfj418-xucqwd": {
+              "kills": 1,
+              "placement": 2
+            }
+          },
+          "map": "聚窟州·正午",
+          "finished": false
+        },
+        {
+          "id": "id-muv1q8bp-jkj7ox",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-mutfj418-3r0pdw": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-mutfj418-qpjajf": {
+              "kills": 7,
+              "placement": 1
+            },
+            "id-mutfj418-zoyk6g": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-mutfj418-2plps0": {
+              "kills": 2,
+              "placement": 2
+            },
+            "id-mutfj418-nyv30g": {
+              "kills": 0,
+              "placement": 4
+            },
+            "id-mutfj418-m6iog3": {
+              "kills": 3,
+              "placement": 5
+            },
+            "id-mutfj418-54uoyg": {
+              "kills": 1,
+              "placement": 3
+            },
+            "id-mutfj418-xucqwd": {
+              "kills": 2,
+              "placement": 6
+            }
+          },
+          "map": "火罗国·星夜",
+          "finished": false
+        }
+      ]
+    }
+  ],
+  "activeEventId": "id-mutdxyvg-kei9om"
+}

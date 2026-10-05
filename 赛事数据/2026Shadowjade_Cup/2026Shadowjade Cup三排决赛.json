@@ -1,0 +1,657 @@
+{
+  "events": [
+    {
+      "id": "id-muv210xm-m88ner",
+      "name": "2026Shadowjade Cup三排决赛",
+      "mode": "trio",
+      "locked": true,
+      "scoring": {
+        "killPoints": 1,
+        "placement": {
+          "1": 4,
+          "2": 2,
+          "3": 1,
+          "4": 1,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "wudaoPlacement": {
+          "1": 8,
+          "2": 4,
+          "3": 2,
+          "4": 2,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "killCoef": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1,
+          "10": 1,
+          "11": 1,
+          "12": 1,
+          "13": 1,
+          "14": 1,
+          "15": 1,
+          "16": 1,
+          "17": 1,
+          "18": 1,
+          "19": 1,
+          "20": 1,
+          "21": 1,
+          "22": 1,
+          "23": 1,
+          "24": 1,
+          "25": 1,
+          "26": 1,
+          "27": 1,
+          "28": 1,
+          "29": 1,
+          "30": 1,
+          "31": 1,
+          "32": 1,
+          "33": 1,
+          "34": 1,
+          "35": 1,
+          "36": 1,
+          "37": 1,
+          "38": 1,
+          "39": 1,
+          "40": 1,
+          "41": 1,
+          "42": 1,
+          "43": 1,
+          "44": 1,
+          "45": 1,
+          "46": 1,
+          "47": 1,
+          "48": 1
+        }
+      },
+      "groups": [],
+      "tags": [
+        {
+          "name": "EU",
+          "color": "#89f505"
+        }
+      ],
+      "rankStyles": [
+        {
+          "from": 1,
+          "to": 2,
+          "color": "#f3eb12"
+        }
+      ],
+      "tieBreak": {
+        "points": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          },
+          {
+            "k": "firstScore",
+            "dir": "asc"
+          },
+          {
+            "k": "kills",
+            "dir": "desc"
+          },
+          {
+            "k": "bestScore",
+            "dir": "desc"
+          },
+          {
+            "k": "bestKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastScore",
+            "dir": "desc"
+          },
+          {
+            "k": "lastKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastPlace",
+            "dir": "asc"
+          }
+        ],
+        "mp": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          }
+        ]
+      },
+      "matchTie": [
+        {
+          "k": "kill",
+          "dir": "desc"
+        },
+        {
+          "k": "place",
+          "dir": "asc"
+        }
+      ],
+      "notes": "前二晋级劫杯入围赛",
+      "lb": {
+        "order": [
+          "rank",
+          "group",
+          "tag",
+          "name",
+          "carry",
+          "games",
+          "total",
+          "mp"
+        ],
+        "show": {
+          "rank": true,
+          "group": true,
+          "tag": true,
+          "name": true,
+          "carry": true,
+          "games": true,
+          "total": true,
+          "mp": true
+        },
+        "width": {
+          "rank": 44,
+          "group": 40,
+          "tag": 76,
+          "name": 0,
+          "carry": 56,
+          "games": 0,
+          "total": 68,
+          "mp": 140
+        },
+        "logo": true,
+        "hideMembers": false,
+        "showTitle": true,
+        "title": "",
+        "cell": {
+          "py": 8,
+          "px": 8,
+          "fs": 14
+        }
+      },
+      "manualOrder": [],
+      "matchPoint": {
+        "enabled": false,
+        "threshold": 40,
+        "maxMatches": 8,
+        "bonusEnabled": true,
+        "bonusStep": 1,
+        "sameGameCanWin": false,
+        "championOverride": null
+      },
+      "competitors": [
+        {
+          "id": "id-muv24mlo-s1e4f7",
+          "name": "HEX",
+          "members": [
+            "Sachiko",
+            "LLExNN",
+            "Woowie",
+            "Korean"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "EU"
+        },
+        {
+          "id": "id-muv24mlo-21s6t1",
+          "name": "Hypercube Wind",
+          "members": [
+            "God7",
+            "Taliska",
+            "Windy",
+            "Chili"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "EU"
+        },
+        {
+          "id": "id-muv24mlo-c490y8",
+          "name": "EFN",
+          "members": [
+            "Agwendoh",
+            "Zade",
+            "Trex"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "EU"
+        },
+        {
+          "id": "id-muv24mlo-k7wm11",
+          "name": "YE",
+          "members": [
+            "Jc",
+            "RinShi",
+            "Ryomen"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "EU"
+        },
+        {
+          "id": "id-muv24mlo-lyli91",
+          "name": "HNJG",
+          "members": [
+            "MJQ",
+            "NoSensee",
+            "IVIZ",
+            "Showien"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "EU"
+        },
+        {
+          "id": "id-muv24mlo-6u94ws",
+          "name": "BWG",
+          "members": [
+            "Bgreen",
+            "Plumeria",
+            "zay"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "EU"
+        },
+        {
+          "id": "id-muv24mlo-e2ye3y",
+          "name": "Risk Takers",
+          "members": [
+            "Brandoro",
+            "Rustam",
+            "aQua"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "EU"
+        },
+        {
+          "id": "id-muv24mlo-hkh7pf",
+          "name": "TDB",
+          "members": [
+            "ZDD[SEA]",
+            "Yizzz",
+            "KARSA"
+          ],
+          "group": null,
+          "carry": 0,
+          "tag": "EU"
+        }
+      ],
+      "matches": [
+        {
+          "id": "id-muv24qqb-oz9awn",
+          "name": "",
+          "type": "wudao",
+          "groups": [],
+          "results": {
+            "id-muv24mlo-s1e4f7": {
+              "kills": null,
+              "placement": 1
+            },
+            "id-muv24mlo-21s6t1": {
+              "kills": null,
+              "placement": 2
+            },
+            "id-muv24mlo-c490y8": {
+              "kills": null,
+              "placement": 4
+            },
+            "id-muv24mlo-k7wm11": {
+              "kills": null,
+              "placement": 3
+            },
+            "id-muv24mlo-lyli91": {
+              "kills": null,
+              "placement": 5
+            },
+            "id-muv24mlo-6u94ws": {
+              "kills": null,
+              "placement": 7
+            },
+            "id-muv24mlo-e2ye3y": {
+              "kills": null,
+              "placement": 8
+            },
+            "id-muv24mlo-hkh7pf": {
+              "kills": null,
+              "placement": 6
+            }
+          },
+          "map": "火罗国",
+          "finished": false
+        },
+        {
+          "id": "id-muv26ecp-3d0v8x",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-muv24mlo-s1e4f7": {
+              "kills": 13,
+              "placement": 1
+            },
+            "id-muv24mlo-6u94ws": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-muv24mlo-21s6t1": {
+              "kills": 11,
+              "placement": 4
+            },
+            "id-muv24mlo-c490y8": {
+              "kills": 7,
+              "placement": 6
+            },
+            "id-muv24mlo-k7wm11": {
+              "kills": 8,
+              "placement": 5
+            },
+            "id-muv24mlo-lyli91": {
+              "kills": 4,
+              "placement": 7
+            },
+            "id-muv24mlo-e2ye3y": {
+              "kills": 7,
+              "placement": 3
+            },
+            "id-muv24mlo-hkh7pf": {
+              "kills": 10,
+              "placement": 2
+            }
+          },
+          "map": "聚窟州·早晨",
+          "finished": false,
+          "mvp": {
+            "compId": "id-muv24mlo-s1e4f7",
+            "member": "Sachiko"
+          }
+        },
+        {
+          "id": "id-muv28243-805wx9",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-muv24mlo-s1e4f7": {
+              "kills": 17,
+              "placement": 1
+            },
+            "id-muv24mlo-21s6t1": {
+              "kills": 15,
+              "placement": 2
+            },
+            "id-muv24mlo-c490y8": {
+              "kills": 10,
+              "placement": 3
+            },
+            "id-muv24mlo-k7wm11": {
+              "kills": 0,
+              "placement": 4
+            },
+            "id-muv24mlo-lyli91": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-muv24mlo-6u94ws": {
+              "kills": 4,
+              "placement": 7
+            },
+            "id-muv24mlo-e2ye3y": {
+              "kills": 6,
+              "placement": 6
+            },
+            "id-muv24mlo-hkh7pf": {
+              "kills": 1,
+              "placement": 5
+            }
+          },
+          "map": "火罗国·阴天",
+          "finished": false,
+          "mvp": {
+            "compId": "id-muv24mlo-s1e4f7",
+            "member": "Woowie"
+          }
+        },
+        {
+          "id": "id-muv2edxa-ujcidl",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-muv24mlo-k7wm11": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-muv24mlo-s1e4f7": {
+              "kills": 6,
+              "placement": 3
+            },
+            "id-muv24mlo-21s6t1": {
+              "kills": 17,
+              "placement": 2
+            },
+            "id-muv24mlo-c490y8": {
+              "kills": 1,
+              "placement": 7
+            },
+            "id-muv24mlo-lyli91": {
+              "kills": 7,
+              "placement": 5
+            },
+            "id-muv24mlo-6u94ws": {
+              "kills": 4,
+              "placement": 4
+            },
+            "id-muv24mlo-e2ye3y": {
+              "kills": 3,
+              "placement": 6
+            },
+            "id-muv24mlo-hkh7pf": {
+              "kills": 17,
+              "placement": 1
+            }
+          },
+          "map": "龙隐洞天·朝露",
+          "finished": false,
+          "mvp": {
+            "compId": "id-muv24mlo-hkh7pf",
+            "member": "KARSA"
+          }
+        },
+        {
+          "id": "id-muv2gy4y-15uq9y",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-muv24mlo-s1e4f7": {
+              "kills": 21,
+              "placement": 1
+            },
+            "id-muv24mlo-k7wm11": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-muv24mlo-21s6t1": {
+              "kills": 8,
+              "placement": 5
+            },
+            "id-muv24mlo-c490y8": {
+              "kills": 1,
+              "placement": 7
+            },
+            "id-muv24mlo-lyli91": {
+              "kills": 3,
+              "placement": 6
+            },
+            "id-muv24mlo-6u94ws": {
+              "kills": 3,
+              "placement": 2
+            },
+            "id-muv24mlo-e2ye3y": {
+              "kills": 8,
+              "placement": 4
+            },
+            "id-muv24mlo-hkh7pf": {
+              "kills": 16,
+              "placement": 3
+            }
+          },
+          "map": "聚窟州·正午",
+          "finished": false,
+          "mvp": {
+            "compId": "id-muv24mlo-s1e4f7",
+            "member": "Woowie"
+          }
+        },
+        {
+          "id": "id-muv2jgg9-clbmpm",
+          "name": "",
+          "type": "tianti",
+          "groups": [],
+          "results": {
+            "id-muv24mlo-s1e4f7": {
+              "kills": 14,
+              "placement": 2
+            },
+            "id-muv24mlo-lyli91": {
+              "kills": 4,
+              "placement": 8
+            },
+            "id-muv24mlo-21s6t1": {
+              "kills": 10,
+              "placement": 1
+            },
+            "id-muv24mlo-c490y8": {
+              "kills": 10,
+              "placement": 3
+            },
+            "id-muv24mlo-k7wm11": {
+              "kills": 5,
+              "placement": 7
+            },
+            "id-muv24mlo-6u94ws": {
+              "kills": 11,
+              "placement": 4
+            },
+            "id-muv24mlo-e2ye3y": {
+              "kills": 7,
+              "placement": 5
+            },
+            "id-muv24mlo-hkh7pf": {
+              "kills": 6,
+              "placement": 6
+            }
+          },
+          "map": "火罗国·星夜",
+          "finished": false,
+          "mvp": {
+            "compId": "id-muv24mlo-s1e4f7",
+            "member": "Woowie"
+          }
+        }
+      ]
+    }
+  ],
+  "activeEventId": "id-muv210xm-m88ner"
+}
