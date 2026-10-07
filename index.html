@@ -549,6 +549,7 @@
   <select id="event-select" onchange="onSelectEvent(this.value)"></select>
   <button id="lock-btn" class="ghost" onclick="toggleLock()"></button>
   <button onclick="openNewEventModal()">+ 新建赛事</button>
+  <button id="lang-btn" class="ghost" data-noi18n onclick="toggleLang()" title="Switch to English">EN</button>
 </div>
 <div id="lock-banner" class="hidden"></div>
 
@@ -3624,14 +3625,19 @@ function parsePlacement(text) {
 /* ==========================================================================
    交互：赛事
    ========================================================================== */
-/* 离开设置面板时，若还有没保存的改动，先问一声要不要顺手保存 */
+/* 离开设置面板时，若还有没保存的改动，先问一声：保存带走，或者直接丢掉 */
 function leaveSettingsCheck(name) {
   if (currentPanel !== 'settings' || name === 'settings' || !setDirty) return true;
   const label = { record: '比赛录入', comp: '参赛者', settings: '设置' }[name] || name;
   const save = confirm('设置里改过东西，但还没点「保存设置」。\n\n' +
     '・点「确定」= 先保存，再切到「' + label + '」\n' +
-    '・点「取消」= 这次不保存，直接切过去（改动会留在设置里，回来还能接着改）');
-  if (!save) return true;                 // 不保存也允许切走，草稿不会丢
+    '・点「取消」= 这次不保存，直接切过去（改动不保留，切回来还是原来的设置）');
+  if (!save) {                            // 不保存直接切走：丢掉草稿，回到已保存的设置
+    setDirty = false;
+    placeDraft = null;
+    updateDirtyNote();
+    return true;
+  }
   return saveSettings(true);              // 保存失败（数值不合法）就别切走，先改对
 }
 function switchPanel(name) {
@@ -5404,7 +5410,819 @@ document.addEventListener('change', function(e) {
   }
 });
 
+/* ==========================================================================
+   中英文切换（i18n）
+   纯显示层：不改任何渲染逻辑，页面画好之后把界面上的中文换成英文。
+   翻不到的原样保持中文，数据、导出、逻辑一律不受影响。
+   ========================================================================== */
+const I18N_KEY = 'naraka_lang';
+let LANG = 'zh';
+
+/* 「二十」以内的中文数字 → 阿拉伯数字（第X局/第X赛段这类用） */
+function cnNumToInt(s) {
+  const D = { '一':1, '二':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9, '十':10 };
+  if (D[s] != null) return D[s];
+  if (s.charAt(0) === '十') return 10 + (D[s.charAt(1)] || 0);
+  if (s.charAt(1) === '十') return (D[s.charAt(0)] || 0) * 10 + (s.length > 2 ? (D[s.charAt(2)] || 0) : 0);
+  return s;
+}
+
+/* 中文 → 英文词典。键是完整一段文本（匹配前会去掉首尾空白），值是对应英文 */
+const EN = {
+  /* ---- 顶栏 ---- */
+  '永劫无间': 'NARAKA: BLADEPOINT',
+  '赛事积分表': 'Event Standings',
+  '全部': 'All',
+  '单排': 'Solo',
+  '三排': 'Trios',
+  '+ 新建赛事': '+ New Event',
+  '新建赛事': 'New Event',
+  '还没有赛事': 'No events yet',
+  '该类型下还没有赛事': 'No events in this category',
+
+  /* ---- 积分榜 ---- */
+  '实时积分榜': 'Live Standings',
+  '显示设置': 'Display Settings',
+  '积分榜显示设置': 'Leaderboard Display Settings',
+  '简表': 'Compact',
+  '完整表': 'Full Table',
+  '展开全部': 'Expand All',
+  '收起': 'Collapse',
+  '备注': 'Notes',
+  '编辑': 'Edit',
+  '保存': 'Save',
+  '取消': 'Cancel',
+  '还没有内容。点右上角「编辑」写点什么——比如赛制说明、晋级预测、赛程安排。':
+    'Nothing here yet. Click Edit at the top right to write something — format notes, qualification predictions, schedule…',
+  '还没有参赛者，请在右侧「参赛者」里添加': 'No competitors yet — add them in the Competitors panel',
+  '该组暂无参赛者': 'No competitors in this group',
+  '· 合并总榜': '· Overall',
+  '合并总榜': 'Overall',
+
+  /* ---- 面板 / 参赛者 ---- */
+  '比赛录入': 'Match Entry',
+  '参赛者': 'Competitors',
+  '设置': 'Settings',
+  '+ 添加一局比赛': '+ Add Match',
+  '批量添加': 'Bulk Add',
+  '批量填写前序积分': 'Bulk Carry-in Entry',
+  '填入': 'Apply',
+  '未匹配到的名称会提示，其余参赛者不受影响': 'Unmatched names are reported; other competitors are unaffected',
+  '批量管理 / 删除': 'Bulk Manage / Delete',
+  '+ 添加官方战队': '+ Add Official Teams',
+  '+ 从已有赛事挑选': '+ Pick from Other Events',
+  '无赛区': 'No region',
+  '未分组': 'Ungrouped',
+
+  /* ---- 设置面板 ---- */
+  '基础': 'Basics',
+  '赛事名称': 'Event Name',
+  '模式（不可更改）': 'Mode (read-only)',
+  '赛制': 'Format',
+  '积分制': 'Points',
+  '赛点制': 'Match Point',
+  '赛点分数（累计达到即开启赛点）': 'Match Point threshold (reaching it activates match point)',
+  '最多局数（打满仍无冠军则按总积分定冠军）': 'Max matches (if no champion, highest total wins)',
+  '启用赛点排名分（开启后自下一局起每局递增）': 'Enable match point placement bonus (grows each game after activation)',
+  '每局递增': 'Increase per game',
+  '分': 'pts',
+  '开启赛点的当局所获单局第一也算夺冠（官方为「再获得一次」，默认关）':
+    'A #1 in the game that activates match point also wins (official rule requires another #1; off by default)',
+  '手动指定冠军（用于并列等需人工裁定的情况）': 'Manual champion override (for ties needing a human ruling)',
+  '计分': 'Scoring',
+  '击败分单价（每个击败多少分，仅作用于天人局；再乘上该名次的击败系数）':
+    'Points per kill (Survival matches only; multiplied by the placement kill multiplier)',
+  '排名分表（第 1-48 名，逐格可改）': 'Placement points table (ranks 1-48, editable per cell)',
+  '天人排名分': 'Survival Placement',
+  '武道排名分': 'Martial Artist Placement',
+  '击败系数': 'Kill Multiplier',
+  '文本模式': 'Text mode',
+  '同分排名规则': 'Tiebreak Rules',
+  '总分相同时，依次比较以下项': 'When totals are equal, compare in order:',
+  '+ 添加比较项': '+ Add Criterion',
+  '恢复默认': 'Reset Defaults',
+  '清空': 'Clear',
+  '单局同分排名（天人局）': 'In-game tiebreak (Survival)',
+  '数据': 'Data',
+  '保存设置': 'Save Settings',
+  '导出本赛事': 'Export Event',
+  '导入赛事（可多选）': 'Import Events (multi-select)',
+  '批量管理赛事…': 'Bulk Manage Events…',
+  '删除本赛事': 'Delete Event',
+
+  /* ---- 新建赛事弹窗 ---- */
+  '模式': 'Mode',
+  '默认': 'Default',
+  '沿用当前赛事': 'Copy current event',
+  '创建': 'Create',
+  '还没有赛事，尝试新建赛事或导入赛事吧': 'No events yet — create or import one to get started',
+
+  /* ---- 批量管理参赛者 ---- */
+  '批量管理参赛者': 'Bulk Manage Competitors',
+  '全选': 'Select All',
+  '全不选': 'Select None',
+  '把选中的加入': 'Add selected to',
+  '应用分组': 'Apply Group',
+  '+ 新建组': '+ New Group',
+  '赛区标为': 'Set region to',
+  '应用赛区': 'Apply Region',
+  '+ 新建赛区标签': '+ New Region',
+  '删除选中': 'Delete Selected',
+  '关闭': 'Close',
+
+  /* ---- 批量管理赛事 ---- */
+  '批量管理赛事': 'Bulk Manage Events',
+  '逐个导出': 'Export Individually',
+  '导出为一个文件': 'Export as One File',
+
+  /* ---- 裁定 / 战神弹窗 ---- */
+  '裁定单局最高分': 'Resolve Highest Match Score',
+  '确定': 'OK',
+  '单局同分裁定': 'In-game Tiebreak',
+  '清除本局裁定': "Clear this game's ruling",
+  '选择本局战神': 'Select Match MVP',
+
+  /* ---- 官方战队弹窗 ---- */
+  '添加官方战队': 'Add Official Teams',
+  '名字写法': 'Name style',
+  '官方 ID': 'Official ID',
+  '中文昵称': 'CN Nickname',
+  '添加选中': 'Add Selected',
+
+  /* ---- 从已有赛事挑选 ---- */
+  '从已有赛事挑选': 'Pick from Other Events',
+  '来源赛事': 'Source event',
+  '排序': 'Sort',
+  '总分降序': 'Total desc',
+  '名字': 'Name',
+  '录入顺序': 'Entry order',
+  '赛区': 'Region',
+
+  /* ---- 积分榜显示设置 ---- */
+  '单元格': 'Cells',
+  '上下留白': 'Vertical padding',
+  '左右留白': 'Horizontal padding',
+  '字号': 'Font size',
+  '名次着色（淘汰赛）': 'Rank coloring (elimination)',
+  '按积分榜上的名次给整行着色，用来标出晋级 / 淘汰':
+    'Color whole rows by leaderboard rank to mark qualified / eliminated',
+  '+ 添加规则': '+ Add Rule',
+  '填入常用（5-8 名灰色）': 'Preset: gray ranks 5-8',
+  '在「队伍 / 选手」列显示队标': 'Show team logos in the Team / Player column',
+  '隐藏队伍成员名单（三排只留战队名）': 'Hide member lists (Trios: team name only)',
+  '榜单标题': 'Board Title',
+  '显示标题（居中放在积分榜上方）': 'Show title (centered above the board)',
+  '完成': 'Done',
+  '排名': 'Rank',
+  '队伍 / 选手': 'Team / Player',
+
+  /* ---- 锁定 / 横幅 ---- */
+  '🔒 结束积分': '🔒 End scoring',
+  '🔒 已结束积分 · 点击继续记分': '🔒 Scoring ended · click to resume',
+  '本赛事已结束积分': "This event's scoring has ended",
+
+  /* ---- confirm / 提示 ---- */
+  '结束积分？\n\n锁定后本赛事的成绩录入、参赛者和对局都将无法修改，防止误触。\n随时可以点「已结束积分」解锁。':
+    'End scoring?\n\nOnce locked, score entry, competitors and matches cannot be modified (prevents accidental edits).\nYou can unlock anytime from the top-right button.',
+  '继续记分？\n\n将解除锁定，恢复所有录入操作。':
+    'Resume scoring?\n\nThe event will be unlocked and all entry operations restored.',
+
+  /* ---- 地图（官方英文名；天气名取自游戏内标签） ---- */
+  '火罗国': 'Holoroth',
+  '聚窟州·早晨': 'Morus Isle · Dawn',
+  '聚窟州·正午': 'Morus Isle · Midday',
+  '聚窟州·黄昏': 'Morus Isle · Dusk (Fireflies)',
+  '聚窟州·夜晚': 'Morus Isle · Night (Fireflies)',
+  '火罗国·黄昏': 'Holoroth · Dusk (Fireflies)',
+  '火罗国·阴天': 'Holoroth · Cloudy',
+  '火罗国·晴天': 'Holoroth · Sunny',
+  '火罗国·星夜': 'Holoroth · Starry Night (Fireflies)',
+  '龙隐洞天·日暮': 'Perdoria · Eventide (Fireflies)',
+  '龙隐洞天·夜半': 'Perdoria · Midnight (Fireflies)',
+  '龙隐洞天·朝露': 'Perdoria · Morning Dew',
+  '宛渠·夕阳': 'Wanchu · Sunset',
+  '宛渠·烈日': 'Wanchu · Blaze',
+  '宛渠·星夜': 'Wanchu · Starry Night (Fireflies)',
+
+  /* ---- 赛事名常见词 ---- */
+  '决赛': 'Finals',
+  '预选赛': 'Qualifiers',
+  '单排赛': 'Solo Event',
+  '三排赛': 'Trios Event',
+
+  /* ---- 排名分预设 ---- */
+  '官方 8 人 · 单排 2.5/1/0.5/0.5': 'Official 8 players · Solo 2.5/1/0.5/0.5',
+  '官方 8 队 · 三排 4/2/1/1': 'Official 8 teams · Trios 4/2/1/1',
+  '官方 12 人 · 单排 3/2/1.5/1.5/1/1/0.5/0.5/0.5':
+    'Official 12 players · Solo 3/2/1.5/1.5/1/1/0.5/0.5/0.5',
+  '官方 12 队 · 三排 4/2.5/2/1.5/1.5/1/1/0.5/0.5/0.5':
+    'Official 12 teams · Trios 4/2.5/2/1.5/1.5/1/1/0.5/0.5/0.5',
+  '官方 8 强 · 单排 2/1/0.5/0.5': 'Official top 8 · Solo 2/1/0.5/0.5',
+  '官方 8 强 · 三排 8/4/2/2': 'Official top 8 · Trios 8/4/2/2',
+  '16 人梯度（示例，非官方）': '16-player ladder (example, unofficial)',
+  '24 人梯度（示例，非官方）': '24-player ladder (example, unofficial)',
+  '32 人梯度（示例，非官方）': '32-player ladder (example, unofficial)',
+  '48 人梯度（示例，非官方）': '48-player ladder (example, unofficial)',
+  '全部清零': 'All zeros',
+  '全部为 1（默认）': 'All 1 (default)',
+  '天人排名分表（第 1-48 名，逐格可改）': 'Survival placement table (ranks 1-48, editable per cell)',
+  '武道排名分表（第 1-48 名，逐格可改）': 'Martial Artist placement table (ranks 1-48, editable per cell)',
+  '击败系数表（第 1-48 名，每个名次一个倍率；击败分 = 击败数 × 击败分单价 × 该名次系数，默认全为 1）':
+    'Kill multiplier table (ranks 1-48, one multiplier each; kill points = kills × points per kill × multiplier, all 1 by default)',
+
+  /* ---- 同分比较项 ---- */
+  '前序积分': 'Carry-in points',
+  '第一局积分': 'Game 1 points',
+  '第一局名次': 'Game 1 placement',
+  '击败分': 'Kill points',
+  '单局最高分': 'Highest match score',
+  '单局最高击败': 'Highest match kills',
+  '最后一局积分': 'Last game points',
+  '最后一局击败': 'Last game kills',
+  '最后一局名次': 'Last game placement',
+  '生存排名': 'Placement',
+  '升序': 'Asc',
+  '降序': 'Desc',
+  '降序（固定，不可改）': 'Desc (fixed)',
+  '全部相同则并列，需人工评定。': 'If all equal, players are tied and need a manual ruling.',
+
+  /* ---- 对局卡片 ---- */
+  '类型': 'Type',
+  '天人': 'Survival',
+  '武道': 'Martial Artist',
+  '武道冠军': 'Martial Artist Champion',
+  '战神': 'MVP',
+  '仅排名分，无击败分': 'Placement only, no kills',
+  '排名分 + 击败分': 'Placement + kill points',
+  '地图': 'Map',
+  '地图天气': 'Map & Weather',
+  '点名字 = 淘汰（再点撤销）': 'Click a name = eliminate (click again to undo)',
+  '⚑ 对局结束': '⚑ End match',
+  '✔ 对局结束': '✔ Match ended',
+  '重开淘汰': 'Reopen elimination',
+  '参与组': 'Groups in match',
+  '全员': 'All',
+  '本局备注（可留空）': 'Match note (optional)',
+  '搜索选手…': 'Search players…',
+  '跳到未录入': 'Jump to unfilled',
+  '· 未录入': '· unfilled',
+  '本局得分': 'Match Score',
+  '合计': 'Total',
+  '总积分': 'Total Points',
+  '前序': 'Carry-in',
+  '每局': 'Per game',
+  '赛点状态': 'Match Point',
+  '组': 'Group',
+  '击败': 'Kills',
+  '名次': 'Rank',
+  '击杀': 'Kills',
+  '并列': 'Tied',
+  '已裁定': 'Resolved',
+  '待裁定': 'TBD',
+  '夺冠': 'Champion',
+  '当前': 'Current',
+  '开启赛点': 'Match Point',
+  '🔒 已结束': '🔒 Ended',
+  '🏆 冠军：': '🏆 Champion: ',
+  '（人工裁定）': '(manual ruling)',
+  '· ⚠️名次重复 ': '· ⚠️ duplicate rank ',
+  '· ⚠️无效成绩 ': '· ⚠️ invalid score ',
+  '暂无比赛数据': 'No match data yet',
+  '还没有比赛，点击上方按钮添加第一局': 'No matches yet — add the first one with the button above',
+  '（武道局只按单局积分）': '(Martial Artist matches use match score only)',
+  '前序积分（带入）': 'Carry-in (brought in)',
+  '（无，自动判定）': '(none — auto)',
+  '不指定组': 'No group',
+  '宽度': 'Width',
+  '固定显示': 'Always shown',
+  '此项只影响积分榜每局列的高亮显示，不参与冠军判定。':
+    'This only affects the per-game highlight on the board, not champion determination.',
+
+  /* ---- 对局卡片提示 ---- */
+  '对局结束时点这里，灰掉的选手恢复正常显示': 'Click when the match ends to un-dim eliminated players',
+  '重新进入淘汰录入状态？名次不动，灰显会重新生效。':
+    'Reopen elimination entry? Ranks stay; the dimming takes effect again.',
+  '默认就是参与人数；点名字淘汰会自动往前排':
+    'Defaults to all participants; eliminating via names moves them up automatically',
+  '点击 = 淘汰（拿当前最差名次，其余人 -1）；再点一次撤销':
+    'Click = eliminate (takes the current worst rank, everyone else advances); click again to undo',
+  '本局已手动录入名次，点击淘汰已停用；想用点击就先「清空」本局':
+    'Ranks were entered manually — click-elimination is off. Clear this match to use it.',
+  '本局最高分有并列，点击裁定高亮哪一个': 'Highest score is tied — click to pick which one gets highlighted',
+  '本局最高分并列，先裁定高分的是哪队才能定': 'Highest score is tied — resolve which team scored highest to set the ',
+  '清空本局已录入的成绩？': 'Clear all entries for this match?',
+  '清空本局的同分裁定？同分的选手恢复为并列。': "Clear this match's tiebreak rulings? Tied players go back to tied.",
+  '清除全部人工裁定？同分的选手将恢复为并列。': 'Clear all manual rulings? Tied players go back to tied.',
+  '清除全部裁定': 'Clear all rulings',
+  '本局没有并列的最高分，无需裁定。': 'No tied highest score in this match — nothing to resolve.',
+  '本局最高分还有并列没裁定。先在卡片上点「最高分并列」定下来，再来选战神。':
+    'The highest score still has unresolved ties. Resolve them via "highest score tied" on the card first, then pick the MVP.',
+  '从这支队伍的选手里选一名当战神；不选就显示战队名。':
+    'Pick one of this team\'s players as MVP; leave it empty to show the team name.',
+  '要选战神的话，在「参赛者」里按「队伍名 / 成员1 / 成员2」把成员补上。':
+    'To pick an MVP, add members in Competitors as "Team / Member1 / Member2".',
+  '选择要高亮的那一个。官方同分顺序为「单局总分 → 击败分 → 生存排名」，已默认选中符合该顺序的人。<br>':
+    'Choose which one to highlight. The official tiebreak order is "match total → kills → placement"; the player matching it is pre-selected.<br>',
+  '（只列三排赛事）': '(Trios events only)',
+  '（只列单排赛事）': '(Solo events only)',
+  '三排赛事只能从三排赛事里挑队伍。': 'Trios events can only pick teams from other Trios events.',
+  '单排赛事只能从单排赛事里挑选手。': 'Solo events can only pick players from other Solo events.',
+  '选中的都已经在本次赛事里了。': 'All selected entries are already in this event.',
+  '选中的都已经添加过了。': 'All selected entries have already been added.',
+  '还没勾选任何人。': 'Nobody selected yet.',
+  '还没勾选任何选手。': 'No players selected yet.',
+  '还没勾选任何战队。': 'No teams selected yet.',
+  '已有': 'Exists',
+
+  /* ---- 参赛者面板 ---- */
+  '请先粘贴参赛者名单': 'Paste a roster first.',
+  '还没有参赛者，先在上面的框里批量添加。': 'No competitors yet — add them with the bulk box above.',
+  '请先勾选要分组的参赛者。': 'Select competitors to group first.',
+  '请先勾选要删除的参赛者。': 'Select competitors to delete first.',
+  '请先勾选要标赛区的参赛者。': 'Select competitors to tag first.',
+  '组名（例如 A、东部赛区）': 'Group name (e.g. A, East)',
+  '新组名（例如 C、东部赛区）': 'New group name (e.g. C, East)',
+  '该组已存在': 'This group already exists.',
+  '分成几个组？': 'Split into how many groups?',
+  '组数需在 2-12 之间': 'Group count must be between 2 and 12.',
+  '赛区标签名（例如 华东、A 赛区）': 'Region name (e.g. East, Region A)',
+  '点击上传队标': 'Click to upload a logo',
+  '点击换一张队标': 'Click to change the logo',
+  '请选择图片文件（png / jpg / svg 都行）。': 'Choose an image file (png / jpg / svg).',
+  '这张图片读不出来，换一张试试。': 'This image could not be read — try another one.',
+  '改名': 'Rename',
+  '改颜色': 'Change color',
+  '删除': 'Delete',
+  '删除该标签': 'Delete this tag',
+  '删除该组': 'Delete this group',
+
+  /* ---- 批量管理赛事 ---- */
+  '请先勾选要导出的赛事。': 'Select events to export first.',
+  '请先勾选要删除的赛事。': 'Select events to delete first.',
+  '导入失败：': 'Import failed: ',
+  '导入并切到新赛事': 'Import and open',
+  '赛事导出_': 'event-export_',
+  '选中已结束积分的赛事会被锁定，需要手动解锁后才能修改。':
+    'Selected events with scoring ended are locked; unlock them manually to edit.',
+  '删完就一个赛事都不剩了，首页会回到「还没有赛事」的空状态。真的要全部删掉吗？':
+    'This would delete every event — the home page returns to the empty state. Really delete all of them?',
+
+  /* ---- 占位提示（placeholder） ---- */
+  '例如：2026 秋季赛': 'e.g. 2026 Fall Split',
+  '留空就用赛事名': 'Empty = event name',
+  '只看单排或三排赛事': 'Show only Solo or Trios events',
+  '点击选择本局战神选手': 'Click to select this match\'s MVP',
+  '单局内有按规则分不出先后的，点击人工裁定名次':
+    'If the rules cannot separate players within a match, click to resolve the order manually',
+  '⚠️ 单局第一出现完全并列，无法自动判定夺冠，请在「设置 → 手动指定冠军」中裁定。':
+    '⚠️ The match winner is fully tied — the champion cannot be auto-decided. Resolve it in Settings → Manual champion override.',
+  '还没有可沿用的赛事，本次使用默认显示设置。':
+    'No existing event to copy from — using default display settings.',
+
+  /* ---- 精选弹窗 / 显示设置里的句子碎片 ---- */
+  '你的挑选顺序': 'your pick order',
+  '来源只列': 'Lists only ',
+  '同模式': 'same-mode',
+  '列、单元格、名次着色都是每个赛事单独一套，跟着赛事导出。':
+    'Columns, cells and rank coloring are per-event and exported with it. ',
+  '和': ' and ',
+  '同分人工评定': 'Manual Tie Resolution',
+  '按现行同分规则，所有名次都已分出先后，无需裁定。':
+    'By the current tiebreak rules all places are already decided — no ruling needed.',
+  '未指定': 'Not set',
+  '武道分': 'Martial Artist pts',
+  '赛点': 'Match Point',
+  '🔒 本赛事已结束积分，无法添加对局': '🔒 Scoring ended — cannot add matches',
+  '，所有成绩录入已锁定以防误触。需要修改请点右上角「已结束积分」解锁。':
+    ', all score entry is locked to prevent mistakes. Unlock it from the top-right button.',
+
+  /* ---- 赛点横幅 / 状态碎片 ---- */
+  '赛点制 · 累计达到': 'Match Point · reach',
+  '分开启赛点 · 至多': 'pts to activate · max',
+  '局': 'games',
+  '· 开启后每局递增': '· increases by',
+  '分赛点排名分': 'pts per game after activation',
+  '人工裁定': 'Manual ruling',
+  '总积分定冠军': 'Total points champion',
+  '赛前开启': 'Pre-event',
+  '赛前已开启': 'pre-event',
+  '（赛前已开启）': '(pre-event)',
+  '、': ', ',
+
+  /* ---- 设置面板 / 参赛者面板补充 ---- */
+  '总分': 'Total',
+  '单局积分': 'Match score',
+  '击败数': 'Kills',
+  '当前是': 'Currently: ',
+  '。总分降序固定在最前，向下依次比较；全部相同则并列，需人工评定。':
+    '. Total desc is fixed first; compare downwards in order; if all equal, players are tied and need a manual ruling.',
+  '每局录入后，单局内按这套排名次。单局积分降序固定在最前，之后依次比较（武道局只按单局积分）；全部相同则并列，在卡片上点「单局同分待裁定」人工定先后。':
+    'After each match is entered, in-match ranks follow these rules. Match score desc is fixed first; the rest compare in order (Martial Artist matches use match score only). If all equal, players are tied — resolve via "in-game tiebreak" on the match card.',
+  '🔒 本赛事已结束积分，需先在顶部解锁才能保存修改。':
+    '🔒 This event\'s scoring has ended — unlock it at the top before saving changes.',
+  '当前无人设置前序积分': 'No carry-in points set',
+  '前序积分（带入分）：计入总积分，也参与赛点开启判定':
+    'Carry-in points: count toward totals and match point activation',
+  '随机平均分组': 'Random split',
+  '赛事已结束积分，解锁后可改': 'Scoring ended — unlock to edit',
+
+  /* ---- 裁定弹窗 / 显示设置列 ---- */
+  '同分裁定': 'Tiebreak ruling',
+  '按你想要的顺序依次点名字：先点的排前面，再点一下取消。并列全由人工定，不再按比较项。':
+    'Click names in the order you want: first click ranks first; click again to undo. Ties are decided entirely by hand, ignoring the criteria.',
+  '本局最高分是': 'Top score: ',
+  '名，颜色': ', color',
+  '第': 'Rank ',
+  '显示': 'Show',
+  '自动': 'auto',
+  '左移': 'Move left',
+  '右移': 'Move right',
+  '名称': 'Name',
+  '组名': 'Group name',
+  '赛区标签名': 'Region name',
+  '成员（用 / 或 , 分隔）': 'Members (separated by / or ,)',
+  '战队名': 'Team name',
+
+  /* ---- 多行弹窗消息 ---- */
+  '清空单局同分的全部比较项？\n\n单局积分相同的直接并列，靠人工裁定分先后。':
+    'Clear all in-game tiebreak criteria?\n\nEqual match scores go straight to tied — resolve them manually.',
+  '覆盖当前的名次着色规则？\n\n第 5-8 名标灰。\n颜色之后可以自己改；其余名次不着色。':
+    'Overwrite the current rank coloring rules?\n\nRanks 5-8 will be grayed out.\nYou can change the colors later; other ranks stay uncolored.',
+  '没有匹配到任何参赛者。\n格式应为每行「名称 分数」，例如：TC 8':
+    'No competitors matched.\nExpected one "name score" pair per line, e.g. TC 8',
+  '本局还没有人工裁定。': 'No manual rulings for this match yet.',
+  '本局已全部录入': 'All entries complete for this match',
+};
+
+/* 拼接文案的规则：整段匹配（^…$），m 是捕获组，可递归用 t()。顺序敏感，更具体的放前面 */
+const EN_RULES = [
+  /* 赛事名保持原样，只翻界面加的词缀：X（导入2）/ X（单排·赛点制）/ X（单排 · 8 队） */
+  [ /^(.+)（导入(\d*)）$/, m => m[1] + ' (Imported' + (m[2] ? ' ' + m[2] : '') + ')' ],
+  [ /^(.+)（(单排|三排)·(赛点制|积分制)）$/, m => t(m[1]) + ' (' + t(m[2]) + ' · ' + t(m[3]) + ')' ],
+  [ /^(.+)（(单排|三排) · (\d+) (人|队)）$/, m => t(m[1]) + ' (' + t(m[2]) + ' · ' + m[3] + (m[4] === '人' ? ' players' : ' teams') + ')' ],
+  /* 第X局 / 第X名（X 是中文数字） */
+  [ /^第([一二三四五六七八九十]+)局$/, m => 'Game ' + cnNumToInt(m[1]) ],
+  [ /^第([一二三四五六七八九十]+)名$/, m => 'Rank ' + cnNumToInt(m[1]) ],
+  /* 积分榜表头提示：第三局 · 名字（武道对局）· 聚窟州·早晨 */
+  [ /^第[一二三四五六七八九十]+局( · .*)?(（武道对局）)?( · .*)?$/, (m, s) => trMatchTip(s) ],
+  /* 积分榜 meta 行：单排 · 赛点制 · 48 人 · 8 局（· A组 / · 合并总榜） */
+  [ /^(单排|三排) · (赛点制|积分制) · (\d+) (人|队) · (\d+) 局( · .+)?$/,
+    m => t(m[1]) + ' · ' + t(m[2]) + ' · ' + m[3] + (m[4] === '人' ? ' players' : ' teams') +
+         ' · ' + m[5] + ' games' + (m[6] ? t(m[6]) : '') ],
+  /* A组 / A+B组 → Group A / Group A+B */
+  [ /^([A-L](?:\+[A-L])*)组$/, m => 'Group ' + m[1] ],
+  /* 数量 + 单位 */
+  [ /^(\d+) 人$/, m => m[1] + ' players' ],
+  [ /^(\d+) 队$/, m => m[1] + ' teams' ],
+  /* ---- 对局卡片 / 弹窗合成文案 ---- */
+  [ /^⚔️ 战神：(.+)$/, m => '⚔️ MVP: ' + m[1] ],
+  [ /^⚔️ 武道冠军：(.+)$/, m => '⚔️ Martial Artist Champion: ' + m[1] ],
+  [ /^⚖️ 单局同分待裁定 (\d+) 组$/, m => '⚖️ ' + m[1] + ' in-game tie' + (m[1] === '1' ? '' : 's') + ' to resolve' ],
+  [ /^🔥 已开启赛点：(.+) —— 再获一次单局第一即夺冠$/, m => '🔥 Match Point active: ' + m[1] + ' — one more #1 wins the title' ],
+  [ /^⚠️ 最高分并列 (\d+) (人|队)$/, m => '⚠️ Highest score tied: ' + m[1] + (m[2] === '人' ? ' players' : ' teams') ],
+  [ /^总击败 (\d+)$/, m => 'Kills ' + m[1] ],
+  [ /^击杀 (\d+)(\(×[\d.]+\))? · 名次 (\d+) = ([\d.]+)$/, m => 'Kills ' + m[1] + (m[2] || '') + ' · Rank ' + m[3] + ' = ' + m[4] ],
+  [ /^名次 (\d+) = ([\d.]+)$/, m => 'Rank ' + m[1] + ' = ' + m[2] ],
+  [ /^已录入 (\d+)\/(\d+)( · ⚠️名次重复 (\d+))?( · ⚠️无效成绩 (\d+))?$/, m =>
+      m[1] + '/' + m[2] + ' entered' +
+      (m[4] ? ' · ⚠️ duplicate rank ' + m[4] : '') + (m[6] ? ' · ⚠️ invalid score ' + m[6] : '') ],
+  [ /^(.+) · 未录入$/, m => t(m[1]) + ' · unfilled' ],
+  [ /^(\d+) (人|队)规则同分 · (已裁定|待裁定)$/, m => m[1] + (m[2] === '人' ? ' players' : ' teams') + ' tied by rules · ' + t(m[3]) ],
+  [ /^(\d+) (人|队)同分 · (已裁定|待裁定)$/, m => m[1] + (m[2] === '人' ? ' players' : ' teams') + ' tied · ' + t(m[3]) ],
+  [ /^共 (\d+) 支战队 · (\d+) 名(选手|队员)（含灵活）$/, m => m[1] + ' teams · ' + m[2] + ' players (incl. flex)' ],
+  [ /^「(.+)」的战神选手$/, m => 'MVP — ' + t(m[1]) ],
+  [ /^（([\d.]+) 分），从这支队伍的选手里选一名当战神；不选就显示战队名。$/,
+    m => ' (' + m[1] + ' pts). Pick one of this team\'s players as MVP; leave it empty to show the team name.' ],
+  [ /^沿用「(.+)」的列显示 \/ 顺序 \/ 宽度、单元格大小和名次着色；选「默认」则用内置的一套。$/,
+    m => 'Copy columns / order / widths, cell size and rank coloring from "' + m[1] + '"; "Default" uses the built-in set.' ],
+  [ /^比较项：单局积分降序(（武道局只按单局积分）)?$/, m => 'Criteria: match score desc' + (m[1] ? ' (Martial Artist matches use match score only)' : '') ],
+  [ /^每局（(\d+) 列）$/, m => 'Per game (' + m[1] + ' columns)' ],
+  [ /^(单排|三排) · (赛点制|积分制) · (\d+) (人|队) · (\d+) 局$/, m =>
+      t(m[1]) + ' · ' + t(m[2]) + ' · ' + m[3] + (m[4] === '人' ? ' players' : ' teams') + ' · ' + m[5] + ' games' ],
+  [ /^「(.+)」还没录选手，先用战队名代替。\n要选战神的话，在「参赛者」里按「队伍名 \/ 成员1 \/ 成员2」把成员补上。$/,
+    m => '“' + m[1] + '” has no players yet — showing the team name instead.\nTo pick an MVP, add members in Competitors as “Team / Member1 / Member2”.' ],
+  [ /^表只有前 (\d+) 名有分，其余名次得 0 分。$/, m => 'Only the top ' + m[1] + ' ranks score; the rest get 0.' ],
+  [ /^⚠️ 第 (.+) 名被多条规则覆盖，以靠上的那条为准。$/, m => '⚠️ Rank ' + m[1] + ' is covered by multiple rules — the topmost one wins.' ],
+  [ /^⚠️ 第 (.+) 名的击败系数为 0，这些名次的击败不计分。$/, m => '⚠️ Rank ' + m[1] + ' has a kill multiplier of 0 — kills there score nothing.' ],
+  /* ---- 赛点横幅 / 状态 ---- */
+  [ /^🏆 冠军：(.+)（第([一二三四五六七八九十]+)局达成）$/, m => '🏆 Champion: ' + m[1] + ' (decided at Game ' + cnNumToInt(m[2]) + ')' ],
+  [ /^🏆 冠军：(.+)（人工裁定）$/, m => '🏆 Champion: ' + m[1] + ' (manual ruling)' ],
+  [ /^🏆 打满 (\d+) 局仍未决出，积分第一夺冠：$/, m => '🏆 No champion after ' + m[1] + ' games — highest total wins: ' ],
+  [ /^🏆 第([一二三四五六七八九十]+)局夺冠$/, m => '🏆 Won at Game ' + cnNumToInt(m[1]) ],
+  [ /^🏆 本局决出冠军$/, () => '🏆 Champion decided' ],
+  [ /^🏆 本局决出冠军：(.+)$/, m => '🏆 Champion decided: ' + m[1] ],
+  [ /^🏆 总积分定冠军$/, () => '🏆 Won on total points' ],
+  [ /^🏆 人工裁定$/, () => '🏆 Manual ruling' ],
+  [ /^：(.+)$/, m => ': ' + m[1] ],
+  [ /^🔥 第([一二三四五六七八九十]+)局开启$/, m => '🔥 Activated at Game ' + cnNumToInt(m[1]) ],
+  [ /^🔥 赛前开启$/, () => '🔥 Pre-event' ],
+  [ /^🔥 本局开启赛点 (\d+) (人|队)$/, m => '🔥 Match Point activated: ' + m[1] + (m[2] === '人' ? ' player' : ' team') + (m[1] === '1' ? '' : 's') ],
+  [ /^（第([一二三四五六七八九十]+)局）$/, m => '(Game ' + cnNumToInt(m[1]) + ')' ],
+  /* ---- 弹窗组合消息 ---- */
+  [ /^确定删除赛事「(.+)」？此操作不可恢复。$/, m => 'Delete event "' + m[1] + '"? This cannot be undone.' ],
+  [ /^确定删除这 (\d+) (人|队)？\n\n([\s\S]+)\n\n他们在所有对局里的成绩也会一并删除，不可恢复。$/,
+    m => 'Delete the ' + m[1] + ' selected ' + (m[2] === '人' ? 'players' : 'teams') + '?\n\n' + m[3] +
+         '\n\nTheir results in all matches will be deleted too — cannot be undone.' ],
+  [ /^确定删除这 (\d+) 个赛事？\n\n([\s\S]+?)(\n\n（其中 (\d+) 个已「结束积分」）)?\n\n此操作不可恢复，建议先导出备份。$/,
+    m => 'Delete the ' + m[1] + ' selected events?\n\n' + m[2] +
+         (m[4] ? '\n\n(' + m[4] + ' of them have "scoring ended")' : '') +
+         '\n\nThis cannot be undone — export a backup first.' ],
+  [ /^⚠️ 这是全部 (\d+) 个赛事。\n\n删完就一个赛事都不剩了，首页会回到「还没有赛事」的空状态。真的要全部删掉吗？$/,
+    m => '⚠️ This is all ' + m[1] + ' events.\n\nDeleting them leaves zero events — the home page returns to the empty state. Really delete them all?' ],
+  [ /^将添加 (\d+) (人|队)。确认？$/, m => 'Will add ' + m[1] + (m[2] === '人' ? (m[1] === '1' ? ' player' : ' players') : (m[1] === '1' ? ' team' : ' teams')) + '. Confirm?' ],
+  [ /^将添加 (\d+) (人|队)(，跳过 (\d+) 个重名（(.+?)）)?(，跳过 (\d+) 行空)?(，自动新建组 (.+?))?(，自动新建赛区标签 (.+?))?。确认？$/,
+    m => 'Will add ' + m[1] + (m[2] === '人' ? (m[1] === '1' ? ' player' : ' players') : (m[1] === '1' ? ' team' : ' teams')) +
+         (m[4] ? ', skipping ' + m[4] + ' duplicate name' + (m[4] === '1' ? '' : 's') + ' (' + m[5] + ')' : '') +
+         (m[6] ? ', skipping ' + m[6] + ' blank line' + (m[6] === '1' ? '' : 's') : '') +
+         (m[9] ? ', creating group ' + m[9] : '') +
+         (m[11] ? ', creating region tag ' + m[11] : '') + '. Confirm?' ],
+  [ /^将添加 (\d+) (名选手|支战队)：\n([\s\S]+?)(\n（跳过 (\d+) 个已存在的）)?\n\n确认？$/,
+    m => 'Will add ' + m[1] + ' ' + (m[2] === '名选手' ? (m[1] === '1' ? 'player' : 'players') : (m[1] === '1' ? 'team' : 'teams')) + ':\n' +
+         m[3].replace(/ 等$/, ' etc.') + (m[5] ? '\n(skipping ' + m[5] + ' already present)' : '') + '\n\nConfirm?' ],
+  [ /^从「(.+)」复制 (\d+) (人|队)：\n([\s\S]+?)(\n（跳过 (\d+) 个已有的）)?\n\n前序积分不带过来（从 0 开始）。确认？$/,
+    m => 'Copy ' + m[2] + ' ' + (m[3] === '人' ? (m[2] === '1' ? 'player' : 'players') : (m[2] === '1' ? 'team' : 'teams')) + ' from "' + m[1] + '":\n' +
+         m[4].replace(/ 等$/, ' etc.') + (m[6] ? '\n(skipping ' + m[6] + ' already present)' : '') +
+         '\n\nCarry-in points are not copied (start from 0). Confirm?' ],
+  [ /^清空(积分制|赛点制)的全部比较项？\n\n总分相同的直接并列，需要人工评定。$/,
+    m => 'Clear all tiebreak criteria for ' + t(m[1]) + '?\n\nEqual totals go straight to tied — resolve manually.' ],
+  [ /^把(积分制|赛点制)的同分规则恢复为默认？$/, m => 'Reset the ' + t(m[1]) + ' tiebreak rules to defaults?' ],
+  [ /^删除「(.+)」？其所有比赛数据也会删除。$/, m => 'Delete "' + m[1] + '"? All its match data will be removed too.' ],
+  [ /^删除「(.+)」？该局所有数据也会删除。$/, m => 'Delete "' + t(m[1]) + '"? All data for this match will be removed too.' ],
+  [ /^还没有同模式的赛事可以挑。\n\n(单排赛事只能从单排赛事里挑选手。|三排赛事只能从三排赛事里挑队伍。)$/,
+    m => 'No events of the same mode to pick from.\n\n' + t(m[1]) ],
+  [ /^设置里改过东西，但还没点「保存设置」。\n\n・点「确定」= 先保存，再切到「(.+)」\n・点「取消」= 这次不保存，直接切过去（改动不保留，切回来还是原来的设置）$/,
+    m => 'Settings changed but not saved.\n\n・OK = save first, then switch to "' + t(m[1]) + '"\n・Cancel = switch without saving (changes are discarded; the settings show the saved values when you come back)' ],
+  [ /^总击败 (\d+)(?: · 赛点分 ([\d.]+))?$/, m => 'Kills ' + m[1] + (m[2] ? ' · MP bonus ' + m[2] : '') ],
+  [ /^([\d.]+) 分$/, m => m[1] + ' pts' ],
+  [ /^共 (\d+) (人|队)$/, m => m[1] + (m[2] === '人' ? ' players' : ' teams') ],
+  [ /^共 (\d+) (人|队)，已选 (\d+) (人|队)$/, m => m[1] + (m[2] === '人' ? ' players' : ' teams') + ', ' + m[3] + ' selected' ],
+  [ /^已选 (\d+) (人|队)$/, m => m[1] + ' selected' ],
+  [ /^(\d+) 个赛事，已选 (\d+) 个$/, m => m[1] + ' events, ' + m[2] + ' selected' ],
+  [ /^未分组 · (.+)$/, m => 'Ungrouped · ' + m[1] ],
+  [ /^([A-Za-z\d]+) 组 · (.+)$/, m => 'Group ' + m[1] + ' · ' + m[2] ],
+  [ /^([A-Za-z\d]+) 组$/, m => 'Group ' + m[1] ],
+  [ /^⚠️ 参赛者 (\d+) (人|队)，但(天人|武道)排名分表只有前 (\d+) 名有分，其余名次得 0 分。$/,
+    m => '⚠️ ' + m[1] + (m[2] === '人' ? ' players' : ' teams') + ', but the ' + t(m[3]) +
+         ' placement table only scores the top ' + m[4] + ' — the rest get 0.' ],
+  /* ---- 多行占位提示 ---- */
+  [ /^每行一支队伍，格式：\s*队伍名 \/ 成员1 \/ 成员2 \/ 成员3 …（成员数量不限，用 \/ 分隔）\s*可选前缀：\[A\] 分组，小括号或大括号写赛区（两者顺序随意）\s*例：\[A\] \(华东\) 队伍名 \/ 成员1 \/ 成员2 \/ 成员3$/,
+    () => 'One team per line: Team / Member1 / Member2 / Member3 … (any number of members, separated by /)\nOptional prefix: [A] for group, (…) or {…} for region (either order)\nExample: [A] (East) Team / Member1 / Member2 / Member3' ],
+  [ /^每行一名选手：\s*选手名\s*可选前缀：\[A\] 分组，小括号或大括号写赛区（两者顺序随意）\s*例：\[A\] \(华东\) 选手名　或　\{华东\} 选手名$/,
+    () => 'One player per line: Player\nOptional prefix: [A] for group, (…) or {…} for region (either order)\nExample: [A] (East) Player or {East} Player' ],
+  [ /^可以写赛制说明、晋级预测、赛程安排、选手介绍……\s*纯文本，换行会保留，支持任意长度。$/,
+    () => 'Format notes, qualification predictions, schedule, player intros…\nPlain text; line breaks are kept; any length.' ],
+  [ /^每行一条「名称 分数」，按名称匹配，只改前序积分：\s*TC 8\s*RW 6\.5$/,
+    () => 'One "name score" per line, matched by name; only carry-in points change:\nTC 8\nRW 6.5' ],
+  [ /^官网战队名单（换赛季需要重新抓取）。单排赛事一位选手一行，\s*录入成「战队名\.选手名」，想只挑几个人也行；三排赛事每队一条，队伍成员就是该队的三排选手 \+ 灵活选手。$/,
+    () => 'official team roster (re-scrape each season). Solo events: one player per line as "Team.Player" — picking just a few is fine. Trios events: one team per line; its members are that team\'s Trios players + flex players.' ],
+  [ /^的赛事（单排赛事只挑单排选手、三排赛事只挑三排队伍）。\s*列表按你选的排序排列（默认总分降序、含同分规则），右边是它在那个赛事里的总分；\s*勾选后前面的数字就是$/,
+    () => ' events (Solo events offer Solo players only, Trios events offer Trios teams only).\nThe list follows your sort (total desc with tiebreaks by default); the number on the right is its total in that event.\nThe number in front is ' ],
+  [ /^，添加时按这个顺序排（"全选"则按列表顺序）。\s*复制过来会带上成员、队标和赛区；已经在本次赛事里的会标「已有」并跳过。$/,
+    () => '. Entries are added in that order ("Select All" uses list order).\nMembers, logos and region tags are copied; entries already in this event are marked "Exists" and skipped.' ],
+  [ /^固定显示；\s*宽度留空就是自动，改动立刻生效。$/,
+    () => ' are always shown;\nleave width empty for auto — changes apply instantly.' ],
+  /* 未保存提醒（confirm 组合模板） */
+  [ /^还有没保存的内容：(.*)。\n\n・点「确定」= 这些改动不要了，继续(.+?)（丢掉就找不回来了）\n・点「取消」= 先停下不\2，回去把改动保存好\n\n保存位置：设置面板底部的「保存设置」；备注框里的「保存」。$/,
+    m => 'You have unsaved changes: ' + t(m[1]) + '.\n\n' +
+         '・OK = discard these changes and continue with ' + t(m[2]) + ' (they will be lost)\n' +
+         '・Cancel = stop and save your changes first\n\n' +
+         'Where to save: "Save Settings" at the bottom of the Settings panel; "Save" in the Notes box.' ],
+  [ /^(设置里改过但没点「保存设置」|备注还在编辑、没保存)$/, m => m[1] === '设置里改过但没点「保存设置」' ? 'Settings changed but not saved' : 'Notes still being edited, not saved' ],
+];
+
+/* 对局提示：第3局 · 名字（武道对局）· 聚窟州·早晨 */
+function trMatchTip(s) {
+  const isWudao = s.indexOf('（武道对局）') !== -1;
+  let out = s.replace(/^第([一二三四五六七八九十]+)局/, function(_, n) { return 'Game ' + cnNumToInt(n); });
+  out = out.replace('（武道对局）', ' (Martial Artist)');
+  return out.split(' · ').map(function(p, i) {
+    if (i === 0) return p;
+    if (isWudao && p === '火罗国') return 'Versus-Random';   /* 武道地图在数据里固定存火罗国 */
+    return EN[p] || p;
+  }).join(' · ');
+}
+
+/* 整段翻译：词典 → 规则 → 原样 */
+/* 中文界面的地图显示名：带萤火虫的天气在地图名后标「（虫）」。数据、导出仍存原名 */
+const ZH_DISPLAY = {
+  '聚窟州·黄昏': '聚窟州·黄昏（虫）',
+  '聚窟州·夜晚': '聚窟州·夜晚（虫）',
+  '火罗国·黄昏': '火罗国·黄昏（虫）',
+  '火罗国·星夜': '火罗国·星夜（虫）',
+  '龙隐洞天·日暮': '龙隐洞天·日暮（虫）',
+  '龙隐洞天·夜半': '龙隐洞天·夜半（虫）',
+  '宛渠·星夜': '宛渠·星夜（虫）',
+};
+
+function t(str) {
+  if (!str) return str;
+  const key = str.trim();
+  if (!key || !/[一-鿿]/.test(key)) return str;
+  if (LANG !== 'en') {
+    /* 中文界面本身：带萤火虫的天气在地图名后标「（虫）」 */
+    const zh = ZH_DISPLAY[key];
+    if (zh != null) {
+      const at0 = str.indexOf(key);
+      return str.slice(0, at0) + zh + str.slice(at0 + key.length);
+    }
+    if (/^第[一二三四五六七八九十]+局/.test(key)) {
+      let out = str;
+      Object.keys(ZH_DISPLAY).forEach(function(k) {
+        if (out.indexOf(k) !== -1) out = out.split(k).join(ZH_DISPLAY[k]);
+      });
+      return out;
+    }
+    return str;
+  }
+  let out = EN[key];
+  if (out == null) {
+    for (let i = 0; i < EN_RULES.length; i++) {
+      const m = key.match(EN_RULES[i][0]);
+      if (m) { out = EN_RULES[i][1](m, key); break; }
+    }
+  }
+  if (out == null) return str;
+  const at = str.indexOf(key);
+  return str.slice(0, at) + out + str.slice(at + key.length);
+}
+
+/* 少数位置要按上下文特殊处理（赛事名等数据保持原样，只在界面生成的词缀上翻译） */
+function tNode(node, src) {
+  const pe = node.parentElement;
+  if (LANG === 'en' && pe && pe.tagName === 'OPTION' && pe.parentElement &&
+      pe.parentElement.classList && pe.parentElement.classList.contains('msel') &&
+      src.trim() === '火罗国') {
+    /* 对局卡片的地图下拉：武道局只有一个选项「火罗国」，对应游戏里的 Versus-Random */
+    return 'Versus-Random';
+  }
+  return t(src);
+}
+
+/* 文本一律不翻的子树（textarea 里是用户正在编辑的内容） */
+const I18N_SKIP = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1 };
+function i18nSkipText(el) {
+  return !!el && (I18N_SKIP[el.tagName] === 1 || el.hasAttribute('data-noi18n'));
+}
+/* 连 placeholder/title 也不翻（语言按钮自己管文案） */
+function i18nSkipAll(el) {
+  return !!el && el.hasAttribute('data-noi18n');
+}
+
+function trTextNode(node) {
+  const prev = node.__i18nSrc;
+  if (prev != null && node.__i18nLang === LANG && node.nodeValue !== tNode(node, prev)) {
+    /* 应用把这段文字改写了（不是我们写的译文），以新内容为原文 */
+    node.__i18nSrc = node.nodeValue;
+  }
+  const src = node.__i18nSrc != null ? node.__i18nSrc : node.nodeValue;
+  node.__i18nSrc = src;
+  node.__i18nLang = LANG;
+  const out = tNode(node, src);
+  if (out !== node.nodeValue) node.nodeValue = out;
+}
+
+/* 只翻 placeholder 和 title：value / data-* 都是逻辑数据，绝不碰 */
+const I18N_ATTRS = ['placeholder', 'title'];
+function trAttr(el, name) {
+  const cur = el.getAttribute(name);
+  if (cur == null || !cur) return;
+  const store = el.__i18nAttr || (el.__i18nAttr = {});
+  let rec = store[name];
+  if (!rec || (rec.lang === LANG && rec.out !== cur)) rec = { src: cur, lang: null, out: null };
+  if (rec.src == null) rec.src = cur;
+  const out = t(rec.src);
+  rec.lang = LANG; rec.out = out; store[name] = rec;
+  if (out !== cur) el.setAttribute(name, out);
+}
+
+function translateTree(root) {
+  if (!root) return;
+  if (root.nodeType === 3) { if (!i18nSkipText(root.parentElement)) trTextNode(root); return; }
+  if (root.nodeType !== 1 && root.nodeType !== 9) return;
+  if (root.nodeType === 1) {
+    if (i18nSkipAll(root)) return;
+    I18N_ATTRS.forEach(function(a) { trAttr(root, a); });
+  }
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, {
+    acceptNode: function(n) {
+      if (n.nodeType !== 1) return NodeFilter.FILTER_ACCEPT;
+      if (n.tagName === 'SCRIPT' || n.tagName === 'STYLE' || n.hasAttribute('data-noi18n')) {
+        return NodeFilter.FILTER_REJECT;
+      }
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  let n;
+  while ((n = walker.nextNode())) {
+    if (n.nodeType === 1) I18N_ATTRS.forEach(function(a) { trAttr(n, a); });
+    else if (!i18nSkipText(n.parentElement)) trTextNode(n);
+  }
+}
+
+/* 动态内容：监听渲染出来的新节点，合批翻译 */
+let i18nObserver = null;
+let i18nDirty = null;
+let i18nRaf = null;
+function absorbRecords(records) {
+  for (let i = 0; i < records.length; i++) {
+    const r = records[i];
+    if (r.type === 'childList') {
+      r.addedNodes.forEach(function(n) { if (n.isConnected) i18nDirty.add(n); });
+    } else {
+      i18nDirty.add(r.target);
+    }
+  }
+}
+function onI18nMutations(records) {
+  absorbRecords(records);
+  if (!i18nRaf) i18nRaf = requestAnimationFrame(flushI18n);
+}
+function flushI18n() {
+  if (i18nRaf) { cancelAnimationFrame(i18nRaf); i18nRaf = null; }
+  /* 吸收还没派发到回调的变更（同步调用 flush 时，回调微任务还没跑） */
+  if (i18nObserver) absorbRecords(i18nObserver.takeRecords());
+  const roots = i18nDirty ? Array.from(i18nDirty) : [];
+  if (i18nDirty) i18nDirty.clear();
+  if (i18nObserver) i18nObserver.disconnect();
+  roots.forEach(function(n) { if (n.isConnected) translateTree(n); });
+  syncSpecialInputs();
+  /* 丢掉翻译自己写回产生的记录，避免多余的重扫 */
+  if (i18nObserver) {
+    i18nObserver.takeRecords();
+    observeI18n();
+  }
+  if (typeof syncBannerWidth === 'function') { try { syncBannerWidth(); } catch (e) {} }
+}
+function observeI18n() {
+  i18nObserver.observe(document.body, {
+    childList: true, subtree: true, characterData: true,
+    attributes: true, attributeFilter: I18N_ATTRS
+  });
+}
+
+/* 设置面板「模式」是只读输入框，文字在 value 里，单独处理 */
+function syncSpecialInputs() {
+  const sm = document.getElementById('set-mode');
+  if (sm && typeof getActiveEvent === 'function') {
+    const ev = getActiveEvent();
+    if (ev) sm.value = t(ev.mode === 'solo' ? '单排' : '三排');
+  }
+}
+
+function updateLangBtn() {
+  const b = document.getElementById('lang-btn');
+  if (!b) return;
+  b.textContent = LANG === 'en' ? '中文' : 'EN';
+  b.title = LANG === 'en' ? '切换到中文' : 'Switch to English';
+}
+
+function setLang(lang, persist) {
+  flushI18n();
+  LANG = (lang === 'en') ? 'en' : 'zh';
+  if (persist) { try { localStorage.setItem(I18N_KEY, LANG); } catch (e) {} }
+  document.documentElement.lang = LANG === 'en' ? 'en' : 'zh-CN';
+  document.title = LANG === 'en' ? 'NARAKA: BLADEPOINT Event Standings' : '永劫无间赛事积分表';
+  translateTree(document.body);
+  syncSpecialInputs();
+  updateLangBtn();
+  if (typeof syncBannerWidth === 'function') { try { syncBannerWidth(); } catch (e) {} }
+}
+function toggleLang() { setLang(LANG === 'en' ? 'zh' : 'en', true); }
+
+function installI18n() {
+  /* 语言选择：?lang= 参数 > 上次的选择 > 浏览器语言 */
+  let lang = null;
+  try {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q === 'en' || q === 'zh') lang = q;
+  } catch (e) {}
+  if (!lang) { try { lang = localStorage.getItem(I18N_KEY); } catch (e) {} }
+  if (lang !== 'en' && lang !== 'zh') {
+    lang = /^en/i.test(navigator.language || '') ? 'en' : 'zh';
+  }
+  LANG = lang;
+  try { localStorage.setItem(I18N_KEY, LANG); } catch (e) {}
+
+  /* 弹窗文案也过一遍翻译（prompt 只翻问题，默认值参数是数据） */
+  const rawAlert = window.alert, rawConfirm = window.confirm, rawPrompt = window.prompt;
+  window.alert = function(msg) { return rawAlert.call(window, t(String(msg == null ? '' : msg))); };
+  window.confirm = function(msg) { return rawConfirm.call(window, t(String(msg == null ? '' : msg))); };
+  window.prompt = function(msg, def) { return rawPrompt.call(window, t(String(msg == null ? '' : msg)), def); };
+
+  document.documentElement.lang = LANG === 'en' ? 'en' : 'zh-CN';
+  document.title = LANG === 'en' ? 'NARAKA: BLADEPOINT Event Standings' : '永劫无间赛事积分表';
+  i18nDirty = new Set();
+  i18nObserver = new MutationObserver(onI18nMutations);
+  translateTree(document.body);
+  syncSpecialInputs();
+  observeI18n();
+  updateLangBtn();
+  window.__i18nFlush = flushI18n;   /* 供测试与调试用 */
+  window.__i18nT = t;
+}
+
 init();
+installI18n();
 </script>
 </body>
 </html>
