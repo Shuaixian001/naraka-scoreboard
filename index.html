@@ -183,6 +183,11 @@
   table.lb tbody tr.rs:hover td { background: var(--rs-bg2); }
   table.lb tbody tr.rs td .badge { background: var(--rs); color: var(--rs-fg); }
   table.lb th.wd { color: var(--accent2); }
+  /* 每局列头的地图名（显示设置里可开） */
+  table.lb th .mapname {
+    display: block; font-weight: 400; font-size: 10px; line-height: 1.25;
+    color: var(--muted); white-space: normal;
+  }
   table.lb .total { font-weight: 700; color: var(--accent); font-size: calc(var(--lb-fs, 14px) + 2px); }
   table.lb td.name { white-space: normal; min-width: 110px; }
   /* 积分榜正上方的居中标题：默认用赛事名，可在显示设置里改文字或隐藏 */
@@ -258,6 +263,9 @@
   }
   .batch-row.cur .bname { font-weight: 700; }
   .batch-row .bmeta { flex: none; color: var(--muted); font-size: 12px; }
+  .batch-row .bmove { flex: none; display: flex; gap: 2px; }
+  .batch-row.dragging { opacity: .45; }
+  .batch-row .carrynote { flex: none; color: var(--accent); font-size: 12px; font-weight: 700; }
   /* 官方战队弹窗：勾选的先后序号 */
   .batch-row .pickno {
     flex: none; min-width: 22px; text-align: right; font-size: 12px; font-weight: 700;
@@ -549,6 +557,8 @@
   <select id="event-select" onchange="onSelectEvent(this.value)"></select>
   <button id="lock-btn" class="ghost" onclick="toggleLock()"></button>
   <button onclick="openNewEventModal()">+ 新建赛事</button>
+  <button class="ghost" onclick="document.getElementById('import-file').click()">导入赛事</button>
+  <button class="ghost" onclick="openBatchModal()">批量管理赛事</button>
   <button id="lang-btn" class="ghost" data-noi18n onclick="toggleLang()" title="Switch to English">EN</button>
 </div>
 <div id="lock-banner" class="hidden"></div>
@@ -732,9 +742,7 @@
         <div class="warn hidden" id="set-dirty-note"></div>
         <button id="set-save" onclick="saveSettings()">保存设置</button>
         <button class="ghost" onclick="exportData()">导出本赛事</button>
-        <button class="ghost" onclick="document.getElementById('import-file').click()">导入赛事（可多选）</button>
         <input id="import-file" type="file" accept=".json" multiple style="display:none" onchange="importData(this)">
-        <button class="ghost" onclick="openBatchModal()">批量管理赛事…</button>
         <button class="danger" id="set-delete" onclick="deleteEvent()">删除本赛事</button>
       </div>
     </div>
@@ -817,6 +825,7 @@
     <h3>批量管理赛事</h3>
     <div class="batch-tools">
       <span class="muted" id="batch-count"></span>
+      <span class="muted">（拖动行或用 ↑↓ 调整顺序）</span>
       <span class="grow"></span>
       <button class="ghost tiny" onclick="batchCheckAll(true)">全选</button>
       <button class="ghost tiny" onclick="batchCheckAll(false)">全不选</button>
@@ -866,6 +875,24 @@
         <label><input type="radio" name="off-name" value="nick" onchange="renderOfficialList()"> 中文昵称</label>
       </div>
     </div>
+    <div class="batch-tools" style="margin:8px 0 0">
+      <span class="muted">前序积分</span>
+      <div class="radio-row">
+        <label><input type="radio" name="off-carry" value="none" checked onchange="onOfficialCarry()"> 不带入</label>
+        <label><input type="radio" name="off-carry" value="dec" onchange="onOfficialCarry()"> 顺序递减</label>
+      </div>
+    </div>
+    <div class="batch-tools hidden" id="off-carry-dec" style="margin:4px 0 0">
+      <span class="muted">首位</span>
+      <input type="number" id="off-dec-x" min="0" step="0.5" value="8" style="width:70px"
+        oninput="renderOfficialList()" onfocus="this.select()">
+      <span class="muted">分，每名递减</span>
+      <input type="number" id="off-dec-y" min="0" step="0.5" value="0.5" style="width:70px"
+        oninput="renderOfficialList()" onfocus="this.select()">
+      <span class="muted">分</span>
+      <span class="grow"></span>
+      <span class="muted">按勾选序号从首位往下算，最低 0</span>
+    </div>
     <div id="off-list" class="batch-list"></div>
     <div class="modal-actions">
       <button class="ghost" onclick="closeOfficialRoster()">取消</button>
@@ -893,6 +920,33 @@
       <span class="grow"></span>
       <button class="ghost tiny" onclick="pickCompAll(true)">全选</button>
       <button class="ghost tiny" onclick="pickCompAll(false)">全不选</button>
+    </div>
+    <div class="batch-tools" style="margin:8px 0 0">
+      <span class="muted">前序积分</span>
+      <div class="radio-row">
+        <label><input type="radio" name="pc-carry" value="none" checked onchange="onPickCompCarry()"> 不带入</label>
+        <label><input type="radio" name="pc-carry" value="dec" onchange="onPickCompCarry()"> 顺序递减</label>
+        <label><input type="radio" name="pc-carry" value="pct" onchange="onPickCompCarry()"> 按百分比</label>
+      </div>
+    </div>
+    <div class="batch-tools hidden" id="pc-carry-dec" style="margin:4px 0 0">
+      <span class="muted">首位</span>
+      <input type="number" id="pc-dec-x" min="0" step="0.5" value="8" style="width:70px"
+        oninput="renderPickCompList()" onfocus="this.select()">
+      <span class="muted">分，每名递减</span>
+      <input type="number" id="pc-dec-y" min="0" step="0.5" value="0.5" style="width:70px"
+        oninput="renderPickCompList()" onfocus="this.select()">
+      <span class="muted">分</span>
+      <span class="grow"></span>
+      <span class="muted">按勾选序号从首位往下算，最低 0</span>
+    </div>
+    <div class="batch-tools hidden" id="pc-carry-pct" style="margin:4px 0 0">
+      <span class="muted">来源积分 ×</span>
+      <input type="number" id="pc-pct" min="0" step="5" value="30" style="width:70px"
+        oninput="renderPickCompList()" onfocus="this.select()">
+      <span class="muted">%</span>
+      <span class="grow"></span>
+      <span class="muted">按每位在来源赛事的总分（含带入分）算</span>
     </div>
 
     <div class="muted" style="font-size:12px;margin:8px 0 0;line-height:1.7">
@@ -942,6 +996,15 @@
         <span class="muted" id="lbcfg-fs-v" style="width:52px;text-align:right"></span>
       </div>
     </div>
+    <div class="section-title" style="margin-top:14px">按选手着色</div>
+    <div class="set-row">
+      <label>单独给某个选手 / 队伍整行上色，优先于按名次着色</label>
+      <div id="cs-list"></div>
+      <div class="set-actions" style="margin-top:8px">
+        <button class="ghost small" onclick="addCompStyle()">+ 添加规则</button>
+      </div>
+      <div class="warn" id="cs-warn"></div>
+    </div>
     <div class="section-title" style="margin-top:14px">名次着色（淘汰赛）</div>
     <div class="set-row">
       <label>按积分榜上的名次给整行着色，用来标出晋级 / 淘汰</label>
@@ -956,6 +1019,12 @@
       <label class="check-row" style="margin:0">
         <input type="checkbox" id="lbcfg-logo" onchange="setLbLogo(this.checked)">
         在「队伍 / 选手」列显示队标
+      </label>
+    </div>
+    <div class="set-row" style="margin-top:8px">
+      <label class="check-row" style="margin:0">
+        <input type="checkbox" id="lbcfg-map" onchange="setLbMapNames(this.checked)">
+        每局列显示地图名
       </label>
     </div>
     <div class="set-row hidden" id="lbcfg-members-row" style="margin-top:8px">
@@ -1306,6 +1375,27 @@ function normalizeRankStyles(ev) {
   }).filter(Boolean);
 }
 
+/* ---------------- 按选手着色 ----------------
+   规则列表，从上往下第一条命中的生效：{ id: 参赛者 id, color: '#rrggbb' }
+   和名次着色共用一套整行样式，渲染时优先于名次规则。 */
+function compStyleFor(ev, compId) {
+  const list = ev.compStyles || [];
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].id === compId) return list[i];
+  }
+  return null;
+}
+function normalizeCompStyles(ev) {
+  if (!Array.isArray(ev.compStyles)) ev.compStyles = [];
+  const have = {};
+  (ev.competitors || []).forEach(function(c) { have[c.id] = 1; });
+  // 选手被删掉后规则自动作废，不再跟着导出
+  ev.compStyles = ev.compStyles.map(function(s) {
+    if (!s || typeof s !== 'object' || !have[s.id]) return null;
+    return { id: s.id, color: isHex6(s.color) ? s.color : RS_PALETTE[0] };
+  }).filter(Boolean);
+}
+
 /* 排名分表预设。mode 限定适用模式（同一档位单排/三排的分值不同），null 表示两种模式通用。
    标「官方」的来自 2026 赛季规则；标「示例」的是占位梯度，不是官方值。 */
 const PLACEMENT_PRESETS = {
@@ -1389,6 +1479,7 @@ function newEvent(mode, name, matchPointEnabled) {
     groups: [],
     tags: [],
     rankStyles: [],
+    compStyles: [],
     tieBreak: defaultTieBreak(),
     matchTie: defaultMatchTie(),
     notes: '',
@@ -1425,6 +1516,7 @@ function normalize(ev) {
   if (!Array.isArray(ev.manualOrder)) ev.manualOrder = [];
   ev.manualOrder = ev.manualOrder.filter(function(id) { return typeof id === 'string'; });
   normalizeRankStyles(ev);
+  normalizeCompStyles(ev);
   normalizeTieBreak(ev);
   normalizeMatchTie(ev);
   if (!ev.scoring || typeof ev.scoring !== 'object') ev.scoring = {};
@@ -1500,8 +1592,6 @@ function normalize(ev) {
     m.topPick = (typeof m.topPick === 'string' && m.topPick) ? m.topPick : null;
     // 对局结束标记：结束录入淘汰后不再给淘汰的选手置灰
     m.finished = !!m.finished;
-    // 手改名次 / 导入来的老数据都算「手动录入」，点击淘汰停用（新的一局没有任何名次，才走点击）
-    m.typedRank = m.typedRank === true ? true : matchHasPlacement(m);
     // 本局战神：只存「哪支队伍 + 哪名选手」，队伍仍然是按最高分实时算的
     m.mvp = (m.mvp && typeof m.mvp === 'object' && typeof m.mvp.compId === 'string' && m.mvp.compId)
       ? { compId: m.mvp.compId, member: (typeof m.mvp.member === 'string' && m.mvp.member) ? m.mvp.member : null }
@@ -1511,6 +1601,11 @@ function normalize(ev) {
       return typeof g === 'string' && g && arr.indexOf(g) === i;
     });
     m.groups.forEach(function(g) { if (ev.groups.indexOf(g) === -1) ev.groups.push(g); });
+    // 点击淘汰自己就会往名次里写值，不能「有名次就算手填」：名次还是点击淘汰排得出来的
+    // 形状（剩下的人数正好等于他们占的名次）就回到点击模式，刷新不会失效；
+    // 手填 / 导入来的其它形状才算手动录入，点击停用
+    m.typedRank = matchHasPlacement(m) && !matchElimPattern(m,
+      ev.competitors.filter(function(c) { return participates(m, c); }));
   });
 
   normalizeMatchPoint(ev);
@@ -1632,7 +1727,8 @@ const TIE_CRITERIA = [
   { k: 'firstPlace', label: '第一局名次',   def: 'asc'  },
   { k: 'lastScore',  label: '最后一局积分', def: 'desc' },
   { k: 'lastKills',  label: '最后一局击败', def: 'desc' },
-  { k: 'lastPlace',  label: '最后一局名次', def: 'asc'  }
+  { k: 'lastPlace',  label: '最后一局名次', def: 'asc'  },
+  { k: 'topN',       label: '单局前', def: 'desc' }   // 行里跟着数字框和后缀「名次数」拼成「单局前 m 名次数」；m 存在规则对象的 n 上
 ];
 function tieCriterion(k) {
   return TIE_CRITERIA.filter(function(c) { return c.k === k; })[0] || null;
@@ -1700,7 +1796,10 @@ function normalizeTieBreak(ev) {
       if (!r || typeof r !== 'object') return null;
       const c = tieCriterion(r.k);
       if (!c) return null;
-      return { k: c.k, dir: (r.dir === 'asc' || r.dir === 'desc') ? r.dir : c.def };
+      const out = { k: c.k, dir: (r.dir === 'asc' || r.dir === 'desc') ? r.dir : c.def };
+      // 单局前 m 名次数的 m 跟着规则走，缺省/越界回 8
+      if (c.k === 'topN') out.n = Math.max(1, Math.min(MAX_RANK, Math.floor(num(r.n) || 8)));
+      return out;
     }).filter(Boolean);
   });
   upgradeLegacyTieBreak(ev);
@@ -1708,8 +1807,9 @@ function normalizeTieBreak(ev) {
 function tieRulesFor(ev) {
   return (ev.matchPoint && ev.matchPoint.enabled ? ev.tieBreak.mp : ev.tieBreak.points) || [];
 }
-/* 取某人某个比较项的值；没打过的局返回 null（排最后） */
-function tieValue(r, k) {
+/* 取某人某个比较项的值；没打过的局返回 null（排最后）。
+   n 只有 topN（单局前 n 名次数）用得上 */
+function tieValue(r, k, n) {
   const first = function() {
     for (let i = 0; i < r.games.length; i++) if (r.games[i].participated && r.games[i].hasResult) return r.games[i];
     return null;
@@ -1728,6 +1828,16 @@ function tieValue(r, k) {
     case 'lastScore':  { const g = last();  return g ? g.totalT : null; }
     case 'lastKills':  { const g = last();  return g ? g.kills : null; }
     case 'lastPlace':  { const g = last();  return (g && g.placement != null) ? g.placement : null; }
+    case 'topN': {
+      const m = n || 8;
+      let played = false, cnt = 0;
+      r.games.forEach(function(g) {
+        if (!g.participated || !g.hasResult) return;
+        played = true;
+        if (g.placement != null && g.placement <= m) cnt++;
+      });
+      return played ? cnt : null;   // 一局都没打过 → 未知，排最后
+    }
     default: return null;
   }
 }
@@ -1736,7 +1846,7 @@ function cmpRows(a, b, rules) {
   rules = rules || [];
   for (let i = 0; i < rules.length; i++) {
     const r = rules[i];
-    const av = tieValue(a, r.k), bv = tieValue(b, r.k);
+    const av = tieValue(a, r.k, r.n), bv = tieValue(b, r.k, r.n);
     if (av === bv) continue;
     if (av == null) return 1;
     if (bv == null) return -1;
@@ -2053,7 +2163,7 @@ function renderTopbar() {
       const mode = e.mode === 'solo' ? '单排' : '三排';
       const fmtTag = e.matchPoint.enabled ? '赛点制' : '积分制';
       return '<option value="' + e.id + '"' + (e.id === state.activeEventId ? ' selected' : '') + '>' +
-        esc(e.name) + '（' + mode + '·' + fmtTag + '）</option>';
+        esc(e.name) + '（' + mode + '·' + fmtTag + (e.locked ? '·🔒已结束' : '') + '）</option>';
     }).join('') : '<option>该类型下还没有赛事</option>';
   }
 
@@ -2199,7 +2309,7 @@ function defaultLbCfg() {
   const show = {}, width = {};
   LB_COL_ORDER.forEach(function(k) { show[k] = true; width[k] = LB_COL_DEF[k].w; });
   return { order: LB_COL_ORDER.slice(), show: show, width: width, logo: true,
-           hideMembers: false, showTitle: true, title: '',
+           hideMembers: false, showTitle: true, title: '', mapNames: false,
            cell: { py: LB_CELL_DEF.py, px: LB_CELL_DEF.px, fs: LB_CELL_DEF.fs } };
 }
 
@@ -2220,6 +2330,7 @@ function normalizeLbCfg(raw) {
     if (isFinite(w)) cfg.width[k] = Math.max(0, Math.min(600, Math.round(w)));
   });
   if (typeof raw.logo === 'boolean') cfg.logo = raw.logo;
+  if (typeof raw.mapNames === 'boolean') cfg.mapNames = raw.mapNames;
   if (typeof raw.hideMembers === 'boolean') cfg.hideMembers = raw.hideMembers;
   if (typeof raw.showTitle === 'boolean') cfg.showTitle = raw.showTitle;
   if (typeof raw.title === 'string') cfg.title = raw.title.slice(0, 60);
@@ -2306,6 +2417,7 @@ function renderLbCfg() {
     document.getElementById('lbcfg-' + f + '-v').textContent = cfg.cell[f] + ' px';
   });
   document.getElementById('lbcfg-logo').checked = cfg.logo !== false;
+  document.getElementById('lbcfg-map').checked = cfg.mapNames === true;
   // 成员名单只有三排才有，单排时把这行藏起来
   document.getElementById('lbcfg-members-row').className =
     ev.mode === 'trio' ? 'set-row' : 'set-row hidden';
@@ -2313,10 +2425,16 @@ function renderLbCfg() {
   document.getElementById('lbcfg-title-show').checked = cfg.showTitle !== false;
   document.getElementById('lbcfg-title').value = cfg.title || '';
   renderRankStyles(ev);
+  renderCompStyles(ev);
 }
 function setLbLogo(on) {
   const ev = getActiveEvent(); if (!ev) return;
   lbCfgOf(ev).logo = !!on;
+  refreshLb();
+}
+function setLbMapNames(on) {
+  const ev = getActiveEvent(); if (!ev) return;
+  lbCfgOf(ev).mapNames = !!on;
   refreshLb();
 }
 function setLbMembers(on) {
@@ -2459,7 +2577,10 @@ function renderLeaderboard(ev, S) {
         const lab = '第' + cnNum(meta.index + 1) + '局';
         const tip = lab + (meta.name ? ' · ' + meta.name : '') +
           (meta.isWudao ? '（武道对局）' : '') + (meta.map ? ' · ' + meta.map : '');
-        head += '<th class="num' + (meta.isWudao ? ' wd' : '') + '"' + w + ' title="' + esc(tip) + '">' + lab + '</th>';
+        // 显示设置打开时，列头直接用地图名替换「第X局」（没地图的局照旧）
+        const headTxt = (cfg.mapNames && meta.map)
+          ? '<small class="mapname">' + esc(meta.map) + '</small>' : lab;
+        head += '<th class="num' + (meta.isWudao ? ' wd' : '') + '"' + w + ' title="' + esc(tip) + '">' + headTxt + '</th>';
       });
       return;
     }
@@ -2641,12 +2762,13 @@ function lbRow(r, rank, ev, S, ctx) {
     });
   });
 
-  // 淘汰赛名次着色：按榜单上显示的名次取第一条命中的规则
-  const rs = rankStyleFor(ev.rankStyles || [], rank);
-  const rsCls = rs ? ' rs' : '';
-  const rsAttr = rs
-    ? ' style="--rs:' + rs.color + ';--rs-fg:' + readableOn(rs.color) +
-      ';--rs-bg:' + tint(rs.color, .12) + ';--rs-bg2:' + tint(rs.color, .22) + '"'
+  // 整行着色：按选手的规则优先，名次着色只做兜底；两套共用同一组 CSS 变量
+  const cs = compStyleFor(ev, c.id);
+  const stl = cs || rankStyleFor(ev.rankStyles || [], rank);
+  const rsCls = stl ? ' rs' : '';
+  const rsAttr = stl
+    ? ' style="--rs:' + stl.color + ';--rs-fg:' + readableOn(stl.color) +
+      ';--rs-bg:' + tint(stl.color, .12) + ';--rs-bg2:' + tint(stl.color, .22) + '"'
     : '';
 
   return '<tr class="lb-row' + (r.isChampion ? ' champion' : '') + rsCls + '"' + rsAttr + ' onclick="toggleDetail(\'' + c.id + '\')">' + tds + '</tr>' +
@@ -3004,7 +3126,8 @@ function matchGridHTML(ev, m, i, S) {
       'data-m="' + m.id + '" data-c="' + c.id + '" data-f="kills"' + evtAttrs + dis + '></td>';
     const cls = [];
     if (pending) cls.push('pending');
-    if (!elim.done && elim.vals[c.id] > elim.aliveRank) cls.push('out');
+    // 「已淘汰」的置灰只在点击淘汰模式里出现；手填 / 锁定（点不动）时整行恢复正常颜色
+    if (!elim.done && canElim && elim.vals[c.id] > elim.aliveRank) cls.push('out');
     return '<tr data-comp="' + c.id + '"' + (cls.length ? ' class="' + cls.join(' ') + '"' : '') + '>' +
       '<td class="num">' + (rk ? rankBadge(rk.rank) : '<span class="muted">—</span>') + '</td>' +
       '<td class="cname' + (canElim ? ' eli' : '') + '"' +
@@ -3383,6 +3506,11 @@ function renderTieRules(ev, S) {
             return '<option value="' + c.k + '"' + (c.k === r.k ? ' selected' : '') + '>' + c.label + '</option>';
           }).join('') +
         '</select>' +
+        (r.k === 'topN'
+          ? '<input type="number" min="1" max="' + MAX_RANK + '" value="' + (r.n || 8) + '"' +
+            ' title="单局进入前 m 名的次数（中间的数字就是 m）" data-tb="n" data-i="' + i + '"' + dis + ' oninput="onTieRuleInput(this)">' +
+            '<span class="rs-sp">名次数</span>'
+          : '') +
         '<select data-tb="dir" data-i="' + i + '"' + dis + ' onchange="onTieRuleInput(this)">' +
           '<option value="desc"' + (r.dir === 'desc' ? ' selected' : '') + '>降序</option>' +
           '<option value="asc"' + (r.dir === 'asc' ? ' selected' : '') + '>升序</option>' +
@@ -3421,10 +3549,20 @@ function onTieRuleInput(el) {
     const c = tieCriterion(el.value); if (!c) return;
     r.k = c.k;
     r.dir = c.def;             // 换比较项时方向回到该项默认
+    if (c.k === 'topN' && !(r.n >= 1)) r.n = 8;
     scheduleSave();
     const S = computeStandings(ev);
-    renderTieRules(ev, S);     // 方向跟着变，需要重绘列表
+    renderTieRules(ev, S);     // 方向/参数框跟着变，需要重绘列表
     renderLeaderboard(ev, S);
+    return;
+  }
+  if (el.dataset.tb === 'n') {
+    const v = Math.floor(Number(el.value));
+    r.n = (isFinite(v) && v >= 1) ? Math.min(MAX_RANK, v) : 8;
+    scheduleSave();
+    const S = computeStandings(ev);
+    renderLeaderboard(ev, S);
+    updateTieWarn(S, ev);
     return;
   }
   r.dir = (el.value === 'asc') ? 'asc' : 'desc';
@@ -3441,7 +3579,9 @@ function addTieRule() {
   rules.forEach(function(r) { used[r.k] = 1; });
   const free = TIE_CRITERIA.filter(function(c) { return !used[c.k]; })[0];
   if (!free) { alert('所有比较项都已经用上了。'); return; }
-  rules.push({ k: free.k, dir: free.def });
+  const rule = { k: free.k, dir: free.def };
+  if (free.k === 'topN') rule.n = 8;
+  rules.push(rule);
   saveState();
   renderAll();
 }
@@ -3566,6 +3706,82 @@ function applyRankStylePreset() {
   saveState();
   renderAll();
   renderRankStyles(ev);
+}
+
+/* ---------- 按选手着色规则编辑 ---------- */
+function renderCompStyles(ev) {
+  const el = document.getElementById('cs-list');
+  if (!el) return;
+  const dis = ev.locked ? ' disabled' : '';
+  // 选手被删掉后规则先隐藏（数据留到下次 normalize 清理），下标仍指向原数组
+  const rows = (ev.compStyles || []).map(function(s, i) { return { s: s, i: i }; })
+    .filter(function(x) { return ev.competitors.some(function(c) { return c.id === x.s.id; }); });
+  if (rows.length === 0) {
+    el.innerHTML = '<div class="rs-empty">还没有规则，没有选手被单独着色。</div>';
+  } else {
+    el.innerHTML = rows.map(function(x) {
+      const s = x.s;
+      const opts = ev.competitors.map(function(c) {
+        return '<option value="' + esc(c.id) + '"' + (c.id === s.id ? ' selected' : '') + '>' + esc(c.name) + '</option>';
+      }).join('');
+      return '<div class="rs-row">' +
+        '<select data-cs="id" data-i="' + x.i + '"' + dis + ' onchange="onCompStyleInput(this)">' + opts + '</select>' +
+        '<span class="rs-sp">整行颜色</span>' +
+        '<input type="color" value="' + s.color + '" data-cs="color" data-i="' + x.i + '"' + dis + ' oninput="onCompStyleInput(this)">' +
+        '<button class="danger tiny" onclick="removeCompStyle(' + x.i + ')"' + dis + '>删除</button>' +
+        '</div>';
+    }).join('');
+  }
+  updateCompStyleWarn(ev);
+}
+
+function updateCompStyleWarn(ev) {
+  const el = document.getElementById('cs-warn');
+  if (!el) return;
+  const nameOf = {};
+  ev.competitors.forEach(function(c) { nameOf[c.id] = c.name; });
+  const seen = {}, dup = [];
+  (ev.compStyles || []).forEach(function(s) {
+    if (!nameOf[s.id]) return;
+    if (seen[s.id]) dup.push(nameOf[s.id]);
+    else seen[s.id] = 1;
+  });
+  el.textContent = dup.length
+    ? '⚠️「' + dup.slice(0, 5).join('、') + '」被多条规则覆盖，以靠上的那条为准。'
+    : '';
+}
+
+/* 逐格改动只重绘积分榜，不重建设置面板（否则丢焦点） */
+function onCompStyleInput(el) {
+  const ev = getActiveEvent(); if (!ev) return;
+  const s = (ev.compStyles || [])[Number(el.dataset.i)]; if (!s) return;
+  const k = el.dataset.cs;
+  if (k === 'color') { if (isHex6(el.value)) s.color = el.value; }
+  else if (k === 'id') s.id = el.value;
+  scheduleSave();
+  renderLeaderboard(ev, computeStandings(ev));
+  updateCompStyleWarn(ev);
+}
+
+function addCompStyle() {
+  const ev = getActiveEvent(); if (!ev) return;
+  if (ev.competitors.length === 0) { alert('还没有参赛者，先添加参赛者再来着色。'); return; }
+  if (!Array.isArray(ev.compStyles)) ev.compStyles = [];
+  const used = {};
+  ev.compStyles.forEach(function(s) { used[s.id] = 1; });
+  const pick = ev.competitors.filter(function(c) { return !used[c.id]; })[0] || ev.competitors[0];
+  ev.compStyles.push({ id: pick.id, color: RS_PALETTE[ev.compStyles.length % RS_PALETTE.length] });
+  saveState();
+  renderAll();
+  renderCompStyles(ev);   // 着色编辑器在显示设置弹窗里，renderAll 管不到
+}
+
+function removeCompStyle(i) {
+  const ev = getActiveEvent(); if (!ev) return;
+  ev.compStyles.splice(i, 1);
+  saveState();
+  renderAll();
+  renderCompStyles(ev);
 }
 
 function renderPlacementGrid(pl) {
@@ -3979,6 +4195,52 @@ function deleteCompetitor(id) {
 /* ---------- 从已有赛事挑选选手 ---------- */
 let pcSort = 'score';         // 挑选弹窗的排序方式（这次会话里记住）
 let pcPickOrder = [];         // 挑选弹窗里勾选的先后顺序（添加时按这个顺序）
+
+/* 前序积分带入（挑选 / 官方战队两个弹窗共用）：none 不带入 / dec 按序号递减 / pct 按来源总分百分比 */
+function carryRadioVal(name) {
+  const el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : 'none';
+}
+function carryNumInput(id) {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  const n = parseFloat(el.value);
+  return isFinite(n) && n > 0 ? n : 0;
+}
+/* 第 i 位（0 基）的递减带入分：首位 x，每名少 y；降到 0 以下按 0 算 */
+function carryDrop(i, x, y) {
+  return Math.max(0, Math.round((x - y * i) * 10) / 10);
+}
+/* 按来源总分（tenths）的 p% 带入，保留一位小数 */
+function carryPct(totalT, p) {
+  return Math.max(0, Math.round(totalT * p / 100) / 10);
+}
+/* 顺序递减的默认参数：单排 4 分起每名减 0.5，三排 8 分起每名减 1 */
+function carryDecDefaults() {
+  const ev = getActiveEvent();
+  return (ev && ev.mode === 'trio') ? { x: 8, y: 1 } : { x: 4, y: 0.5 };
+}
+function pickCompCarryMode() { return carryRadioVal('pc-carry'); }
+function pickCompDecArgs() { return { x: carryNumInput('pc-dec-x'), y: carryNumInput('pc-dec-y') }; }
+function pickCompPctVal() { return carryNumInput('pc-pct'); }
+function togglePickCompCarryBlocks() {
+  const m = pickCompCarryMode();
+  document.getElementById('pc-carry-dec').className = 'batch-tools' + (m === 'dec' ? '' : ' hidden');
+  document.getElementById('pc-carry-pct').className = 'batch-tools' + (m === 'pct' ? '' : ' hidden');
+}
+function resetPickCompCarry() {
+  const r = document.querySelector('input[name="pc-carry"][value="none"]');
+  if (r) r.checked = true;
+  const d = carryDecDefaults();
+  document.getElementById('pc-dec-x').value = d.x;
+  document.getElementById('pc-dec-y').value = d.y;
+  document.getElementById('pc-pct').value = '30';
+  togglePickCompCarryBlocks();
+}
+function onPickCompCarry() {
+  togglePickCompCarryBlocks();
+  renderPickCompList();
+}
 function pickCompSort() {
   const el = document.getElementById('pc-sort');
   if (el && el.value) pcSort = el.value;
@@ -4007,6 +4269,7 @@ function openPickComp() {
   pcPickOrder = [];                                    // 每次打开重新记勾选顺序
   document.getElementById('pc-modenote').textContent = ev.mode === 'trio' ? '（只列三排赛事）' : '（只列单排赛事）';
   document.getElementById('pc-sort').value = pcSort;   // 记住这次会话里选过的排序
+  resetPickCompCarry();
   renderPickCompList();
   document.getElementById('pickcomp-modal').className = 'modal';
 }
@@ -4051,7 +4314,8 @@ function renderPickCompList() {
     const c = x.r.comp;
     const dup = have[c.name];
     return '<label class="batch-row">' +
-      '<input type="checkbox" data-id="' + esc(c.id) + '"' + (dup ? ' disabled' : '') +
+      '<input type="checkbox" data-id="' + esc(c.id) + '" data-total="' + x.r.totalT + '"' +
+        (dup ? ' disabled' : '') +
         (!dup && pcPickOrder.indexOf(c.id) !== -1 ? ' checked' : '') +
         ' onchange="onPickCompCheck(this)">' +
       '<span class="pickno"></span>' +
@@ -4063,6 +4327,7 @@ function renderPickCompList() {
   }).join('');
   updatePickCompCount();
   updatePickCompNumbers();
+  refreshPickCompNotes();
 }
 function pickCompBoxes() {
   return Array.prototype.slice.call(document.querySelectorAll('#pc-list input[type=checkbox]'));
@@ -4082,6 +4347,34 @@ function updatePickCompNumbers() {
     no.textContent = (cb.checked && at !== -1) ? String(at + 1) : '';
   });
 }
+/* 已勾选的行预告带入分，原地刷新（不重建列表，勾选不丢焦点）：
+   递减按勾选序号（data-total 是来源总分 tenths，供百分比用） */
+function refreshPickCompNotes() {
+  const cmode = pickCompCarryMode();
+  const decA = pickCompDecArgs();
+  const pct = pickCompPctVal();
+  pickCompBoxes().forEach(function(cb) {
+    const lab = cb.closest ? cb.closest('label') : null;
+    if (!lab) return;
+    let text = '';
+    if (!cb.disabled && cmode !== 'none' && cb.checked) {
+      const at = pcPickOrder.indexOf(cb.getAttribute('data-id'));
+      if (at !== -1) {
+        const v = cmode === 'dec' ? carryDrop(at, decA.x, decA.y)
+                                  : carryPct(Number(cb.getAttribute('data-total')) || 0, pct);
+        text = '带入 ' + fmtT(T(v)) + ' 分';
+      }
+    }
+    let note = lab.querySelector('.carrynote');
+    if (!text) { if (note) note.remove(); return; }
+    if (!note) {
+      note = document.createElement('span');
+      note.className = 'carrynote';
+      lab.appendChild(note);
+    }
+    note.textContent = text;
+  });
+}
 function onPickCompCheck(cb) {
   if (cb) {
     const id = cb.getAttribute('data-id');
@@ -4091,6 +4384,7 @@ function onPickCompCheck(cb) {
   }
   updatePickCompCount();
   updatePickCompNumbers();
+  refreshPickCompNotes();
 }
 function pickCompAll(on) {
   if (!on) pcPickOrder = [];
@@ -4113,10 +4407,20 @@ function confirmPickComp() {
   });
   if (!picked.length) { alert('还没勾选任何人。'); return; }
 
+  // 带入方式：递减按勾选序号（第 i 位 x−i·y），百分比按来源赛事总分查出来算
+  const mode = pickCompCarryMode();
+  const decA = pickCompDecArgs();
+  const pct = pickCompPctVal();
+  let totalTById = null;
+  if (mode === 'pct') {
+    totalTById = {};
+    computeStandings(src).rows.forEach(function(r) { totalTById[r.comp.id] = r.totalT; });
+  }
+
   const existing = {};
   ev.competitors.forEach(function(c) { existing[c.name] = 1; });
   const added = [], dup = [];
-  picked.forEach(function(id) {
+  picked.forEach(function(id, at) {
     const c = src.competitors.filter(function(x) { return x.id === id; })[0];
     if (!c) return;
     if (existing[c.name]) { dup.push(c.name); return; }
@@ -4127,10 +4431,13 @@ function confirmPickComp() {
       const srcTag = tagOf(src, tag);
       ev.tags.push({ name: tag, color: (srcTag && normHex(srcTag.color)) || nextTagColor(ev.tags) });
     }
+    let carry = 0;
+    if (mode === 'dec') carry = carryDrop(at, decA.x, decA.y);
+    else if (mode === 'pct') carry = carryPct(totalTById[id] || 0, pct);
     added.push({
       id: uid(), name: c.name,
       members: ev.mode === 'trio' ? (c.members || []).slice() : [],
-      group: null, carry: 0, tag: tag, logo: c.logo || null
+      group: null, carry: carry, tag: tag, logo: c.logo || null
     });
   });
   if (!added.length) { alert('选中的都已经在本次赛事里了。'); return; }
@@ -4138,7 +4445,13 @@ function confirmPickComp() {
   let msg = '从「' + src.name + '」复制 ' + added.length + ' ' + unitOf(ev) + '：\n' +
             added.slice(0, 8).map(function(a) { return a.name; }).join('、') + (added.length > 8 ? ' 等' : '');
   if (dup.length) msg += '\n（跳过 ' + dup.length + ' 个已有的）';
-  msg += '\n\n前序积分不带过来（从 0 开始）。确认？';
+  if (mode === 'dec') {
+    msg += '\n\n前序积分按挑选顺序带入：首位 ' + fmtT(T(decA.x)) + ' 分，每名递减 ' + fmtT(T(decA.y)) + ' 分，最低 0。确认？';
+  } else if (mode === 'pct') {
+    msg += '\n\n前序积分按来源赛事总分的 ' + fmtT(T(pct)) + '% 带入。确认？';
+  } else {
+    msg += '\n\n前序积分不带过来（从 0 开始）。确认？';
+  }
   if (!confirm(msg)) return;
 
   added.forEach(function(c) { ev.competitors.push(c); });
@@ -4149,6 +4462,36 @@ function confirmPickComp() {
 
 /* ---------- 官方战队名单 ---------- */
 let offPickOrder = [];        // 勾选的先后顺序，添加时按这个顺序录入
+
+function officialCarryMode() { return carryRadioVal('off-carry'); }
+function officialDecArgs() { return { x: carryNumInput('off-dec-x'), y: carryNumInput('off-dec-y') }; }
+function toggleOfficialCarryBlocks() {
+  document.getElementById('off-carry-dec').className =
+    'batch-tools' + (officialCarryMode() === 'dec' ? '' : ' hidden');
+}
+function resetOfficialCarry() {
+  const r = document.querySelector('input[name="off-carry"][value="none"]');
+  if (r) r.checked = true;
+  const d = carryDecDefaults();
+  document.getElementById('off-dec-x').value = d.x;
+  document.getElementById('off-dec-y').value = d.y;
+  toggleOfficialCarryBlocks();
+}
+function onOfficialCarry() {
+  toggleOfficialCarryBlocks();
+  renderOfficialList();
+}
+/* 打开弹窗时的默认勾选顺序 = 列表顺序，和「不点直接确认」的录入顺序一致 */
+function officialListKeys() {
+  const ev = getActiveEvent(); if (!ev) return [];
+  const solo = ev.mode === 'solo';
+  const keys = [];
+  NBPL_TEAMS.forEach(function(t) {
+    if (solo) officialSoloList(t).forEach(function(p) { keys.push(t.name + '\t' + p[0]); });
+    else keys.push(t.name + '\t');
+  });
+  return keys;
+}
 function offPickOrderKey(cb) {
   return cb.getAttribute('data-team') + '\t' + (cb.getAttribute('data-pid') || '');
 }
@@ -4158,6 +4501,7 @@ function onOfficialCheck(cb) {
   if (cb.checked) { if (at === -1) offPickOrder.push(k); }
   else if (at !== -1) offPickOrder.splice(at, 1);
   updateOfficialNumbers();
+  refreshOfficialNotes();
 }
 /* 每行勾选后面显示序号，看得见自己挑的先后 */
 function updateOfficialNumbers() {
@@ -4186,7 +4530,8 @@ function officialFindPlayer(tName, pid) {
 function openOfficialRoster() {
   const ev = getActiveEvent(); if (!ev || ev.locked) return;
   document.getElementById('off-season').textContent = NBPL_SEASON;
-  offPickOrder = [];                 // 每次打开重新记勾选顺序
+  resetOfficialCarry();
+  offPickOrder = officialListKeys(); // 默认顺序 = 列表顺序（打开就能看到 1、2、3…）
   renderOfficialList();
   document.getElementById('official-modal').className = 'modal';
 }
@@ -4233,6 +4578,29 @@ function renderOfficialList() {
     ? '共 ' + n + ' 名选手（含灵活）'
     : '共 ' + NBPL_TEAMS.length + ' 支战队 · ' + n + ' 名队员（含灵活）';
   updateOfficialNumbers();
+  refreshOfficialNotes();
+}
+/* 勾选的行预告带入分，原地刷新（不重建列表，勾选不丢焦点） */
+function refreshOfficialNotes() {
+  const cmode = officialCarryMode();
+  const decA = officialDecArgs();
+  Array.prototype.forEach.call(document.querySelectorAll('#off-list input[type=checkbox]'), function(cb) {
+    const lab = cb.closest ? cb.closest('label') : null;
+    if (!lab) return;
+    let text = '';
+    if (cmode === 'dec' && cb.checked) {
+      const at = offPickOrder.indexOf(offPickOrderKey(cb));
+      if (at !== -1) text = '带入 ' + fmtT(T(carryDrop(at, decA.x, decA.y))) + ' 分';
+    }
+    let note = lab.querySelector('.carrynote');
+    if (!text) { if (note) note.remove(); return; }
+    if (!note) {
+      note = document.createElement('span');
+      note.className = 'carrynote';
+      lab.appendChild(note);
+    }
+    note.textContent = text;
+  });
 }
 function officialCheckAll(on) {
   if (!on) offPickOrder = [];
@@ -4244,6 +4612,7 @@ function officialCheckAll(on) {
     }
   });
   updateOfficialNumbers();
+  refreshOfficialNotes();
 }
 function confirmOfficialRoster() {
   const ev = getActiveEvent(); if (!ev || ev.locked) return;
@@ -4261,19 +4630,23 @@ function confirmOfficialRoster() {
     if (keys.indexOf(k) === -1) keys.push(k);
   });
 
+  // 带入方式：递减按勾选序号（跳过的已存在项也占一个序号，后面的人不往前挪）
+  const cmode = officialCarryMode();
+  const decA = officialDecArgs();
   const existing = {};
   ev.competitors.forEach(function(c) { existing[c.name] = 1; });
   const added = [], dup = [];
-  keys.forEach(function(k) {
+  keys.forEach(function(k, i) {
     const parts = k.split('\t');
     const tName = parts[0], pid = parts[1] || '';
+    const carry = cmode === 'dec' ? carryDrop(i, decA.x, decA.y) : 0;
     if (solo) {
       const p = officialFindPlayer(tName, pid);
       if (!p) return;
       const nm = tName + '.' + officialPlayerName(p, style);
       if (existing[nm]) { dup.push(nm); return; }
       existing[nm] = 1;
-      added.push({ name: nm, members: [], group: null, carry: 0, tag: null,
+      added.push({ name: nm, members: [], group: null, carry: carry, tag: null,
                    logo: NBPL_LOGOS[tName] || null });
       return;
     }
@@ -4281,7 +4654,7 @@ function confirmOfficialRoster() {
     if (!t) return;
     if (existing[t.name]) { dup.push(t.name); return; }
     existing[t.name] = 1;
-    added.push({ name: t.name, group: null, carry: 0, tag: null,
+    added.push({ name: t.name, group: null, carry: carry, tag: null,
                  logo: NBPL_LOGOS[t.name] || null,
                  members: officialTrioList(t).map(function(p) { return officialPlayerName(p, style); }) });
   });
@@ -4291,7 +4664,11 @@ function confirmOfficialRoster() {
             added.slice(0, 8).map(function(a) { return a.name; }).join('、') +
             (added.length > 8 ? ' 等' : '');
   if (dup.length) msg += '\n（跳过 ' + dup.length + ' 个已存在的）';
-  msg += '\n\n确认？';
+  if (cmode === 'dec') {
+    msg += '\n\n前序积分按勾选顺序带入：首位 ' + fmtT(T(decA.x)) + ' 分，每名递减 ' + fmtT(T(decA.y)) + ' 分，最低 0。确认？';
+  } else {
+    msg += '\n\n确认？';
+  }
   if (!confirm(msg)) return;
 
   added.forEach(function(c) { c.id = uid(); ev.competitors.push(c); });
@@ -4675,7 +5052,8 @@ function matchMapSelectHTML(m, dis) {
   const isWudao = m.type === 'wudao';
   const list = isWudao ? [WUDAO_MAP] : TIANTI_MAPS;
   const cur = m.map || '';
-  let h = '<select class="msel" title="地图天气" onchange="setMatchMap(\'' + m.id + '\', this.value)"' + dis + '>' +
+  let h = '<select class="msel" title="地图天气" data-mid="' + esc(m.id) + '"' +
+    ' onchange="onMatchMapSelect(this)"' + dis + '>' +
     '<option value=""' + (cur ? '' : ' selected') + '>未指定</option>';
   if (cur && list.indexOf(cur) === -1) {
     h += '<option value="' + esc(cur) + '" selected>' + esc(cur) + '</option>';
@@ -4683,7 +5061,19 @@ function matchMapSelectHTML(m, dis) {
   list.forEach(function(v) {
     h += '<option value="' + esc(v) + '"' + (cur === v ? ' selected' : '') + '>' + esc(v) + '</option>';
   });
-  return h + '</select>';
+  return h + '<option value="__custom__">自定义…</option></select>';
+}
+/* 地图下拉变更：选「自定义…」就弹输入框；取消或留空都重绘回原来的值 */
+function onMatchMapSelect(el) {
+  const ev = getActiveEvent(); if (!ev || ev.locked) return;
+  const id = el.getAttribute('data-mid');
+  if (el.value !== '__custom__') { setMatchMap(id, el.value); return; }
+  const m = ev.matches.filter(function(x) { return x.id === id; })[0]; if (!m) return;
+  const cur = (m.map && TIANTI_MAPS.indexOf(m.map) === -1 && m.map !== WUDAO_MAP) ? m.map : '';
+  const v = prompt('地图名', cur);
+  const next = (v == null) ? '' : v.trim();
+  if (next) { m.map = next; saveState(); }
+  renderAll();   // 重绘：确认就带上自定义名，取消/留空就恢复原来的选择
 }
 
 function renameMatch(id) {
@@ -4961,6 +5351,24 @@ function matchElimState(m, parts) {
   });
   return { vals: vals, aliveRank: aliveRank, done: !!m.finished || distinct };
 }
+/* 名次状态是不是「点击淘汰」排得出来的形状：还活着的整组占最小名次、人数正好等于
+   这个名次；已淘汰的名次互不相同、都大于它（点击和撤销只可能排出这种形状）。
+   刷新后靠它认出「这局还是点击模式」，而不是「有名次就当成手填」。 */
+function matchElimPattern(m, parts) {
+  const N = parts.length;
+  if (!N) return false;
+  const st = matchElimState(m, parts);
+  const vals = st.vals, base = st.aliveRank;
+  let alive = 0, ok = true;
+  const seen = {};
+  parts.forEach(function(c) {
+    const v = vals[c.id];
+    if (v === base) { alive++; return; }
+    if (v <= base || v > N || seen[v]) ok = false;
+    seen[v] = 1;
+  });
+  return ok && alive === base;
+}
 /* 对局结束：灰掉的选手恢复正常显示（名次不动） */
 function finishMatch(matchId) {
   const ev = getActiveEvent(); if (!ev || ev.locked) return;
@@ -5023,10 +5431,12 @@ function onResultInput(el) {
   const raw = el.value.trim();
   m.results[compId][field] = raw === '' ? null : Number(raw);
 
-  // 手工填了名次就不再走「点名字淘汰」：两套录法别混着用，免得互相打乱
+  // 手工填了名次就不再走「点名字淘汰」：两套录法别混着用，免得互相打乱；
+  // 把填的值清掉后，只要名次状态还是点击淘汰的形状（比如原来就是点出来的），就恢复点击
   if (field === 'placement') {
     const was = !!m.typedRank;
-    m.typedRank = (raw !== '') ? true : matchHasPlacement(m);
+    m.typedRank = (raw !== '') ? true : (matchHasPlacement(m) && !matchElimPattern(m,
+      ev.competitors.filter(function(c) { return participates(m, c); })));
     if (was !== !!m.typedRank) updateElimAffordance(matchId, m);   // 打字途中也要马上变灰/变回可点
   }
 
@@ -5034,15 +5444,20 @@ function onResultInput(el) {
   refreshDerived();
 }
 
-/* 手动录入模式切换时，就地改名字格的可点击样式（不重建 DOM，免得丢焦点） */
+/* 手动录入模式切换时，就地改名字格的可点击样式（不重建 DOM，免得丢焦点）；
+   不能点击淘汰时，已淘汰的置灰一并恢复正常颜色 */
 function updateElimAffordance(matchId, m) {
   const ev = getActiveEvent(); if (!ev) return;
   const can = !ev.locked && !m.typedRank;
+  const parts = ev.competitors.filter(function(c) { return participates(m, c); });
+  const st = matchElimState(m, parts);
   document.querySelectorAll('#matchbody-' + matchId + ' tbody tr td.cname').forEach(function(td) {
     td.classList.toggle('eli', can);
     if (can) td.title = '点击 = 淘汰（拿当前最差名次，其余人 -1）；再点一次撤销';
-    else if (m.typedRank && !ev.locked) td.title = '本局已手动录入名次，点击淘汰已停用；想用点击就先「清空」本局';
+    else if (m.typedRank && !ev.locked) td.title = '本局已手动录入了名次，点击淘汰已停用；想用点击就先「清空」本局';
     else td.title = '';
+    const tr = td.closest ? td.closest('tr') : null;
+    if (tr) tr.classList.toggle('out', can && !st.done && st.vals[tr.dataset.comp] > st.aliveRank);
   });
 }
 
@@ -5305,22 +5720,91 @@ function openBatchModal() {
 function closeBatchModal() {
   document.getElementById('batch-modal').className = 'modal hidden';
 }
-function renderBatchList() {
+function renderBatchList(keepIds) {
   const box = document.getElementById('batch-list');
   if (!box) return;
-  // 勾选状态直接读 DOM，不另存一份，省得和列表不同步
-  box.innerHTML = state.events.map(function(e) {
+  // 勾选状态直接读 DOM，不另存一份，省得和列表不同步；调整顺序时用 keepIds 保住勾选
+  box.innerHTML = state.events.map(function(e, i) {
     const meta = (e.mode === 'solo' ? '单排' : '三排') + ' · ' +
       (e.matchPoint.enabled ? '赛点制' : '积分制') + ' · ' +
       e.competitors.length + ' ' + unitOf(e) + ' · ' + e.matches.length + ' 局';
     const cur = e.id === state.activeEventId ? '<span class="tag cur">当前</span>' : '';
     const lock = e.locked ? '<span class="tag lock">🔒 已结束</span>' : '';
-    return '<label class="batch-row' + (e.id === state.activeEventId ? ' cur' : '') + '">' +
+    return '<label class="batch-row' + (e.id === state.activeEventId ? ' cur' : '') + '"' +
+      ' draggable="true" data-id="' + esc(e.id) + '"' +
+      ' ondragstart="onBatchDragStart(event)" ondragover="onBatchDragOver(event)"' +
+      ' ondrop="event.preventDefault()" ondragend="onBatchDragEnd()">' +
       '<input type="checkbox" data-id="' + esc(e.id) + '" onchange="updateBatchCount()">' +
       '<span class="bname">' + esc(e.name) + cur + lock + '</span>' +
-      '<span class="bmeta">' + meta + '</span></label>';
+      '<span class="bmeta">' + meta + '</span>' +
+      '<span class="bmove">' +
+        '<button type="button" class="ghost tiny" title="上移"' + (i === 0 ? ' disabled' : '') +
+          ' onclick="event.preventDefault(); event.stopPropagation(); moveEvent(' + i + ',-1)">↑</button>' +
+        '<button type="button" class="ghost tiny" title="下移"' + (i === state.events.length - 1 ? ' disabled' : '') +
+          ' onclick="event.preventDefault(); event.stopPropagation(); moveEvent(' + i + ',1)">↓</button>' +
+      '</span></label>';
   }).join('');
+  if (keepIds && keepIds.length) {
+    const keep = {};
+    keepIds.forEach(function(id) { keep[id] = 1; });
+    Array.prototype.forEach.call(box.querySelectorAll('input[data-id]'), function(cb) {
+      if (keep[cb.getAttribute('data-id')]) cb.checked = true;
+    });
+  }
   updateBatchCount();
+}
+
+/* 批量管理：拖动整行调整赛事顺序，松手后按列表新顺序重排 state.events */
+let batchDragEl = null;
+function onBatchDragStart(e) {
+  batchDragEl = e.currentTarget;
+  batchDragEl.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', batchDragEl.getAttribute('data-id')); } catch (err) {}
+}
+function onBatchDragOver(e) {
+  if (!batchDragEl) return;
+  e.preventDefault();
+  const over = e.currentTarget;
+  if (over === batchDragEl || over.parentNode !== batchDragEl.parentNode) return;
+  const rect = over.getBoundingClientRect();
+  const after = (e.clientY - rect.top) > rect.height / 2;
+  over.parentNode.insertBefore(batchDragEl, after ? over.nextSibling : over);
+}
+function onBatchDragEnd() {
+  const el = batchDragEl;
+  batchDragEl = null;
+  if (!el) return;
+  el.classList.remove('dragging');
+  const box = document.getElementById('batch-list');
+  if (!box) return;
+  const keep = batchBoxes().filter(function(cb) { return cb.checked; })
+    .map(function(cb) { return cb.getAttribute('data-id'); });
+  const byId = {};
+  state.events.forEach(function(ev) { byId[ev.id] = ev; });
+  const next = Array.prototype.map.call(box.querySelectorAll('.batch-row'), function(r) {
+    return byId[r.getAttribute('data-id')];
+  }).filter(Boolean);
+  if (next.length !== state.events.length) return;
+  if (next.every(function(ev, i) { return ev === state.events[i]; })) return;
+  state.events = next;
+  saveState();
+  renderBatchList(keep);
+  renderTopbar();
+}
+
+/* ↑↓ 按钮微调顺序：只影响下拉和列表的排列，不动任何数据 */
+function moveEvent(i, d) {
+  const j = i + d;
+  if (j < 0 || j >= state.events.length) return;
+  const keep = batchBoxes().filter(function(cb) { return cb.checked; })
+    .map(function(cb) { return cb.getAttribute('data-id'); });
+  const tmp = state.events[i];
+  state.events[i] = state.events[j];
+  state.events[j] = tmp;
+  saveState();
+  renderBatchList(keep);
+  renderTopbar();
 }
 function batchBoxes() {
   return Array.prototype.slice.call(document.querySelectorAll('#batch-list input[type=checkbox]'));
@@ -5507,6 +5991,7 @@ const EN = {
   '保存设置': 'Save Settings',
   '导出本赛事': 'Export Event',
   '导入赛事（可多选）': 'Import Events (multi-select)',
+  '导入赛事': 'Import Events',
   '批量管理赛事…': 'Bulk Manage Events…',
   '删除本赛事': 'Delete Event',
 
@@ -5521,6 +6006,7 @@ const EN = {
   '批量管理参赛者': 'Bulk Manage Competitors',
   '全选': 'Select All',
   '全不选': 'Select None',
+  '（拖动行或用 ↑↓ 调整顺序）': '(drag rows or use ↑↓ to reorder)',
   '把选中的加入': 'Add selected to',
   '应用分组': 'Apply Group',
   '+ 新建组': '+ New Group',
@@ -5558,6 +6044,16 @@ const EN = {
   '录入顺序': 'Entry order',
   '赛区': 'Region',
 
+  /* ---- 前序积分带入（挑选 / 官方战队弹窗） ---- */
+  '不带入': 'None',
+  '顺序递减': 'Descending',
+  '按百分比': 'Percentage',
+  '首位': 'First',
+  '分，每名递减': ' pts, dropping',
+  '来源积分 ×': 'Source score ×',
+  '按勾选序号从首位往下算，最低 0': 'Based on selection numbers, dropping from the first; minimum 0',
+  '按每位在来源赛事的总分（含带入分）算': "Uses each entry's total in the source event (carry-in included)",
+
   /* ---- 积分榜显示设置 ---- */
   '单元格': 'Cells',
   '上下留白': 'Vertical padding',
@@ -5568,7 +6064,14 @@ const EN = {
     'Color whole rows by leaderboard rank to mark qualified / eliminated',
   '+ 添加规则': '+ Add Rule',
   '填入常用（5-8 名灰色）': 'Preset: gray ranks 5-8',
+  '按选手着色': 'Color by Competitor',
+  '单独给某个选手 / 队伍整行上色，优先于按名次着色':
+    'Color whole rows for individual competitors — takes priority over rank coloring',
+  '还没有规则，没有选手被单独着色。': 'No rules yet — no competitors are individually colored.',
+  '整行颜色': 'Row color',
+  '还没有参赛者，先添加参赛者再来着色。': 'No competitors yet — add competitors before coloring.',
   '在「队伍 / 选手」列显示队标': 'Show team logos in the Team / Player column',
+  '每局列显示地图名': 'Show map names in game columns',
   '隐藏队伍成员名单（三排只留战队名）': 'Hide member lists (Trios: team name only)',
   '榜单标题': 'Board Title',
   '显示标题（居中放在积分榜上方）': 'Show title (centered above the board)',
@@ -5641,6 +6144,9 @@ const EN = {
   '最后一局击败': 'Last game kills',
   '最后一局名次': 'Last game placement',
   '生存排名': 'Placement',
+  '单局前': 'Top',
+  '名次数': 'finishes',
+  '单局进入前 m 名的次数（中间的数字就是 m）': 'Matches finished in the top m (the middle number is m)',
   '升序': 'Asc',
   '降序': 'Desc',
   '降序（固定，不可改）': 'Desc (fixed)',
@@ -5790,6 +6296,8 @@ const EN = {
   '按现行同分规则，所有名次都已分出先后，无需裁定。':
     'By the current tiebreak rules all places are already decided — no ruling needed.',
   '未指定': 'Not set',
+  '自定义…': 'Custom…',
+  '地图名': 'Map name',
   '武道分': 'Martial Artist pts',
   '赛点': 'Match Point',
   '🔒 本赛事已结束积分，无法添加对局': '🔒 Scoring ended — cannot add matches',
@@ -5837,6 +6345,8 @@ const EN = {
   '自动': 'auto',
   '左移': 'Move left',
   '右移': 'Move right',
+  '上移': 'Move up',
+  '下移': 'Move down',
   '名称': 'Name',
   '组名': 'Group name',
   '赛区标签名': 'Region name',
@@ -5855,10 +6365,12 @@ const EN = {
 };
 
 /* 拼接文案的规则：整段匹配（^…$），m 是捕获组，可递归用 t()。顺序敏感，更具体的放前面 */
+/* 前序积分带入句子里的单位：值恰为 1 时用单数 pt */
+function enPts(n) { return String(n) === '1' ? ' pt' : ' pts'; }
 const EN_RULES = [
   /* 赛事名保持原样，只翻界面加的词缀：X（导入2）/ X（单排·赛点制）/ X（单排 · 8 队） */
   [ /^(.+)（导入(\d*)）$/, m => m[1] + ' (Imported' + (m[2] ? ' ' + m[2] : '') + ')' ],
-  [ /^(.+)（(单排|三排)·(赛点制|积分制)）$/, m => t(m[1]) + ' (' + t(m[2]) + ' · ' + t(m[3]) + ')' ],
+  [ /^(.+)（(单排|三排)·(赛点制|积分制)(·🔒已结束)?）$/, m => t(m[1]) + ' (' + t(m[2]) + ' · ' + t(m[3]) + (m[4] ? ' · 🔒 Ended' : '') + ')' ],
   [ /^(.+)（(单排|三排) · (\d+) (人|队)）$/, m => t(m[1]) + ' (' + t(m[2]) + ' · ' + m[3] + (m[4] === '人' ? ' players' : ' teams') + ')' ],
   /* 第X局 / 第X名（X 是中文数字） */
   [ /^第([一二三四五六七八九十]+)局$/, m => 'Game ' + cnNumToInt(m[1]) ],
@@ -5903,6 +6415,7 @@ const EN_RULES = [
     m => '“' + m[1] + '” has no players yet — showing the team name instead.\nTo pick an MVP, add members in Competitors as “Team / Member1 / Member2”.' ],
   [ /^表只有前 (\d+) 名有分，其余名次得 0 分。$/, m => 'Only the top ' + m[1] + ' ranks score; the rest get 0.' ],
   [ /^⚠️ 第 (.+) 名被多条规则覆盖，以靠上的那条为准。$/, m => '⚠️ Rank ' + m[1] + ' is covered by multiple rules — the topmost one wins.' ],
+  [ /^⚠️「(.+)」被多条规则覆盖，以靠上的那条为准。$/, m => '⚠️ "' + m[1] + '" is covered by multiple rules — the topmost one wins.' ],
   [ /^⚠️ 第 (.+) 名的击败系数为 0，这些名次的击败不计分。$/, m => '⚠️ Rank ' + m[1] + ' has a kill multiplier of 0 — kills there score nothing.' ],
   /* ---- 赛点横幅 / 状态 ---- */
   [ /^🏆 冠军：(.+)（第([一二三四五六七八九十]+)局达成）$/, m => '🏆 Champion: ' + m[1] + ' (decided at Game ' + cnNumToInt(m[2]) + ')' ],
@@ -5943,6 +6456,18 @@ const EN_RULES = [
     m => 'Copy ' + m[2] + ' ' + (m[3] === '人' ? (m[2] === '1' ? 'player' : 'players') : (m[2] === '1' ? 'team' : 'teams')) + ' from "' + m[1] + '":\n' +
          m[4].replace(/ 等$/, ' etc.') + (m[6] ? '\n(skipping ' + m[6] + ' already present)' : '') +
          '\n\nCarry-in points are not copied (start from 0). Confirm?' ],
+  [ /^从「(.+)」复制 (\d+) (人|队)：\n([\s\S]+?)(\n（跳过 (\d+) 个已有的）)?\n\n前序积分按挑选顺序带入：首位 ([\d.]+) 分，每名递减 ([\d.]+) 分，最低 0。确认？$/,
+    m => 'Copy ' + m[2] + ' ' + (m[3] === '人' ? (m[2] === '1' ? 'player' : 'players') : (m[2] === '1' ? 'team' : 'teams')) + ' from "' + m[1] + '":\n' +
+         m[4].replace(/ 等$/, ' etc.') + (m[6] ? '\n(skipping ' + m[6] + ' already present)' : '') +
+         '\n\nCarry-in follows your pick order: first gets ' + m[7] + enPts(m[7]) + ', dropping ' + m[8] + enPts(m[8]) + ' each (minimum 0). Confirm?' ],
+  [ /^从「(.+)」复制 (\d+) (人|队)：\n([\s\S]+?)(\n（跳过 (\d+) 个已有的）)?\n\n前序积分按来源赛事总分的 ([\d.]+)% 带入。确认？$/,
+    m => 'Copy ' + m[2] + ' ' + (m[3] === '人' ? (m[2] === '1' ? 'player' : 'players') : (m[2] === '1' ? 'team' : 'teams')) + ' from "' + m[1] + '":\n' +
+         m[4].replace(/ 等$/, ' etc.') + (m[6] ? '\n(skipping ' + m[6] + ' already present)' : '') +
+         '\n\nCarry-in: ' + m[7] + '% of each entry\'s total in the source event. Confirm?' ],
+  [ /^将添加 (\d+) (名选手|支战队)：\n([\s\S]+?)(\n（跳过 (\d+) 个已存在的）)?\n\n前序积分按勾选顺序带入：首位 ([\d.]+) 分，每名递减 ([\d.]+) 分，最低 0。确认？$/,
+    m => 'Will add ' + m[1] + ' ' + (m[2] === '名选手' ? (m[1] === '1' ? 'player' : 'players') : (m[1] === '1' ? 'team' : 'teams')) + ':\n' +
+         m[3].replace(/ 等$/, ' etc.') + (m[5] ? '\n(skipping ' + m[5] + ' already present)' : '') +
+         '\n\nCarry-in follows the selection order: first gets ' + m[6] + enPts(m[6]) + ', dropping ' + m[7] + enPts(m[7]) + ' each (minimum 0). Confirm?' ],
   [ /^清空(积分制|赛点制)的全部比较项？\n\n总分相同的直接并列，需要人工评定。$/,
     m => 'Clear all tiebreak criteria for ' + t(m[1]) + '?\n\nEqual totals go straight to tied — resolve manually.' ],
   [ /^把(积分制|赛点制)的同分规则恢复为默认？$/, m => 'Reset the ' + t(m[1]) + ' tiebreak rules to defaults?' ],
@@ -5954,6 +6479,7 @@ const EN_RULES = [
     m => 'Settings changed but not saved.\n\n・OK = save first, then switch to "' + t(m[1]) + '"\n・Cancel = switch without saving (changes are discarded; the settings show the saved values when you come back)' ],
   [ /^总击败 (\d+)(?: · 赛点分 ([\d.]+))?$/, m => 'Kills ' + m[1] + (m[2] ? ' · MP bonus ' + m[2] : '') ],
   [ /^([\d.]+) 分$/, m => m[1] + ' pts' ],
+  [ /^带入 ([\d.]+) 分$/, m => 'Carry-in ' + m[1] + ' pts' ],
   [ /^共 (\d+) (人|队)$/, m => m[1] + (m[2] === '人' ? ' players' : ' teams') ],
   [ /^共 (\d+) (人|队)，已选 (\d+) (人|队)$/, m => m[1] + (m[2] === '人' ? ' players' : ' teams') + ', ' + m[3] + ' selected' ],
   [ /^已选 (\d+) (人|队)$/, m => m[1] + ' selected' ],
@@ -6054,6 +6580,12 @@ function tNode(node, src) {
       src.trim() === '火罗国') {
     /* 对局卡片的地图下拉：武道局只有一个选项「火罗国」，对应游戏里的 Versus-Random */
     return 'Versus-Random';
+  }
+  if (LANG === 'en' && pe && pe.tagName === 'SMALL' && pe.classList &&
+      pe.classList.contains('mapname') && src.trim() === '火罗国') {
+    /* 每局列头的地图名：武道对局固定火罗国，对应 Versus-Random */
+    const th = pe.closest ? pe.closest('th.wd') : null;
+    if (th) return 'Versus-Random';
   }
   return t(src);
 }

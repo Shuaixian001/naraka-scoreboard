@@ -126,33 +126,34 @@ Total descending is fixed first; the remaining criteria are editable in Settings
 - Tie resolution: when a game's top score is tied, a dialog lets you pick which one to highlight (the official tiebreak order is pre-selected)
 - When totals are tied and no rule separates them, click names in order in the tie-resolution panel; click again to undo
 - End scoring: one click locks the event, disabling all entry operations to prevent accidents; unlock anytime
-- Multi-event management; Solo and Trios are fully independent
+- Multi-event management; Solo and Trios are fully independent. Events with scoring ended are marked 「🔒已结束」 / 「🔒 Ended」 in the top-bar dropdown
 - An empty state on first open (or after deleting everything), with create/import actions right there
 - JSON export / import
 - Placement tables are editable cell by cell, with built-in official 8-player and 12-player presets
 
 ### Bulk event management
 
-Under Settings → Data, alongside the per-event export / import / delete:
+Import and bulk management live in the **top bar** (next to "+ New Event"); per-event export / delete stay under Settings → Data:
 
-- **Bulk import**: "Import Events (multi-select)" accepts several JSON files at once, then shows one confirm dialog listing all event names. Unreadable files are listed and skipped without aborting the batch; duplicate names get an "(Imported)" suffix
-- **Bulk export**: "Bulk Manage Events…" → tick any number of events, then choose one of two styles:
+- **Bulk import**: "Import Events" in the top bar accepts several JSON files at once, then shows one confirm dialog listing all event names. Unreadable files are listed and skipped without aborting the batch; duplicate names get an "(Imported)" suffix
+- **Bulk export**: "Bulk Manage Events" in the top bar → tick any number of events, then choose one of two styles:
   - *Export as One File*: packs `{events:[...]}`, restorable in a single import
   - *Export Individually*: one file per event, named after each event
 - **Bulk delete**: "Delete Selected" in the same dialog. The confirm lists full event names; deleting everything asks for confirmation again. Deleting the event you are viewing switches to a remaining one automatically
+- **Reorder**: drag a row to move it anywhere (great for long distances), or nudge it with the `↑` `↓` buttons at the row end; the top-bar dropdown follows and your selections are preserved
 
 > **About "Export Individually"**: the browser will ask whether to allow multiple downloads — choose **Allow**. Verified working in Edge. If your browser blocks downloads without asking, use "Export as One File" instead.
 
 ## Usage notes
 
 1. **Double-check the placement table against the current season's official rules before running an event.** Rules change every season; the built-in defaults (official 8-player: Solo `2.5/1/0.5/0.5`, Trios `4/2/1/1`) are just a starting point — every cell is editable in Settings → Placement table.
-2. **Data lives in your browser** (localStorage). Switching computers or browsers, or clearing browser data, loses past results — export important events regularly via "Settings → Export Event" or "Bulk Manage Events".
+2. **Data lives in your browser** (localStorage). Switching computers or browsers, or clearing browser data, loses past results — export important events regularly via "Settings → Export Event" or "Bulk Manage Events" in the top bar.
 3. Single-match ties follow the official order: match total → kills → placement. Damage data is not recorded, so the chain stops there.
 4. Click "Save Settings" to apply changes — otherwise they do not take effect. If you switch panels with unsaved settings, the dialog offers: OK = save first, then switch; Cancel = discard the changes and switch right away (coming back shows the saved settings).
 
 ## Sample data
 
-Sample data lives in the [`赛事数据/测试数据/`](赛事数据/测试数据) folder — load each file via "Settings → Import Events".
+Sample data lives in the [`赛事数据/测试数据/`](赛事数据/测试数据) folder — load each file via "Import Events" in the top bar.
 
 - The Stage 1 test data covers three files: Solo Stage 1 Finals, Trios Stage 1 Finals, and Stage 1 Losers Round 2. All later updates are single-day data.
 
