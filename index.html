@@ -5402,16 +5402,19 @@ function toggleEliminate(matchId, compId) {
   const st = matchElimState(m, parts);
   const vals = st.vals, aliveRank = st.aliveRank;
   const aliveCount = parts.filter(function(c) { return vals[c.id] === aliveRank; }).length;
-  m.finished = false;   // 又点名字了 = 重新进入淘汰录入
 
   if (vals[compId] === aliveRank) {
     if (aliveCount < 2) { alert('只剩最后一个人了，不能再淘汰。'); return; }
+    m.finished = false;   // 又点名字了 = 重新进入淘汰录入
     parts.forEach(function(c) {
       if (c.id !== compId && vals[c.id] === aliveRank) setResultPlacement(m, c.id, aliveRank - 1);
     });
     setResultPlacement(m, compId, aliveRank);
   } else {
     // 撤销：生者名次整体 +1，他排到生者里的最后，原来在他后面的依次前进
+    const c = parts.filter(function(p) { return p.id === compId; })[0];
+    if (!confirm('恢复「' + c.name + '」？\n\n撤销这次淘汰，本局名次会重新排。')) return;
+    m.finished = false;   // 又点名字了 = 重新进入淘汰录入
     const v = vals[compId];
     parts.forEach(function(c) {
       if (vals[c.id] >= aliveRank && vals[c.id] < v) setResultPlacement(m, c.id, vals[c.id] + 1);
@@ -6473,6 +6476,8 @@ const EN_RULES = [
   [ /^把(积分制|赛点制)的同分规则恢复为默认？$/, m => 'Reset the ' + t(m[1]) + ' tiebreak rules to defaults?' ],
   [ /^删除「(.+)」？其所有比赛数据也会删除。$/, m => 'Delete "' + m[1] + '"? All its match data will be removed too.' ],
   [ /^删除「(.+)」？该局所有数据也会删除。$/, m => 'Delete "' + t(m[1]) + '"? All data for this match will be removed too.' ],
+  [ /^恢复「(.+)」？\n\n撤销这次淘汰，本局名次会重新排。$/,
+    m => 'Restore "' + t(m[1]) + '"?\n\nThis undoes the elimination and re-ranks this match.' ],
   [ /^还没有同模式的赛事可以挑。\n\n(单排赛事只能从单排赛事里挑选手。|三排赛事只能从三排赛事里挑队伍。)$/,
     m => 'No events of the same mode to pick from.\n\n' + t(m[1]) ],
   [ /^设置里改过东西，但还没点「保存设置」。\n\n・点「确定」= 先保存，再切到「(.+)」\n・点「取消」= 这次不保存，直接切过去（改动不保留，切回来还是原来的设置）$/,
