@@ -1094,15 +1094,18 @@ const TIANTI_MAPS = [
   '龙隐洞天·日暮', '龙隐洞天·夜半', '龙隐洞天·朝露',
   '宛渠·夕阳', '宛渠·烈日', '宛渠·星夜'
 ];
-/* 新建赛事时的默认排布：第 1 局武道（火罗国），第 2-8 局依次是这些 */
+/* 单排：第 1 局武道（火罗国），第 2-8 局依次是这些；
+   三排：默认没有武道局，第 1-7 局依次是这些 */
 const DEFAULT_MAP_SEQUENCE = [
   '聚窟州·早晨', '火罗国·阴天', '龙隐洞天·朝露', '聚窟州·正午',
   '火罗国·星夜', '龙隐洞天·夜半', '聚窟州·夜晚'
 ];
-/* index 从 0 数；第 1 局是武道，之后按固定顺序排 */
-function defaultMatchMap(index, type) {
+/* index 从 0 数；单排第 1 局是武道，之后按固定顺序排；
+   三排默认没有武道局，第一局直接从天人地图序列开头开始 */
+function defaultMatchMap(index, type, mode) {
   if (type === 'wudao') return WUDAO_MAP;
-  return DEFAULT_MAP_SEQUENCE[index - 1] || null;
+  const seqIndex = (mode === 'trio') ? index : (index - 1);
+  return DEFAULT_MAP_SEQUENCE[seqIndex] || null;
 }
 
 /* NBPL 2026 秋季赛 16 支官方战队与选手名单（2026-09-22 取自赛事官网「战队系统」接口）
@@ -1455,7 +1458,7 @@ function presetValues(preset) {
 function defaultMatchPoint(mode) {
   return {
     enabled: false,
-    threshold: mode === 'solo' ? 16 : 40,
+    threshold: mode === 'solo' ? 16 : 36,
     maxMatches: 8,
     bonusEnabled: true,
     bonusStep: mode === 'solo' ? 0.5 : 1,
@@ -1480,7 +1483,7 @@ function newEvent(mode, name, matchPointEnabled) {
     tags: [],
     rankStyles: [],
     compStyles: [],
-    tieBreak: defaultTieBreak(),
+    tieBreak: defaultTieBreak(mode),
     matchTie: defaultMatchTie(),
     notes: '',
     lb: defaultLbCfg(),
@@ -1733,19 +1736,22 @@ const TIE_CRITERIA = [
 function tieCriterion(k) {
   return TIE_CRITERIA.filter(function(c) { return c.k === k; })[0] || null;
 }
-function defaultTieBreak() {
+function defaultTieBreak(mode) {
+  // 三排默认不比较第一局积分；单排保持原默认
+  const points = [
+    { k: 'carry', dir: 'asc' }
+  ];
+  if (mode !== 'trio') points.push({ k: 'firstScore', dir: 'asc' });
+  points.push(
+    { k: 'kills',      dir: 'desc' },
+    { k: 'bestScore',  dir: 'desc' },
+    { k: 'bestKills',  dir: 'desc' },
+    { k: 'lastScore',  dir: 'desc' },
+    { k: 'lastKills',  dir: 'desc' },
+    { k: 'lastPlace',  dir: 'asc'  }
+  );
   return {
-    // 积分制：前序少的在前 → 第一局积分升序 → …依次比到最后一局名次；全同则并列，人工评定
-    points: [
-      { k: 'carry',      dir: 'asc'  },
-      { k: 'firstScore', dir: 'asc'  },
-      { k: 'kills',      dir: 'desc' },
-      { k: 'bestScore',  dir: 'desc' },
-      { k: 'bestKills',  dir: 'desc' },
-      { k: 'lastScore',  dir: 'desc' },
-      { k: 'lastKills',  dir: 'desc' },
-      { k: 'lastPlace',  dir: 'asc'  }
-    ],
+    points: points,
     mp: [{ k: 'carry', dir: 'asc' }]
   };
 }
@@ -1757,7 +1763,7 @@ function upgradeLegacyTieBreak(ev) {
   for (let i = 0; i < legacy.length; i++) {
     if (pts[i].k !== legacy[i].k || pts[i].dir !== legacy[i].dir) return;
   }
-  ev.tieBreak.points = defaultTieBreak().points.map(function(x) { return { k: x.k, dir: x.dir }; });
+  ev.tieBreak.points = defaultTieBreak(ev.mode).points.map(function(x) { return { k: x.k, dir: x.dir }; });
 }
 /* 单局内的同分比较项：只在采用（天人）用到，单局积分降序固定在最前 */
 const MATCH_TIE_CRITERIA = [
@@ -1784,7 +1790,7 @@ function normalizeMatchTie(ev) {
 }
 
 function normalizeTieBreak(ev) {
-  const d = defaultTieBreak();
+  const d = defaultTieBreak(ev.mode);
   if (!ev.tieBreak || typeof ev.tieBreak !== 'object') { ev.tieBreak = d; return; }
   ['points', 'mp'].forEach(function(branch) {
     const raw = ev.tieBreak[branch];
@@ -3608,7 +3614,7 @@ function resetTieRules() {
   if (ev.locked) { alert('本赛事已结束积分，需先在顶部解锁才能修改设置。'); return; }
   const branch = tieBranch(ev);
   if (!confirm('把' + (ev.matchPoint.enabled ? '赛点制' : '积分制') + '的同分规则恢复为默认？')) return;
-  ev.tieBreak[branch] = defaultTieBreak()[branch].map(function(x) { return { k: x.k, dir: x.dir }; });
+  ev.tieBreak[branch] = defaultTieBreak(ev.mode)[branch].map(function(x) { return { k: x.k, dir: x.dir }; });
   saveState();
   renderAll();
 }
@@ -5018,11 +5024,11 @@ function randomGroupDialog() {
 function addMatch() {
   const ev = getActiveEvent(); if (!ev) return;
   const groups = (lbFilter.board === 'group' && lbFilter.group) ? [lbFilter.group] : [];
-  // 第 1 局默认武道（火罗国），之后按默认顺序给天人局配地图天气
+  // 单排第 1 局默认武道（火罗国）；三排默认全部天人，从聚窟州·早晨开始
   const index = ev.matches.length;
-  const type = index === 0 ? 'wudao' : 'tianti';
+  const type = (ev.mode !== 'trio' && index === 0) ? 'wudao' : 'tianti';
   ev.matches.push({ id: uid(), name: '', type: type, groups: groups, results: {},
-                    map: defaultMatchMap(index, type) });
+                    map: defaultMatchMap(index, type, ev.mode) });
   saveState(); renderAll();
 }
 
@@ -5034,7 +5040,7 @@ function setMatchType(id, t) {
   m.type = next;
   // 武道只有火罗国；切回天人时「火罗国」不适用了，换成该局的默认地图天气
   if (next === 'wudao') m.map = WUDAO_MAP;
-  else if (!m.map || m.map === WUDAO_MAP) m.map = defaultMatchMap(ev.matches.indexOf(m), 'tianti');
+  else if (!m.map || m.map === WUDAO_MAP) m.map = defaultMatchMap(ev.matches.indexOf(m), 'tianti', ev.mode);
   saveState(); renderAll();
 }
 

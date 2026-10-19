@@ -15,7 +15,7 @@ Open it and go. Your data is stored in your own browser and never uploaded to an
 ### Formats
 
 - **Points format**: `Total = Placement points + Kill points`
-- **Match Point format**: configurable match point threshold (default: Solo 16 / Trios 40) and max matches (default: 8)
+- **Match Point format**: configurable match point threshold (default: Solo 16 / Trios 36) and max matches (default: 8)
   - Live match-point status with a progress bar showing how many points are still needed
   - After activating match point, one more match win automatically crowns the champion
   - **Match point placement bonus**: optional, grows each game after activation (Solo +0.5 / Trios +1)
@@ -26,7 +26,7 @@ Open it and go. Your data is stored in your own browser and never uploaded to an
 
 - **Survival matches**: placement points + kill points, using the Survival placement table
 - **Martial Artist matches**: placement points only, using a separate Martial Artist placement table, with no kill input
-- Match type can be switched anytime in the entry screen; the first game of a new event defaults to Martial Artist
+- Match type can be switched anytime in the entry screen; a new Solo event defaults its first game to Martial Artist, while a new Trios event defaults to Survival games (you can still switch any game to Martial Artist)
 
 ### Maps & weather
 
@@ -37,10 +37,12 @@ Open it and go. Your data is stored in your own browser and never uploaded to an
   Perdoria (Eventide (Fireflies) / Midnight (Fireflies) / Morning Dew),
   Wanchu (Sunset / Blaze / Starry Night (Fireflies))
 - Variants with fireflies are marked **（虫）** in the Chinese UI (Fireflies in English), so you can tell them apart at a glance
-- After creating an event, the first 8 games are pre-filled in order:
-  Game 1 Martial Artist (Versus-Random) → Morus Isle · Dawn → Holoroth · Cloudy → Perdoria · Morning Dew → Morus Isle · Midday →
-  Holoroth · Starry Night (Fireflies) → Perdoria · Midnight (Fireflies) → Morus Isle · Night (Fireflies)
-  (from Game 9 on there are no presets — pick your own)
+- After creating an event, the first games are pre-filled in order:
+  - **Solo**: Game 1 Martial Artist (Versus-Random) → Morus Isle · Dawn → Holoroth · Cloudy → Perdoria · Morning Dew →
+    Morus Isle · Midday → Holoroth · Starry Night (Fireflies) → Perdoria · Midnight (Fireflies) → Morus Isle · Night (Fireflies)
+  - **Trios**: no Martial Artist game by default — Morus Isle · Dawn → Holoroth · Cloudy → Perdoria · Morning Dew →
+    Morus Isle · Midday → Holoroth · Starry Night (Fireflies) → Perdoria · Midnight (Fireflies) → Morus Isle · Night (Fireflies) (7 games)
+  - Both modes can switch any game to Martial Artist; games beyond the presets have no automatic map.
 
 ### Scoring breakdown
 
@@ -107,10 +109,11 @@ An independent labeling system (separate from groups) for regions, divisions, te
 
 Total descending is fixed first; the remaining criteria are editable in Settings → Tiebreak Rules (add / remove, direction, order).
 
-- **Points defaults**: Carry-in ascending → Game 1 points ascending → Kill points descending → Highest match score descending → Highest match kills descending → Last game points descending → Last game kills descending → Last game placement ascending
+- **Points defaults (Solo)**: Carry-in ascending → Game 1 points ascending → Kill points descending → Highest match score descending → Highest match kills descending → Last game points descending → Last game kills descending → Last game placement ascending
+- **Points defaults (Trios)**: Carry-in ascending → Kill points descending → Highest match score descending → Highest match kills descending → Last game points descending → Last game kills descending → Last game placement ascending (no Game 1 points criterion)
 - **Match Point defaults**: Carry-in ascending
 - If every criterion is equal → tied; order them by clicking names in "Manual Tie Resolution"
-- "Clear" removes all criteria (equal totals go straight to tied); "Reset Defaults" restores the above
+- "Clear" removes all criteria (equal totals go straight to tied); "Reset Defaults" restores the defaults for the current mode
 
 ### Language (Chinese / English)
 
