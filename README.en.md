@@ -90,7 +90,7 @@ An independent labeling system (separate from groups) for regions, divisions, te
   - **Columns**: toggle visibility, reorder with `←` `→` (or arrow keys once a row is focused, ↑↓ equivalent), set per-column width (empty = auto). `Rank` and `Team / Player` are always shown
   - The "Per game (N columns)" block is managed as a unit: show/hide, move, and set width together
   - **Cells**: vertical padding / horizontal padding / font size sliders, applied live
-  - **Rank coloring (elimination)**: custom rules (e.g. gray for ranks 5–8) coloring whole rows
+  - **Rank coloring**: separate rule sets for the Overall board and A/B/C group boards (e.g. gray for ranks 5–8), coloring whole rows; group boards inherit the Overall colors until edited; use “Use Overall Colors” to restore inheritance
   - Fixed layout kicks in only after you change a column width (overflow gets ellipsized); untouched layouts look exactly as before
 - **Compact / Full table toggle**: collapses/expands the Carry-in + per-game columns as a unit — handy for streaming and casting
 - **Match point champions are pinned to rank 1 immediately**, everyone else shifts down one
