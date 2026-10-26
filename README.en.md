@@ -2,13 +2,15 @@
 
 [中文](README.md) | English
 
-A **single-file, zero-dependency, pure front-end** standings tool for NARAKA: BLADEPOINT events, with a **Chinese / English UI**. Just double-click `index.html` — nothing to install, no internet connection required.
+A **single-file, zero-dependency, pure front-end** standings tool for NARAKA: BLADEPOINT events, with a **Chinese / English UI**. Just double-click `index.html` — nothing to install, no internet connection required. The online build can optionally connect to Tencent CloudBase for a public event library and member editing.
 
 ## Online
 
-**https://shuaixian001.github.io/naraka-scoreboard/**
+**https://jiestandings.com/**
 
-Open it and go. Your data is stored in your own browser and never uploaded to any server.
+The live site opens on **Public Events**: a collapsible event history grouped by tag on the left and the live leaderboard on the right. Visitors are read-only, and every public event has its own share link. Click **Local Station** in the top bar (or open `#local`) for your own workspace — events you create or import stay in your browser and are never uploaded.
+
+The public library requires one-time CloudBase setup by the admin; see [Public event library & member editing](#public-event-library--member-editing-optional). Without it, the page is a purely local tool, and opening `index.html` directly goes straight to the Local Station.
 
 ## Features
 
@@ -147,10 +149,108 @@ Import and bulk management live in the **top bar** (next to "+ New Event"); per-
 
 > **About "Export Individually"**: the browser will ask whether to allow multiple downloads — choose **Allow**. Verified working in Edge. If your browser blocks downloads without asking, use "Export as One File" instead.
 
+## Public event library & member editing (optional)
+
+The online build splits into two views:
+
+- **Public Events** (default): event history grouped by tag on the left (searchable, filterable by Solo / Trios) and the live leaderboard on the right. Visitors are read-only, and each event has a share link `#public/<document-id>`.
+  - Group headings expand / collapse; the collapsed state is kept in the current browser. An event can belong to multiple tags, so it appears once under each tag with an **Also in: …** note. Use `/` in a tag name to create nested folders, e.g. `NBPL Events/2026 Autumn Split/Stage 2`; legacy tags without `/` stay at the top level.
+  - Admins can click **Organize** at the top right of the directory to drag rows or use ↑↓ to reorder events and add / remove tags (new tags can be created inline; every event keeps at least one tag). The result applies to all visitors.
+  - The public browse view shows read-only **Match score** cards directly, reusing the match entry card layout. All matches are expanded by default with no height limit, showing the complete entered kills, placement, match score, etc.; clicking a card title still folds that match. The **Collapse ▲ / Expand ▼** button hides or shows the whole section. It appears only in public browse mode — not in edit mode or the Local Station — and never modifies data.
+- **Local Station**: your own local workspace. The top-bar **Public Events** button opens the same directory; publishers who pick their own event open it in the station with a **Back to My Events** crumb, while everyone else goes to the read-only public page.
+- Local files (`file://`) open the Local Station and never connect to CloudBase.
+
+### Permissions & hidden events
+
+- **Only the publisher can modify a public event's content.** Other approved members are read-only, but can publish their own local events.
+- **Admins** can hide / restore / delete any public event, but cannot edit content published by someone else. Admins can still edit events they published themselves.
+- **Publishers** can hide / restore / delete their own public events. Other members are read-only and cannot hide or delete someone else's event.
+- Viewers without editing permission can open **Display Settings** to inspect the current configuration, but every button and input except **Done** is disabled.
+- **Deleting is permanent**: it removes the public event content, tags/order, and hidden state, and all share links stop working. The local copy is kept and is not deleted. Hiding only makes the event invisible to visitors; the data remains.
+- **Admins** can also organize any public event's tags and display order. Organizing writes only `tags` and `order` into `published_event_visibility`, never the event body or `rev`, so it cannot conflict with a publisher's autosave.
+- "Unpublish" means **hidden but retained**: data stays in CloudBase and can be restored anytime. Visitors no longer see hidden events; publishers and admins find them in the **Hidden** section of the directory.
+- Hidden is a UI filter, not strict confidentiality — direct database API reads may still return hidden documents. Do not publish sensitive data.
+- Public data lives only in CloudBase and page memory, never in a visitor's localStorage. The browser keeps only a small link map (local event ID → public document ID), not the event body.
+
+### One-time CloudBase setup
+
+1. Register a Tencent Cloud account, complete real-name verification, create a CloudBase environment (Shanghai region), and put its environment ID into `const CLOUD_ENV = ''` in `index.html`.
+2. Enable **email verification-code sign-in** under Authentication → Sign-in methods, using the built-in mail service, plus **email password sign-in** and **anonymous sign-in**. Anonymous sessions let visitors read public events; anonymous UIDs are not in the member allowlist and cannot write.
+3. Add `jiestandings.com` (and `www.jiestandings.com` if needed) to Environment → Security → Allowed web origins. For local development add `localhost:8123`.
+4. Create three collections: `published_events` (content), `published_event_visibility` (hidden state, tags, and ordering), `app_config` (member settings).
+5. Set custom security rules on all three (do not use the default "creator only" preset).
+
+   `published_events`:
+   ```json
+   {
+     "read": "auth != null",
+     "create": "auth != null && (auth.uid in get('database.app_config.editors').uids || auth.uid in get('database.app_config.editors').admins) && request.data.ownerUid == auth.uid",
+     "update": "auth != null && doc.ownerUid == auth.uid",
+     "delete": "auth != null && (auth.uid in get('database.app_config.editors').admins || (auth.uid in get('database.app_config.editors').uids && doc.ownerUid == auth.uid))"
+   }
+   ```
+
+   `published_event_visibility`:
+   ```json
+   {
+     "read": "auth != null",
+     "create": "auth != null && (auth.uid in get('database.app_config.editors').admins || (auth.uid in get('database.app_config.editors').uids && request.data.ownerUid == auth.uid))",
+     "update": "auth != null && (auth.uid in get('database.app_config.editors').admins || doc.ownerUid == auth.uid)",
+     "delete": "auth != null && (auth.uid in get('database.app_config.editors').admins || (auth.uid in get('database.app_config.editors').uids && doc.ownerUid == auth.uid))"
+   }
+   ```
+
+   `app_config`:
+   ```json
+   {
+     "read": "auth != null",
+     "update": "auth != null && auth.uid in get('database.app_config.editors').admins"
+   }
+   ```
+
+   `published_event_visibility` documents may also store `tags` (an array of tags) and `order` (a number) alongside `hidden`. Old documents without these fields are treated as having the `published_events.folder` value as their only tag — no migration is needed.
+
+6. Create the `app_config` document `_id = "editors"`:
+   ```json
+   { "uids": [], "admins": [], "names": {} }
+   ```
+7. Open the deployed page → Member Sign-in: new accounts use **Register**, entering an email and requesting a code first, then setting a password in the next step. Existing accounts sign in with a password. If a password is forgotten, click **Forgot Password** below the password form, verify the email, and set a new password; **Email Code** sign-in is still available. Copy your UID, then add it to both `uids` and `admins`; optionally add a display name under `names`, e.g. `{ "<your-uid>": "Data Team" }`.
+8. Sign in again and publish local events via "Bulk Manage Events → Publish to Public Library". Additional members can be approved from the in-page Member Management panel.
+
+> If the library already contains events published before ownership was introduced, backfill `ownerUid` / `ownerName` on each document (publisher UID + display name). Without that, the owner-only update rule leaves those documents uneditable.
+
+> CloudBase trial resources are limited; the personal plan (about ¥19.9/month) is recommended for long-term use.
+
+### Publishing events
+
+Import the files under `赛事数据/` by folder, then select them in **Bulk Manage Events → Publish to Public Library**. In the panel that opens, choose an existing folder or select **+ New folder…** and enter a name or path (use `/` to nest, e.g. `NBPL Events/2026 Autumn Split`), then click **Publish**. That name becomes the event's initial tag; an admin can later change tags and ordering via **Organize** on the public page. Publishing oldest-first keeps groups ordered with the most recently updated first.
+
+- Publishing records your UID as `ownerUid` and shows the publisher name. Local dropdowns and the bulk dialog show the publish state.
+- After publishing, the local event and its public record are linked and **sync in both directions automatically**:
+  - Local edits (scores, notes, settings, lock, display settings…) upload after about 0.7 seconds; no need to publish again. Other tabs in the same browser refresh immediately; other devices pick changes up by polling in about 10–20 seconds.
+  - Editing the same public event in the Local Station updates the local copy (when the local copy is idle and has no unsynced changes).
+  - When editing on the public page, changes go to the online record as usual; the local copy pulls them automatically the next time you switch to the Local Station and activate the event.
+  - The public page polls for new versions and loads them automatically. While you are typing or have unsaved settings, auto-refresh pauses and shows "A newer version is online".
+  - Local dropdowns / the bulk dialog show 🌐 published, hidden, or ⚠️ sync paused.
+  - Hidden only affects visitor visibility; publisher edits still sync to the hidden record and appear immediately after restoring it.
+- Publishing again still works: it updates the record you published (via the locally stored link or by matching the event ID) and can recreate a deleted online record. Events published by another member under the same ID are never overwritten.
+- **If both sides changed**, autosave pauses and reports a conflict. Choose "Load Online Version" or "Keep My Version as a Copy". The copy becomes a new local event without a link; the original receives the online version.
+- **If the online record was deleted**, sync pauses, local data is kept, and the state becomes "⚠️ Sync paused". Publish again to create a new record.
+- When signed out or on another device, local edits stay in the browser; after signing in as the publisher they sync automatically.
+
+### Sync and permissions
+
+- Visitors who are not signed in automatically get an anonymous session for reading only; anonymous UIDs are not in the allowlist and cannot write. Signing in with email switches to the real account.
+- Linked local edits reach CloudBase after ~0.7s; other visitors see them in about 15–20 seconds (10–15 seconds between signed-in members) while the page is visible. Polling pauses when the tab is in the background. Actual timing depends on the network and CloudBase.
+- Public events are single-publisher, not collaboratively edited. Content updates use a revision (`rev`) optimistic lock, so conflicts are reported instead of silently overwritten. Hidden state is stored separately and never bumps the content revision.
+- Accounts support email + password registration and password sign-in. Registration takes two steps: verify the email, then set a password; resending the code does not clear the password already typed. If a password is forgotten, click **Forgot Password** below the password form, then verify the email, set a new password, and sign in. The reset interface is only reachable through that entry. Old accounts created with verification codes that have no password can also use Forgot Password to set one. **Email Code** sign-in remains available and does not change the password.
+- Editing the same local event in multiple tabs of one browser is last-write-wins for localStorage; use one tab while editing. Public writes are still protected by the `rev` lock, and stale tabs get a conflict notice.
+- Anonymous sign-in must stay enabled: in the current CloudBase environment, unauthenticated database queries fail with an internal error, so the page uses an anonymous session to read public data. Disabling it makes visitors see a load error.
+
 ## Usage notes
 
 1. **Double-check the placement table against the current season's official rules before running an event.** Rules change every season; the built-in defaults (official 8-player: Solo `2.5/1/0.5/0.5`, Trios `4/2/1/1`) are just a starting point — every cell is editable in Settings → Placement table.
-2. **Data lives in your browser** (localStorage). Switching computers or browsers, or clearing browser data, loses past results — export important events regularly via "Settings → Export Event" or "Bulk Manage Events" in the top bar.
+2. **Your own data lives in your browser** (localStorage). Switching computers or browsers, or clearing browser data, loses past results — export important events regularly via "Settings → Export Event" or "Bulk Manage Events" in the top bar. Public library data lives in CloudBase and is unaffected by clearing browser data.
 3. Single-match ties follow the official order: match total → kills → placement. Damage data is not recorded, so the chain stops there.
 4. Click "Save Settings" to apply changes — otherwise they do not take effect. If you switch panels with unsaved settings, the dialog offers: OK = save first, then switch; Cancel = discard the changes and switch right away (coming back shows the saved settings).
 
@@ -162,7 +262,7 @@ Sample data lives in the [`赛事数据/测试数据/`](赛事数据/测试数�
 
 ## Local use
 
-Download `index.html` and double-click it in your browser. No server, no build, no internet needed.
+Download `index.html` and double-click it in your browser. No server, no build, no internet needed. Local-file mode never connects to CloudBase and hides the public library entry; use the online page for public events.
 
 ## Rule sources
 
