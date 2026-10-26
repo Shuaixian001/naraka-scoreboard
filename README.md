@@ -288,4 +288,4 @@
 
 ## 规则来源
 
-积分规则参考 [永劫无间官方赛事页面](https://www.yjwujian.cn/match) 与[官方赛事规则页（NBPL 2026 秋季赛）](https://www.yjwujian.cn/news/match/20260930/37804_1315619.html)。
+积分规则参考 [永劫无间官方赛事页面](https://www.yjwujian.cn/match) 与[官方赛事规则页（NBPL 2026 秋季赛）](https://www.yjwujian.cn/news/match/20261022/37804_1317514.html)。

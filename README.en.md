@@ -266,4 +266,4 @@ Download `index.html` and double-click it in your browser. No server, no build, 
 
 ## Rule sources
 
-Scoring rules are based on the [official NARAKA: BLADEPOINT event page](https://www.yjwujian.cn/match) and the [official rules page for NBPL 2026 Fall Split](https://www.yjwujian.cn/news/match/20260930/37804_1315619.html) — both pages are in Chinese.
+Scoring rules are based on the [official NARAKA: BLADEPOINT event page](https://www.yjwujian.cn/match) and the [official rules page for NBPL 2026 Fall Split](https://www.yjwujian.cn/news/match/20261022/37804_1317514.html) — both pages are in Chinese.
