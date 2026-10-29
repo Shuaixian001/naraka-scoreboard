@@ -260,6 +260,8 @@
         "hideMembers": false,
         "showTitle": true,
         "title": "",
+        "titleEn": "",
+        "mapNames": false,
         "cell": {
           "py": 8,
           "px": 8,
@@ -393,7 +395,8 @@
           "map": "火罗国",
           "finished": false,
           "topPick": null,
-          "mvp": null
+          "mvp": null,
+          "typedRank": false
         },
         {
           "id": "id-muta2z47-wkdu56",
@@ -437,7 +440,8 @@
           "map": "聚窟州·早晨",
           "finished": false,
           "topPick": null,
-          "mvp": null
+          "mvp": null,
+          "typedRank": false
         },
         {
           "id": "id-mutadnsj-8f69i4",
@@ -481,7 +485,8 @@
           "map": "火罗国·阴天",
           "finished": false,
           "topPick": null,
-          "mvp": null
+          "mvp": null,
+          "typedRank": false
         },
         {
           "id": "id-mutal1gz-6g46dj",
@@ -525,7 +530,8 @@
           "map": "龙隐洞天·朝露",
           "finished": false,
           "topPick": null,
-          "mvp": null
+          "mvp": null,
+          "typedRank": false
         },
         {
           "id": "id-mutav4c2-qfjzfo",
@@ -569,7 +575,8 @@
           "map": "聚窟州·正午",
           "finished": false,
           "topPick": null,
-          "mvp": null
+          "mvp": null,
+          "typedRank": false
         },
         {
           "id": "id-mutb59y8-yuwbjq",
@@ -613,9 +620,58 @@
           "map": "火罗国·星夜",
           "finished": false,
           "topPick": null,
-          "mvp": null
+          "mvp": null,
+          "typedRank": false
         }
-      ]
+      ],
+      "compStyles": [],
+      "nameEn": "2026 Morus Cup Solo Finals",
+      "notesEn": "Top 1 player qualifies for closed qualifiers.\nVersus:ADodo 2:0 Numza; Sink2u 2:0 enlightenment; tryhard 2:0 gmanchew; aniovo 2:0 Hypernova;\n          tryhard 2:0 ADodo; Sink2u 2:1 aniovo\n          tryhard 2:1 Sink2u",
+      "bp": {
+        "v": 1,
+        "preset": "points",
+        "cfg": {
+          "scope": "order",
+          "simu": false,
+          "soloLimit": 2,
+          "soloMinDistinct": 3,
+          "soloMaxTwice": 1,
+          "soloUnique": true,
+          "trioStart": 0,
+          "trioUnique": false,
+          "trioTeamCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 3,
+            "5": 0,
+            "6": 0
+          },
+          "trioSameGameCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 2,
+            "5": 2,
+            "6": 2
+          }
+        },
+        "order": [
+          "id-mut9nlnv-qo4b0e",
+          "id-mut9nlnv-8t3iq7",
+          "id-mut9nlnv-5cofwl",
+          "id-mut9nlnv-48ddu5",
+          "id-mut9nlnv-iufry4",
+          "id-mut9nlnv-w8toty",
+          "id-mut9nlnv-54sh74",
+          "id-mut9nlnv-638ui4"
+        ],
+        "trioGroupSize": 2,
+        "trioGroups": [],
+        "mirrors": [],
+        "games": {},
+        "groupCount": 4
+      }
     }
   ],
   "activeEventId": "id-mut9l6jb-sp820v"

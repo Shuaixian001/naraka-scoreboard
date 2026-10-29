@@ -260,6 +260,8 @@
         "hideMembers": false,
         "showTitle": true,
         "title": "",
+        "titleEn": "",
+        "mapNames": false,
         "cell": {
           "py": 8,
           "px": 8,
@@ -288,7 +290,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "NA"
+          "tag": "NA",
+          "logo": null
         },
         {
           "id": "id-muv4p58o-k6b7up",
@@ -301,7 +304,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "NA"
+          "tag": "NA",
+          "logo": null
         },
         {
           "id": "id-muv4p58o-43txqw",
@@ -313,7 +317,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "NA"
+          "tag": "NA",
+          "logo": null
         },
         {
           "id": "id-muv4p58o-lua936",
@@ -325,7 +330,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "NA"
+          "tag": "NA",
+          "logo": null
         },
         {
           "id": "id-muv4p58o-x75udd",
@@ -337,7 +343,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "NA"
+          "tag": "NA",
+          "logo": null
         },
         {
           "id": "id-muv4p58o-ipydnu",
@@ -349,7 +356,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "NA"
+          "tag": "NA",
+          "logo": null
         },
         {
           "id": "id-muv4p58o-xoxz4v",
@@ -361,7 +369,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "NA"
+          "tag": "NA",
+          "logo": null
         },
         {
           "id": "id-muv4p58o-1q9qzk",
@@ -374,7 +383,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "NA"
+          "tag": "NA",
+          "logo": null
         }
       ],
       "matches": [
@@ -418,7 +428,10 @@
             }
           },
           "map": "火罗国",
-          "finished": false
+          "finished": false,
+          "topPick": null,
+          "typedRank": false,
+          "mvp": null
         },
         {
           "id": "id-muv5by00-kcuezx",
@@ -464,7 +477,9 @@
           "mvp": {
             "compId": "id-muv4p58o-ipydnu",
             "member": "HyperNova"
-          }
+          },
+          "topPick": null,
+          "typedRank": false
         },
         {
           "id": "id-muv5g657-nxesdd",
@@ -510,7 +525,9 @@
           "mvp": {
             "compId": "id-muv4p58o-rwdogi",
             "member": "Catt"
-          }
+          },
+          "topPick": null,
+          "typedRank": false
         },
         {
           "id": "id-muv5kihq-xex0ud",
@@ -556,7 +573,9 @@
           "mvp": {
             "compId": "id-muv4p58o-43txqw",
             "member": "YiXiao"
-          }
+          },
+          "topPick": null,
+          "typedRank": false
         },
         {
           "id": "id-muv5oa7m-uy8yf8",
@@ -599,7 +618,9 @@
           },
           "map": "聚窟州·正午",
           "finished": false,
-          "mvp": null
+          "mvp": null,
+          "topPick": null,
+          "typedRank": false
         },
         {
           "id": "id-muv5vl02-5mxpz4",
@@ -645,9 +666,59 @@
           "mvp": {
             "compId": "id-muv4p58o-43txqw",
             "member": "YiXiao"
-          }
+          },
+          "topPick": null,
+          "typedRank": false
         }
-      ]
+      ],
+      "compStyles": [],
+      "nameEn": "2026 Morus Cup Trios Final",
+      "notesEn": "Top 1 team qualifies for closed qualifiers.\nGame 5 MVP is Qingovo.",
+      "bp": {
+        "v": 1,
+        "preset": "points",
+        "cfg": {
+          "scope": "order",
+          "simu": false,
+          "soloLimit": 2,
+          "soloMinDistinct": 3,
+          "soloMaxTwice": 1,
+          "soloUnique": true,
+          "trioStart": 0,
+          "trioUnique": false,
+          "trioTeamCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 3,
+            "5": 0,
+            "6": 0
+          },
+          "trioSameGameCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 2,
+            "5": 2,
+            "6": 2
+          }
+        },
+        "order": [
+          "id-muv4p58o-rwdogi",
+          "id-muv4p58o-k6b7up",
+          "id-muv4p58o-43txqw",
+          "id-muv4p58o-lua936",
+          "id-muv4p58o-x75udd",
+          "id-muv4p58o-ipydnu",
+          "id-muv4p58o-xoxz4v",
+          "id-muv4p58o-1q9qzk"
+        ],
+        "trioGroupSize": 2,
+        "trioGroups": [],
+        "mirrors": [],
+        "games": {},
+        "groupCount": 4
+      }
     }
   ],
   "activeEventId": "id-muv22k25-s58h9g"

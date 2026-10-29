@@ -260,6 +260,8 @@
         "hideMembers": false,
         "showTitle": true,
         "title": "",
+        "titleEn": "",
+        "mapNames": false,
         "cell": {
           "py": 8,
           "px": 8,
@@ -288,7 +290,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "EU"
+          "tag": "EU",
+          "logo": null
         },
         {
           "id": "id-muv24mlo-21s6t1",
@@ -301,7 +304,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "EU"
+          "tag": "EU",
+          "logo": null
         },
         {
           "id": "id-muv24mlo-c490y8",
@@ -313,7 +317,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "EU"
+          "tag": "EU",
+          "logo": null
         },
         {
           "id": "id-muv24mlo-k7wm11",
@@ -325,7 +330,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "EU"
+          "tag": "EU",
+          "logo": null
         },
         {
           "id": "id-muv24mlo-lyli91",
@@ -338,7 +344,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "EU"
+          "tag": "EU",
+          "logo": null
         },
         {
           "id": "id-muv24mlo-6u94ws",
@@ -350,7 +357,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "EU"
+          "tag": "EU",
+          "logo": null
         },
         {
           "id": "id-muv24mlo-e2ye3y",
@@ -362,7 +370,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "EU"
+          "tag": "EU",
+          "logo": null
         },
         {
           "id": "id-muv24mlo-hkh7pf",
@@ -374,7 +383,8 @@
           ],
           "group": null,
           "carry": 0,
-          "tag": "EU"
+          "tag": "EU",
+          "logo": null
         }
       ],
       "matches": [
@@ -418,7 +428,10 @@
             }
           },
           "map": "火罗国",
-          "finished": false
+          "finished": false,
+          "topPick": null,
+          "typedRank": false,
+          "mvp": null
         },
         {
           "id": "id-muv26ecp-3d0v8x",
@@ -464,7 +477,9 @@
           "mvp": {
             "compId": "id-muv24mlo-s1e4f7",
             "member": "Sachiko"
-          }
+          },
+          "topPick": null,
+          "typedRank": false
         },
         {
           "id": "id-muv28243-805wx9",
@@ -510,7 +525,9 @@
           "mvp": {
             "compId": "id-muv24mlo-s1e4f7",
             "member": "Woowie"
-          }
+          },
+          "topPick": null,
+          "typedRank": false
         },
         {
           "id": "id-muv2edxa-ujcidl",
@@ -556,7 +573,9 @@
           "mvp": {
             "compId": "id-muv24mlo-hkh7pf",
             "member": "KARSA"
-          }
+          },
+          "topPick": null,
+          "typedRank": false
         },
         {
           "id": "id-muv2gy4y-15uq9y",
@@ -602,7 +621,9 @@
           "mvp": {
             "compId": "id-muv24mlo-s1e4f7",
             "member": "Woowie"
-          }
+          },
+          "topPick": null,
+          "typedRank": false
         },
         {
           "id": "id-muv2jgg9-clbmpm",
@@ -648,9 +669,59 @@
           "mvp": {
             "compId": "id-muv24mlo-s1e4f7",
             "member": "Woowie"
-          }
+          },
+          "topPick": null,
+          "typedRank": false
         }
-      ]
+      ],
+      "compStyles": [],
+      "nameEn": "2026 Shadowjade Cup Trios Finals",
+      "notesEn": "Top 2 teams qualify to closed qualifiers.",
+      "bp": {
+        "v": 1,
+        "preset": "points",
+        "cfg": {
+          "scope": "order",
+          "simu": false,
+          "soloLimit": 2,
+          "soloMinDistinct": 3,
+          "soloMaxTwice": 1,
+          "soloUnique": true,
+          "trioStart": 0,
+          "trioUnique": false,
+          "trioTeamCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 3,
+            "5": 0,
+            "6": 0
+          },
+          "trioSameGameCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 2,
+            "5": 2,
+            "6": 2
+          }
+        },
+        "order": [
+          "id-muv24mlo-s1e4f7",
+          "id-muv24mlo-21s6t1",
+          "id-muv24mlo-c490y8",
+          "id-muv24mlo-k7wm11",
+          "id-muv24mlo-lyli91",
+          "id-muv24mlo-6u94ws",
+          "id-muv24mlo-e2ye3y",
+          "id-muv24mlo-hkh7pf"
+        ],
+        "trioGroupSize": 2,
+        "trioGroups": [],
+        "mirrors": [],
+        "games": {},
+        "groupCount": 4
+      }
     }
   ],
   "activeEventId": "id-muv210xm-m88ner"

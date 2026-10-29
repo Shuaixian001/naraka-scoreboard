@@ -260,6 +260,8 @@
         "hideMembers": false,
         "showTitle": true,
         "title": "",
+        "titleEn": "",
+        "mapNames": false,
         "cell": {
           "py": 8,
           "px": 8,
@@ -391,7 +393,10 @@
             }
           },
           "map": "火罗国",
-          "finished": false
+          "finished": false,
+          "topPick": null,
+          "typedRank": false,
+          "mvp": null
         },
         {
           "id": "id-muv153bb-613k47",
@@ -433,7 +438,10 @@
             }
           },
           "map": "聚窟州·早晨",
-          "finished": false
+          "finished": false,
+          "topPick": null,
+          "typedRank": false,
+          "mvp": null
         },
         {
           "id": "id-muv1c2tn-mvgpte",
@@ -475,7 +483,10 @@
             }
           },
           "map": "火罗国·阴天",
-          "finished": false
+          "finished": false,
+          "topPick": null,
+          "typedRank": false,
+          "mvp": null
         },
         {
           "id": "id-muv1hihf-ck08t7",
@@ -517,7 +528,10 @@
             }
           },
           "map": "龙隐洞天·朝露",
-          "finished": false
+          "finished": false,
+          "topPick": null,
+          "typedRank": false,
+          "mvp": null
         },
         {
           "id": "id-muv1knh7-e453jo",
@@ -559,7 +573,10 @@
             }
           },
           "map": "聚窟州·正午",
-          "finished": false
+          "finished": false,
+          "topPick": null,
+          "typedRank": false,
+          "mvp": null
         },
         {
           "id": "id-muv1q8bp-jkj7ox",
@@ -601,9 +618,60 @@
             }
           },
           "map": "火罗国·星夜",
-          "finished": false
+          "finished": false,
+          "topPick": null,
+          "typedRank": false,
+          "mvp": null
         }
-      ]
+      ],
+      "compStyles": [],
+      "nameEn": "2026 Shadowjade Cup Solo Finals",
+      "notesEn": "Top 2 players qualify for closed qualifiers.",
+      "bp": {
+        "v": 1,
+        "preset": "points",
+        "cfg": {
+          "scope": "order",
+          "simu": false,
+          "soloLimit": 2,
+          "soloMinDistinct": 3,
+          "soloMaxTwice": 1,
+          "soloUnique": true,
+          "trioStart": 0,
+          "trioUnique": false,
+          "trioTeamCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 3,
+            "5": 0,
+            "6": 0
+          },
+          "trioSameGameCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 2,
+            "5": 2,
+            "6": 2
+          }
+        },
+        "order": [
+          "id-mutfj418-qpjajf",
+          "id-mutfj418-zoyk6g",
+          "id-mutfj418-2plps0",
+          "id-mutfj418-nyv30g",
+          "id-mutfj418-3r0pdw",
+          "id-mutfj418-m6iog3",
+          "id-mutfj418-54uoyg",
+          "id-mutfj418-xucqwd"
+        ],
+        "trioGroupSize": 2,
+        "trioGroups": [],
+        "mirrors": [],
+        "games": {},
+        "groupCount": 4
+      }
     }
   ],
   "activeEventId": "id-mutdxyvg-kei9om"
