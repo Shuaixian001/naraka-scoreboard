@@ -1447,6 +1447,7 @@
   .rating-head-actions {
     display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;
   }
+  .rating-head-actions button { white-space: nowrap; }
   .rating-board { min-width: 0; margin-bottom: 16px; }
   .rating-lower {
     display: flex; flex-direction: column;
@@ -1494,14 +1495,24 @@
   .rating-mat:hover { border-color: var(--accent2); }
   .rating-mat img { width: 42px; height: 42px; object-fit: contain; flex: none; }
   .rating-mat .nm {
-    width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    font-weight: 600; line-height: 1.2;
+    width: 100%; overflow-wrap: anywhere; white-space: normal;
+    font-weight: 600; line-height: 1.25;
   }
   .rating-mat .sub {
     width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     color: var(--muted); font-size: 9px; line-height: 1.2;
   }
   .rating-lib-hint { margin-top: 8px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+  .rating-lib-credit {
+    margin-top: 8px; padding-top: 7px; border-top: 1px dashed var(--border);
+    color: var(--muted); font-size: 10px; line-height: 1.5;
+  }
+  .rating-lib-credit a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+  .rating-lib-credit a:hover { color: var(--accent2); }
+  .site-footer-meta { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; }
+  .site-footer-icon { display: inline-flex; width: 18px; height: 18px; color: var(--muted); }
+  .site-footer-icon:hover { color: var(--accent2); }
+  .site-footer-icon svg { width: 100%; height: 100%; display: block; }
   .rating-pool-wrap {
     border: 1px dashed var(--border); border-radius: 9px;
     background: rgba(255,255,255,.018); padding: 8px 10px;
@@ -1528,7 +1539,31 @@
   .rating-pool.rating-drop-on, .rating-tier.rating-drop-on .rating-tier-drop {
     outline: 2px dashed var(--accent2); outline-offset: -4px;
   }
-  .rating-tiers { display: flex; flex-direction: column; gap: 9px; }
+  .rating-tiers { display: flex; flex-direction: column; gap: 0; }
+  .rating-tier { border-radius: 0 !important; }
+  .rating-divider {
+    position: relative; height: 0; z-index: 3;
+  }
+  .rating-divider-hit {
+    position: absolute; left: 0; right: 0; top: -10px; height: 20px; z-index: 1;
+  }
+  .rating-divider.rating-ready .rating-divider-hit { background: rgba(43,127,212,.04); }
+  .rating-divider.rating-drop-on .rating-divider-hit {
+    outline: 2px dashed var(--accent2); outline-offset: -2px;
+  }
+  .rating-divider-ghost {
+    position: absolute; top: 50%; left: calc(105px + var(--slot, 0) * (78px + 7px));
+    z-index: 4; width: 78px; height: 88px; box-sizing: border-box;
+    transform: translateY(-50%); border: 2px dashed var(--accent2); border-radius: 7px;
+    background: rgba(43,127,212,.12); pointer-events: none;
+  }
+  .rating-divider-slot {
+    position: absolute; top: 50%; left: calc(105px + var(--slot, 0) * (78px + 7px));
+    z-index: 2; width: 78px; transform: translateY(-50%);
+  }
+  .rating-divider-slot .rating-item { width: 78px; }
+  .rating-slot { width: 78px; height: 1px; flex: none; pointer-events: none; }
+  [data-rating-item].rating-insert-before { box-shadow: -3px 0 0 var(--accent2); }
   .rating-tier {
     display: grid; grid-template-columns: 96px minmax(0, 1fr);
     border: 1px solid var(--border); border-radius: 9px; overflow: hidden;
@@ -1539,24 +1574,18 @@
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 4px; position: relative;
   }
-  .rating-tier-label input {
+  .rating-tier-label .rating-tier-name {
     width: 100%; box-sizing: border-box; border: 0; background: transparent;
-    color: #fff; text-align: center; font-size: 25px; font-weight: 800;
-    line-height: 1.1; text-shadow: 0 1px 2px rgba(0,0,0,.35); padding: 1px;
+    color: var(--tier-fg, #fff); text-align: center; font-size: 25px; font-weight: 800;
+    line-height: 1.1; text-shadow: 0 1px 2px rgba(0,0,0,.2); padding: 1px;
   }
-  .rating-tier-label input:focus {
+  .rating-tier-label .rating-tier-name:focus {
     outline: 1px solid rgba(255,255,255,.55); border-radius: 4px;
     background: rgba(0,0,0,.18);
   }
-  .rating-tier-remove {
-    position: absolute; top: 2px; right: 2px; padding: 0 4px; border: 0;
-    background: rgba(0,0,0,.2); color: #fff; font-size: 12px; line-height: 1.5;
-    opacity: .65;
-  }
-  .rating-tier-remove:hover { opacity: 1; }
   .rating-tier-move {
-    border: 1px solid rgba(255,255,255,.55); background: rgba(0,0,0,.18);
-    color: #fff; font-size: 10px; padding: 1px 6px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.5); background: rgba(0,0,0,.16);
+    color: var(--tier-fg, #fff); font-size: 10px; padding: 1px 6px; border-radius: 999px;
   }
   .rating-tier-drop {
     display: flex; flex-wrap: wrap; align-content: flex-start;
@@ -1572,12 +1601,15 @@
   }
   .rating-item:hover { border-color: var(--accent2); }
   .rating-item.selected { outline: 2px solid var(--accent2); outline-offset: 1px; }
+  .rating-item.rating-insert-before { box-shadow: -3px 0 0 var(--accent2); }
   .rating-item img { width: 44px; height: 44px; object-fit: contain; flex: none; }
   .rating-item-name {
-    width: 100%; min-width: 0; box-sizing: border-box; border: 0;
+    display: block; width: 100%; min-width: 0; box-sizing: border-box; border: 0;
     background: transparent; color: var(--text); text-align: center;
     font-family: inherit; font-size: 10px; font-weight: 600; line-height: 1.2;
     padding: 1px 0; border-radius: 3px; cursor: text;
+    resize: none; overflow: hidden; white-space: pre-wrap; overflow-wrap: anywhere;
+    min-height: 14px; height: auto;
   }
   .rating-item-name:hover { background: var(--panel2); }
   .rating-item-name:focus {
@@ -1611,9 +1643,13 @@
     .rating-card { padding: 10px; }
     .rating-title-input { font-size: 23px; }
     .rating-head-actions { width: 100%; }
-    .rating-head-actions button { flex: 1 1 0; }
+    .rating-head-actions button { flex: 1 1 auto; }
     .rating-tier { grid-template-columns: 64px minmax(0, 1fr); }
-    .rating-tier-label input { font-size: 20px; }
+    .rating-tier-label .rating-tier-name { font-size: 20px; }
+    .rating-divider-slot { left: calc(70px + var(--slot, 0) * (68px + 5px)); width: 68px; }
+    .rating-divider-slot .rating-item { width: 68px; }
+    .rating-divider-ghost { left: calc(70px + var(--slot, 0) * (68px + 5px)); width: 68px; height: 82px; }
+    .rating-slot { width: 68px; }
     .rating-tier-drop { min-height: 82px; padding: 6px; gap: 5px; }
     .rating-item { width: 68px; min-height: 82px; }
     .rating-item img { width: 38px; height: 38px; }
@@ -1648,6 +1684,25 @@
       border: 0; border-radius: 0; padding: 12px;
     }
     .rating-export-preview { min-height: 120px; }
+  }
+  .rating-tier-menu {
+    position: fixed; z-index: 160; min-width: 168px; padding: 4px;
+    border: 1px solid var(--border); border-radius: 8px; background: var(--panel);
+    box-shadow: 0 10px 32px rgba(0,0,0,.35);
+  }
+  .rating-tier-menu button {
+    display: block; width: 100%; padding: 6px 8px; border: 0; border-radius: 5px;
+    background: transparent; color: var(--text); text-align: left; font-size: 12px;
+  }
+  .rating-tier-menu button:hover { background: var(--panel2); color: var(--accent2); }
+  .rating-tier-menu .rating-tier-menu-delete { color: var(--danger); }
+  .rating-tier-menu .rating-tier-menu-color {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 5px 8px; color: var(--text); font-size: 12px;
+  }
+  .rating-tier-menu .rating-tier-menu-color input {
+    width: 30px; height: 22px; padding: 0; border: 1px solid var(--border);
+    border-radius: 4px; background: transparent; cursor: pointer;
   }
   body.view-rating #layout,
   body.view-rating #card-empty,
@@ -2071,6 +2126,7 @@
         <div class="rating-tabs" id="rating-tabs"></div>
         <div class="rating-materials" id="rating-materials"></div>
         <div class="rating-lib-hint">点击素材会加入一份到待评级区，可以重复添加；桌面端也可以直接拖进档位。上传图片只保存在本浏览器。</div>
+        <div class="rating-lib-credit" id="rating-lib-credit"></div>
       </aside>
     </div>
   </section>
@@ -2078,6 +2134,7 @@
     onchange="ratingUploadFiles(this.files)">
   <div id="rating-upload-status" class="rating-upload-status hidden"></div>
 </main>
+<div id="rating-tier-menu" class="rating-tier-menu hidden" role="menu"></div>
 
 <!-- 评级导出预览 -->
 <div class="modal hidden" id="rating-export-modal">
@@ -2762,8 +2819,15 @@
 </div>
 
 <footer class="site-footer">
-  <span>粉丝自制，与官方无关，与官方不一致的部分以官方为准。队标归各战队所有。积分规则参考</span><a href="https://www.yjwujian.cn/news/match/20261022/37804_1317514.html"
+  <span>粉丝自制，与官方无关，与官方不一致的部分以官方为准。队标归各战队所有，英雄图片版权归官方所有。积分规则参考</span><a href="https://www.yjwujian.cn/news/match/20261022/37804_1317514.html"
     target="_blank" rel="noopener noreferrer">永劫无间职业联赛 (NARAKA:BLADEPOINT PRO LEAGUE) 赛事规则 秋季赛</a>
+  <div class="site-footer-meta">
+    <span class="site-footer-feedback">反馈建议：</span>
+    <a class="site-footer-email" href="mailto:2317040021@qq.com">2317040021@qq.com</a>
+    <a class="site-footer-icon" href="https://github.com/Shuaixian001" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+    </a>
+  </div>
 </footer>
 
 <script src="assets/materials.js"></script>
@@ -15554,23 +15618,134 @@ let ratingExportPreview = null;
 function ratingT(zh, en) { return LANG === 'en' ? en : zh; }
 
 function ratingDefaultTiers() {
-  return ['S', 'A', 'B', 'C', 'D'].map(function(label) {
-    return { id: 'tier-' + uid(), label: label };
+  return ['S', 'A', 'B', 'C', 'D'].map(function(label, index) {
+    return { id: 'tier-' + uid(), label: label, color: RATING_TIER_COLORS[index % RATING_TIER_COLORS.length] };
   });
 }
 function ratingDefaultState() {
   return {
     version: 1,
     title: ratingT('我的评级', 'My Tier List'),
+    tight: true,
     tiers: ratingDefaultTiers(),
     items: []
   };
 }
-function ratingTierColor(index) {
-  return RATING_TIER_COLORS[index % RATING_TIER_COLORS.length];
+function ratingValidColor(value) {
+  const color = String(value || '').trim();
+  return /^#[0-9a-f]{6}$/i.test(color) ? color : '';
+}
+function ratingTierColor(index, tier) {
+  const own = tier && ratingValidColor(tier.color);
+  return own || RATING_TIER_COLORS[Number(index || 0) % RATING_TIER_COLORS.length];
+}
+function ratingTierTextColor(color) {
+  const hex = ratingValidColor(color);
+  if (!hex) return '#ffffff';
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return (r * 0.299 + g * 0.587 + b * 0.114) > 160 ? '#1b1b23' : '#ffffff';
+}
+function ratingTierIndex(tierId) {
+  return ratingState ? ratingState.tiers.findIndex(function(t) { return t.id === tierId; }) : -1;
+}
+function ratingTierById(tierId) {
+  return ratingState ? ratingState.tiers.filter(function(t) { return t.id === tierId; })[0] || null : null;
 }
 function ratingValidTier(id) {
   return !!(id && ratingState && ratingState.tiers.some(function(t) { return t.id === id; }));
+}
+function ratingValidGap(afterTierId) {
+  const index = ratingTierIndex(afterTierId);
+  return !!(index >= 0 && ratingState && index < ratingState.tiers.length - 1);
+}
+function ratingIsGapItem(item) {
+  return !!(item && !ratingValidTier(item.tierId) && ratingValidGap(item.gapAfter));
+}
+function ratingItemGroup(item) {
+  if (!item) return { tierId: null, gapAfter: null };
+  if (ratingValidTier(item.tierId)) return { tierId: item.tierId, gapAfter: null };
+  if (ratingValidGap(item.gapAfter)) return { tierId: null, gapAfter: item.gapAfter };
+  return { tierId: null, gapAfter: null };
+}
+function ratingSameGroup(a, b) {
+  const ga = ratingItemGroup(a);
+  const gb = ratingItemGroup(b);
+  return ga.tierId === gb.tierId && ga.gapAfter === gb.gapAfter;
+}
+function ratingPoolItems() {
+  if (!ratingState) return [];
+  return ratingState.items.filter(function(it) { return !ratingValidTier(it.tierId) && !ratingIsGapItem(it); });
+}
+function ratingGapItems(afterTierId) {
+  if (!ratingState) return [];
+  return ratingState.items.filter(function(it) { return ratingIsGapItem(it) && it.gapAfter === afterTierId; });
+}
+function ratingGapSlotInt(value) {
+  const n = Number(value);
+  return isFinite(n) && n >= 0 ? Math.floor(n) : -1;
+}
+function ratingDefaultGapBase(state, afterTierId) {
+  if (!state) return 0;
+  const index = state.tiers.findIndex(function(t) { return t.id === afterTierId; });
+  if (index < 0) return 0;
+  const upper = state.items.filter(function(it) { return it.tierId === state.tiers[index].id; }).length;
+  const lowerTier = state.tiers[index + 1];
+  const lower = lowerTier ? state.items.filter(function(it) { return it.tierId === lowerTier.id; }).length : 0;
+  return Math.max(upper, lower);
+}
+function ratingNormalizeGapSlots(state) {
+  if (!state) return;
+  state.items.forEach(function(item) {
+    if (!item || !item.gapAfter || !state.tiers.some(function(t) { return t.id === item.gapAfter; })) {
+      item.gapSlot = null;
+    }
+  });
+  state.tiers.forEach(function(tier, index) {
+    if (index >= state.tiers.length - 1) return;
+    const group = state.items.filter(function(it) {
+      return it.gapAfter === tier.id && !state.tiers.some(function(t) { return t.id === it.tierId; });
+    });
+    if (!group.length) return;
+    const used = Object.create(null);
+    let next = ratingDefaultGapBase(state, tier.id);
+    group.forEach(function(item) {
+      let slot = ratingGapSlotInt(item.gapSlot);
+      if (slot < 0 || used[slot]) {
+        slot = next;
+        while (used[slot]) slot++;
+      }
+      item.gapSlot = slot;
+      used[slot] = 1;
+      if (slot >= next) next = slot + 1;
+    });
+  });
+}
+function ratingResolveGapSlot(afterTierId, requested, ignoreId) {
+  if (!ratingState) return 0;
+  let slot = ratingGapSlotInt(requested);
+  if (slot < 0) slot = ratingDefaultGapBase(ratingState, afterTierId);
+  const used = Object.create(null);
+  ratingGapItems(afterTierId).forEach(function(it) {
+    if (it.id === ignoreId) return;
+    const value = ratingGapSlotInt(it.gapSlot);
+    if (value >= 0) used[value] = 1;
+  });
+  while (used[slot]) slot++;
+  return slot;
+}
+function ratingGapSlotFromX(clientX, afterTierId) {
+  if (clientX == null) return -1;
+  const tier = document.querySelector('.rating-tier[data-tier-id="' + afterTierId + '"]');
+  const drop = tier ? tier.querySelector('.rating-tier-drop') : null;
+  if (!drop) return -1;
+  const rect = drop.getBoundingClientRect();
+  const sample = drop.querySelector('.rating-item');
+  const cardW = sample ? sample.getBoundingClientRect().width : (window.innerWidth <= 640 ? 68 : 78);
+  const gap = parseFloat(getComputedStyle(drop).gap) || (window.innerWidth <= 640 ? 5 : 7);
+  const baseX = rect.left + (parseFloat(getComputedStyle(drop).paddingLeft) || 0);
+  return Math.max(0, Math.round((clientX - baseX) / (cardW + gap)));
 }
 function ratingNextTierLabel() {
   const tiers = ratingState ? ratingState.tiers : [];
@@ -15660,25 +15835,40 @@ function ratingIsPlayerKey(key) {
 function ratingIsPlayerItem(item) {
   return !!item && ratingIsPlayerKey(item.refKey || item.id);
 }
+function ratingTeamPrefix(team) {
+  return String(team == null ? '' : team).trim().replace(/\./g, '');
+}
+function ratingPrefixedName(team, name) {
+  const prefix = ratingTeamPrefix(team);
+  const base = String(name == null ? '' : name).trim();
+  if (!prefix) return base;
+  return base ? prefix + '.' + base : prefix;
+}
+function ratingPlayerTeam(item) {
+  return item ? (item.subtitle || item.subtitleEn || '') : '';
+}
 function ratingDisplayName(item) {
   if (ratingIsPlayerItem(item)) {
-    return ratingUi.playerNameMode === 'id'
+    const base = ratingUi.playerNameMode === 'id'
       ? (item.nameEn || item.name || '')
       : (item.name || item.nameEn || '');
+    return ratingPrefixedName(ratingPlayerTeam(item), base);
   }
   if (LANG === 'en') return item.nameEn || item.name || '';
   return item.name || item.nameEn || '';
 }
 function ratingMaterialDisplayName(mat) {
   if (mat && String(mat.category || '').indexOf('player-') === 0) {
-    return ratingUi.playerNameMode === 'id'
+    const base = ratingUi.playerNameMode === 'id'
       ? (mat.nameEn || mat.name)
       : (mat.name || mat.nameEn);
+    return ratingPrefixedName(mat.subtitle || mat.subtitleEn || '', base);
   }
   if (LANG === 'en') return mat && (mat.nameEn || mat.name);
   return mat && (mat.name || mat.nameEn);
 }
 function ratingDisplaySub(item) {
+  if (ratingIsPlayerItem(item)) return '';
   if (LANG === 'en') return item.subtitleEn || item.subtitle || '';
   return item.subtitle || '';
 }
@@ -15691,6 +15881,7 @@ function ratingLoad() {
   const state = {
     version: 1,
     title: typeof raw.title === 'string' ? raw.title.slice(0, 60) : ratingT('我的评级', 'My Tier List'),
+    tight: true,
     tiers: [],
     items: []
   };
@@ -15703,7 +15894,8 @@ function ratingLoad() {
       tierIds[id] = 1;
       state.tiers.push({
         id: id,
-        label: String(tier.label == null ? '' : tier.label).slice(0, 24)
+        label: String(tier.label == null ? '' : tier.label).slice(0, 24),
+        color: ratingValidColor(tier.color) || RATING_TIER_COLORS[state.tiers.length % RATING_TIER_COLORS.length]
       });
     });
   }
@@ -15728,8 +15920,16 @@ function ratingLoad() {
         subtitle: mat ? mat.subtitle : String(item.subtitle || ''),
         subtitleEn: mat ? mat.subtitleEn : String(item.subtitleEn || ''),
         image: mat ? mat.image : '',
-        tierId: state.tiers.some(function(t) { return t.id === item.tierId; }) ? item.tierId : null
+        tierId: state.tiers.some(function(t) { return t.id === item.tierId; }) ? item.tierId : null,
+        gapAfter: null,
+        gapSlot: null
       };
+      if (!copy.tierId && item.gapAfter && state.tiers.some(function(t, i) {
+        return t.id === item.gapAfter && i < state.tiers.length - 1;
+      })) {
+        copy.gapAfter = item.gapAfter;
+        copy.gapSlot = ratingGapSlotInt(item.gapSlot);
+      }
       if (kind === 'custom') {
         copy.customKey = String(item.customKey || '');
         copy.inlineImage = typeof item.inlineImage === 'string' ? item.inlineImage : '';
@@ -15738,13 +15938,15 @@ function ratingLoad() {
       state.items.push(copy);
     });
   }
+  ratingNormalizeGapSlots(state);
   return state;
 }
 function ratingSerialize() {
   return {
     version: 1,
     title: ratingState.title,
-    tiers: ratingState.tiers.map(function(t) { return { id: t.id, label: t.label }; }),
+    tight: true,
+    tiers: ratingState.tiers.map(function(t) { return { id: t.id, label: t.label, color: t.color }; }),
     items: ratingState.items.map(function(item) {
       const copy = {};
       Object.keys(item).forEach(function(k) { if (k !== 'image') copy[k] = item[k]; });
@@ -15953,6 +16155,25 @@ async function ratingUploadFiles(files) {
 }
 
 /* ---------- 渲染和交互 ---------- */
+function ratingClearGapGhost() {
+  Array.prototype.forEach.call(document.querySelectorAll('.rating-divider-ghost'), function(el) {
+    el.remove();
+  });
+}
+function ratingUpdateGapGhost(gapAfter, clientX) {
+  ratingClearGapGhost();
+  if (!gapAfter || clientX == null || !ratingState) return;
+  const payload = ratingDragPayload || '';
+  const draggedId = payload.indexOf('item:') === 0 ? payload.slice(5) : '';
+  const requested = ratingGapSlotFromX(clientX, gapAfter);
+  const slot = ratingResolveGapSlot(gapAfter, requested, draggedId);
+  const divider = document.querySelector('[data-rating-gap="' + gapAfter + '"]');
+  if (!divider) return;
+  const ghost = document.createElement('div');
+  ghost.className = 'rating-divider-ghost';
+  ghost.style.setProperty('--slot', slot);
+  divider.appendChild(ghost);
+}
 function ratingBindEvents() {
   if (ratingBindEvents.done) return;
   ratingBindEvents.done = true;
@@ -15982,16 +16203,24 @@ function ratingBindEvents() {
   if (tiers) {
     tiers.addEventListener('input', function(e) {
       const nameInput = e.target.closest('.rating-item-name');
-      if (nameInput) { ratingItemNameChanged(nameInput.getAttribute('data-rating-name-item'), nameInput.value); return; }
+      if (nameInput) {
+        ratingItemNameChanged(nameInput.getAttribute('data-rating-name-item'), nameInput.value);
+        ratingAutoSizeNameFields(nameInput.closest('.rating-item'));
+        return;
+      }
       const input = e.target.closest('.rating-tier-name');
       if (input) ratingTierLabelChanged(input.getAttribute('data-tier-id'), input.value);
     });
     tiers.addEventListener('click', ratingBoardClick);
+    tiers.addEventListener('contextmenu', ratingBoardContext);
   }
   if (pool) {
     pool.addEventListener('input', function(e) {
       const nameInput = e.target.closest('.rating-item-name');
-      if (nameInput) ratingItemNameChanged(nameInput.getAttribute('data-rating-name-item'), nameInput.value);
+      if (nameInput) {
+        ratingItemNameChanged(nameInput.getAttribute('data-rating-name-item'), nameInput.value);
+        ratingAutoSizeNameFields(nameInput.closest('.rating-item'));
+      }
     });
     pool.addEventListener('click', ratingPoolClick);
   }
@@ -16005,30 +16234,60 @@ function ratingBindEvents() {
     if (!box) return;
     box.addEventListener('dragover', function(e) {
       const tier = e.target.closest('.rating-tier');
+      const gap = e.target.closest('[data-rating-gap]');
       const poolEl = e.target.closest('#rating-pool');
-      if (!tier && !poolEl) return;
+      const item = e.target.closest('[data-rating-item]');
+      if (!tier && !gap && !poolEl) return;
       e.preventDefault();
       if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
       if (tier) tier.classList.add('rating-drop-on');
-      else poolEl.classList.add('rating-drop-on');
+      if (gap) {
+        gap.classList.add('rating-drop-on');
+        const gapAfter = gap.getAttribute('data-rating-gap');
+        ratingUpdateGapGhost(gapAfter, e.clientX);
+      } else {
+        ratingClearGapGhost();
+      }
+      if (poolEl) poolEl.classList.add('rating-drop-on');
+      if (item) item.classList.add('rating-insert-before');
     });
     box.addEventListener('dragleave', function(e) {
       const tier = e.target.closest('.rating-tier');
+      const gap = e.target.closest('[data-rating-gap]');
       const poolEl = e.target.closest('#rating-pool');
+      const item = e.target.closest('[data-rating-item]');
       if (tier && !tier.contains(e.relatedTarget)) tier.classList.remove('rating-drop-on');
+      if (gap && !gap.contains(e.relatedTarget)) {
+        gap.classList.remove('rating-drop-on');
+        ratingClearGapGhost();
+      }
       if (poolEl && !poolEl.contains(e.relatedTarget)) poolEl.classList.remove('rating-drop-on');
+      if (item && !item.contains(e.relatedTarget)) item.classList.remove('rating-insert-before');
     });
     box.addEventListener('drop', function(e) {
       const tier = e.target.closest('.rating-tier');
+      const gap = e.target.closest('[data-rating-gap]');
       const poolEl = e.target.closest('#rating-pool');
-      if (!tier && !poolEl) return;
+      const item = e.target.closest('[data-rating-item]');
+      if (!tier && !gap && !poolEl) return;
       e.preventDefault();
       const payload = ratingDragPayload || (e.dataTransfer ? e.dataTransfer.getData('text/plain') : '');
+      const tierId = tier ? tier.getAttribute('data-tier-id') : null;
+      const gapAfter = gap ? gap.getAttribute('data-rating-gap') : null;
+      const beforeItemId = item ? item.getAttribute('data-rating-item') : '';
+      const gapSlot = gapAfter ? ratingGapSlotFromX(e.clientX, gapAfter) : -1;
       ratingClearDragClasses();
-      ratingHandleDrop(payload, tier ? tier.getAttribute('data-tier-id') : null);
+      ratingHandleDrop(payload, tierId, beforeItemId, gapAfter, gapSlot);
     });
   });
   document.addEventListener('dragend', ratingClearDragClasses);
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#rating-tier-menu')) ratingCloseTierMenu();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') ratingCloseTierMenu();
+  });
+  window.addEventListener('scroll', function() { ratingCloseTierMenu(); }, true);
 }
 function ratingStartDrag(e, payload) {
   ratingDragPayload = payload;
@@ -16039,19 +16298,20 @@ function ratingStartDrag(e, payload) {
 }
 function ratingClearDragClasses() {
   ratingDragPayload = '';
-  Array.prototype.forEach.call(document.querySelectorAll('.rating-drop-on'), function(el) {
+  Array.prototype.forEach.call(document.querySelectorAll('.rating-drop-on, .rating-insert-before'), function(el) {
     el.classList.remove('rating-drop-on');
+    el.classList.remove('rating-insert-before');
   });
+  ratingClearGapGhost();
 }
-function ratingHandleDrop(payload, tierId) {
-  if (!payload) return;
+function ratingHandleDrop(payload, tierId, beforeItemId, gapAfter, gapSlot) {
+  if (!payload || !ratingState) return;
   const validTier = ratingValidTier(tierId) ? tierId : null;
+  const validGap = !validTier && ratingValidGap(gapAfter) ? gapAfter : null;
   if (payload.indexOf('mat:') === 0) {
-    const existing = ratingState.items.filter(function(it) { return it.id === payload.slice(4); })[0];
-    if (existing) ratingMoveItem(existing.id, validTier);
-    else ratingAddMaterial(payload.slice(4), validTier);
+    ratingAddMaterial(payload.slice(4), validTier, beforeItemId || '', validGap, gapSlot);
   } else if (payload.indexOf('item:') === 0) {
-    ratingMoveItem(payload.slice(5), validTier);
+    ratingMoveItem(payload.slice(5), validTier, beforeItemId || '', validGap, gapSlot);
   }
 }
 function ratingBoardClick(e) {
@@ -16073,12 +16333,35 @@ function ratingBoardClick(e) {
     ratingAssignSelected(moveBtn.getAttribute('data-rating-move-tier'));
     return;
   }
+  const moveGap = e.target.closest('[data-rating-move-gap]');
+  if (moveGap) {
+    ratingAssignSelectedGap(moveGap.getAttribute('data-rating-move-gap'));
+    return;
+  }
   const item = e.target.closest('[data-rating-item]');
   if (item) {
-    ratingSelectItem(item.getAttribute('data-rating-item'));
+    const targetId = item.getAttribute('data-rating-item');
+    const selectedItem = ratingState.items.filter(function(it) { return it.id === ratingUi.selectedItemId; })[0];
+    const targetItem = ratingState.items.filter(function(it) { return it.id === targetId; })[0];
+    if (selectedItem && targetItem && selectedItem.id !== targetItem.id) {
+      const selectedGroup = ratingItemGroup(selectedItem);
+      const targetGroup = ratingItemGroup(targetItem);
+      if ((selectedGroup.tierId && selectedGroup.tierId === targetGroup.tierId) ||
+          (selectedGroup.gapAfter && selectedGroup.gapAfter === targetGroup.gapAfter)) {
+        ratingMoveItem(selectedItem.id, targetGroup.tierId, targetItem.id, targetGroup.gapAfter);
+        return;
+      }
+    }
+    ratingSelectItem(targetId);
     return;
   }
   if (e.target.closest('input,button,textarea,select')) return;
+  const gap = e.target.closest('[data-rating-gap]');
+  if (gap && ratingUi.selectedItemId) {
+    const gapAfter = gap.getAttribute('data-rating-gap');
+    ratingAssignSelectedGap(gapAfter, ratingGapSlotFromX(e.clientX, gapAfter));
+    return;
+  }
   const tier = e.target.closest('.rating-tier');
   if (tier && ratingUi.selectedItemId) ratingAssignSelected(tier.getAttribute('data-tier-id'));
 }
@@ -16108,10 +16391,17 @@ function ratingItemHTML(item) {
     '<button type="button" class="rating-item-remove" data-rating-remove-item="' + esc(item.id) +
       '" title="' + esc(ratingT('移除', 'Remove')) + '">×</button>' +
     (item.image ? '<img src="' + esc(item.image) + '" alt="" draggable="false">' : '') +
-    '<input class="rating-item-name" type="text" maxlength="40" value="' + esc(name) +
-      '" data-rating-name-item="' + esc(item.id) + '" data-noi18n>' +
+    '<textarea class="rating-item-name" rows="1" maxlength="40" data-rating-name-item="' + esc(item.id) +
+      '" data-noi18n>' + esc(name) + '</textarea>' +
     (sub ? '<span class="sub">' + esc(sub) + '</span>' : '') +
     '</div>';
+}
+function ratingAutoSizeNameFields(root) {
+  if (!root) return;
+  Array.prototype.forEach.call(root.querySelectorAll('textarea.rating-item-name'), function(el) {
+    el.style.height = 'auto';
+    el.style.height = (el.scrollHeight || 0) + 'px';
+  });
 }
 function ratingRenderLibrary() {
   const box = document.getElementById('rating-materials');
@@ -16135,7 +16425,8 @@ function ratingRenderLibrary() {
   }
   box.innerHTML = list.map(function(mat) {
     const name = ratingMaterialDisplayName(mat);
-    const sub = LANG === 'en' ? (mat.subtitleEn || mat.subtitle) : (mat.subtitle || '');
+    const sub = String(mat.category || '').indexOf('player-') === 0
+      ? '' : (LANG === 'en' ? (mat.subtitleEn || mat.subtitle) : (mat.subtitle || ''));
     return '<button type="button" class="rating-mat' +
       '" draggable="true" data-rating-mat="' + esc(mat.key) + '" data-noi18n title="' + esc(name) + '">' +
       (mat.image ? '<img src="' + esc(mat.image) + '" alt="" loading="lazy" draggable="false">' : '') +
@@ -16144,8 +16435,39 @@ function ratingRenderLibrary() {
       '</button>';
   }).join('');
 }
+function ratingDividerHTML(afterTierId) {
+  const items = ratingGapItems(afterTierId);
+  const title = ratingT('两行之间的分割线：拖图片到这里；右键插入档位',
+    'Divider between rows: drop an image here; right-click to insert a tier');
+  return '<div class="rating-divider" data-rating-gap="' + esc(afterTierId) +
+    '" title="' + esc(title) + '">' +
+    '<div class="rating-divider-hit"></div>' +
+    items.map(function(item) {
+      return '<div class="rating-divider-slot" style="--slot:' + ratingGapSlotInt(item.gapSlot) + '">' +
+        ratingItemHTML(item) + '</div>';
+    }).join('') +
+    '</div>';
+}
+function ratingTierItemsHTML(items, slots) {
+  if (!items.length) return '';
+  const set = Object.create(null);
+  (slots || []).forEach(function(slot) {
+    const n = ratingGapSlotInt(slot);
+    if (n >= 0) set[n] = 1;
+  });
+  let html = '';
+  let itemIndex = 0;
+  let col = 0;
+  while (itemIndex < items.length && col < 400) {
+    if (set[col]) html += '<div class="rating-slot" aria-hidden="true"></div>';
+    else html += ratingItemHTML(items[itemIndex++]);
+    col++;
+  }
+  return html;
+}
 function ratingRenderBoard() {
   if (!ratingState) return;
+  ratingNormalizeGapSlots(ratingState);
   const pool = document.getElementById('rating-pool');
   const tiersBox = document.getElementById('rating-tiers');
   const count = document.getElementById('rating-pool-count');
@@ -16157,7 +16479,7 @@ function ratingRenderBoard() {
     ratingUi.selectedItemId = '';
   }
   const selected = ratingUi.selectedItemId;
-  const poolItems = ratingState.items.filter(function(it) { return !it.tierId || !ratingValidTier(it.tierId); });
+  const poolItems = ratingPoolItems();
   if (count) count.textContent = ratingT('（' + poolItems.length + '）', ' (' + poolItems.length + ')');
   if (poolMove) poolMove.classList.toggle('hidden', !selected);
   const uploadTile = '<button type="button" class="rating-upload-tile" data-rating-upload-tile="1"' +
@@ -16166,29 +16488,38 @@ function ratingRenderBoard() {
   pool.innerHTML = uploadTile + (poolItems.length
     ? poolItems.map(ratingItemHTML).join('')
     : '<span class="rating-tier-empty">' + esc(ratingT('点击素材加入，或用加号上传图片', 'Click a material to add it, or use + to upload images')) + '</span>');
+  tiersBox.classList.add('rating-tight');
   tiersBox.innerHTML = ratingState.tiers.map(function(tier, index) {
     const items = ratingState.items.filter(function(it) { return it.tierId === tier.id; });
-    return '<section class="rating-tier" data-tier-id="' + esc(tier.id) + '" style="--tier-bg:' + ratingTierColor(index) + '">' +
+    const color = ratingTierColor(index, tier);
+    const fg = ratingTierTextColor(color);
+    const slotSet = Object.create(null);
+    if (index > 0) ratingGapItems(ratingState.tiers[index - 1].id).forEach(function(it) { slotSet[ratingGapSlotInt(it.gapSlot)] = 1; });
+    if (index < ratingState.tiers.length - 1) ratingGapItems(tier.id).forEach(function(it) { slotSet[ratingGapSlotInt(it.gapSlot)] = 1; });
+    const slots = Object.keys(slotSet).map(Number).filter(function(n) { return n >= 0; }).sort(function(a, b) { return a - b; });
+    const tierHtml = '<section class="rating-tier" data-tier-id="' + esc(tier.id) +
+      '" style="--tier-bg:' + esc(color) + ';--tier-fg:' + esc(fg) + '">' +
       '<div class="rating-tier-label">' +
         '<input class="rating-tier-name" type="text" maxlength="24" value="' + esc(tier.label) +
           '" data-tier-id="' + esc(tier.id) + '" data-noi18n aria-label="' + esc(ratingT('档位名称', 'Tier label')) + '">' +
-        '<button type="button" class="rating-tier-remove" data-rating-remove-tier="' + esc(tier.id) +
-          '" title="' + esc(ratingT('移除档位', 'Remove tier')) + '">×</button>' +
         (selected ? '<button type="button" class="rating-tier-move" data-rating-move-tier="' + esc(tier.id) + '">' +
           esc(ratingT('移入', 'Move')) + '</button>' : '') +
       '</div>' +
       '<div class="rating-tier-drop">' +
-        (items.length ? items.map(ratingItemHTML).join('') :
+        (items.length ? ratingTierItemsHTML(items, slots) :
           '<span class="rating-tier-empty">' + esc(ratingT('拖入素材', 'Drop materials here')) + '</span>') +
       '</div></section>';
+    return tierHtml + (index < ratingState.tiers.length - 1 ? ratingDividerHTML(tier.id) : '');
   }).join('');
+  ratingAutoSizeNameFields(pool);
+  ratingAutoSizeNameFields(tiersBox);
   if (hint) {
     const selectedItem = ratingState.items.filter(function(it) { return it.id === selected; })[0];
     hint.textContent = selectedItem
-      ? ratingT('已选「' + ratingDisplayName(selectedItem) + '」：点击档位的「移入」或档位空白处；点待评级区空白处放回。',
-        'Selected "' + ratingDisplayName(selectedItem) + '": click "Move" on a tier or an empty spot in it; click empty pool space to unassign.')
-      : ratingT('先把素材加入待评级区，再拖到档位。手机上先点素材，再点档位的「移入」。',
-        'Add materials to the unrated pool, then drag them into a tier. On mobile, tap an item, then tap "Move" on a tier.');
+      ? ratingT('已选「' + ratingDisplayName(selectedItem) + '」：拖到目标位置；点档位空白处或「移入」；点两行之间的分割线可单独放置；点待评级区空白处放回。',
+        'Selected "' + ratingDisplayName(selectedItem) + '": drag to a target; click an empty tier area or "Move"; click the line between rows to place it there; click empty pool space to unassign.')
+      : ratingT('拖动素材可在同档位内排序；把图片拖到分割线的横向位置，就在那一列插入空位（内容会顺延）；右键档位可改颜色或删除该行，右键分割线可插入档位。手机上先点素材，再点目标位置。',
+        'Drag materials to reorder within a tier; drop an image between rows to straddle the divider; right-click a tier to change its color or delete it, or right-click a divider to insert a tier. On mobile, tap an item, then a target.');
   }
 }
 function ratingRender() {
@@ -16202,6 +16533,11 @@ function ratingRender() {
   }
   const poolMove = document.getElementById('rating-pool-move');
   if (poolMove) poolMove.textContent = ratingT('放回待评级', 'Move to unrated');
+  const credit = document.getElementById('rating-lib-credit');
+  if (credit) {
+    credit.innerHTML = ratingT('图片来源于 <a href="https://naraka.wiki" target="_blank" rel="noopener noreferrer">naraka.wiki</a> 和 <a href="https://www.narakathegame.com" target="_blank" rel="noopener noreferrer">narakathegame.com</a>，版权归官方所有。',
+      'Images come from <a href="https://naraka.wiki" target="_blank" rel="noopener noreferrer">naraka.wiki</a> and <a href="https://www.narakathegame.com" target="_blank" rel="noopener noreferrer">narakathegame.com</a>; all rights belong to the official owners.');
+  }
   ratingRenderPlayerMode();
   ratingRenderLibrary();
   ratingRenderBoard();
@@ -16227,20 +16563,44 @@ function ratingTierLabelChanged(tierId, value) {
   tier.label = String(value || '').slice(0, 24);
   ratingSaveSoon();
 }
-function ratingAddTier() {
+function ratingTierColorChanged(tierId, value) {
+  if (!ratingState) return;
+  const tier = ratingTierById(tierId);
+  const color = ratingValidColor(value);
+  if (!tier || !color) return;
+  tier.color = color;
+  const section = document.querySelector('.rating-tier[data-tier-id="' + tierId + '"]');
+  if (section) {
+    section.style.setProperty('--tier-bg', color);
+    section.style.setProperty('--tier-fg', ratingTierTextColor(color));
+  }
+  ratingSaveSoon();
+}
+function ratingAddTierAt(index) {
   ratingEnsureLoaded();
   if (ratingState.tiers.length >= RATING_MAX_TIERS) {
     showToast(ratingT('最多 ' + RATING_MAX_TIERS + ' 个档位', 'Up to ' + RATING_MAX_TIERS + ' tiers'));
     return;
   }
-  const tier = { id: 'tier-' + uid(), label: ratingNextTierLabel() };
-  ratingState.tiers.push(tier);
+  let at = Number(index);
+  if (!isFinite(at)) at = ratingState.tiers.length;
+  at = Math.max(0, Math.min(ratingState.tiers.length, Math.round(at)));
+  const tier = {
+    id: 'tier-' + uid(),
+    label: ratingNextTierLabel(),
+    color: RATING_TIER_COLORS[at % RATING_TIER_COLORS.length]
+  };
+  ratingState.tiers.splice(at, 0, tier);
   ratingSave();
-  ratingRenderBoard();
+  ratingRender();
   setTimeout(function() {
     const input = document.querySelector('.rating-tier-name[data-tier-id="' + tier.id + '"]');
     if (input) { input.focus(); input.select(); }
   }, 0);
+}
+function ratingAddTier() {
+  ratingEnsureLoaded();
+  ratingAddTierAt(ratingState.tiers.length);
 }
 function ratingRemoveTier(tierId) {
   ratingEnsureLoaded();
@@ -16251,18 +16611,30 @@ function ratingRemoveTier(tierId) {
     return;
   }
   const tier = ratingState.tiers[index];
-  const count = ratingState.items.filter(function(it) { return it.tierId === tier.id; }).length;
+  const count = ratingState.items.filter(function(it) {
+    return it.tierId === tier.id || it.gapAfter === tier.id;
+  }).length;
   if (count) {
-    const message = ratingT('移除档位「' + tier.label + '」？\n\n档位里的 ' + count + ' 个素材会回到待评级区。',
-      'Remove tier "' + tier.label + '"?\n\nIts ' + count + ' item' + (count === 1 ? '' : 's') + ' will return to the unrated pool.');
+    const message = ratingT('移除档位「' + tier.label + '」？\n\n档位里和它下方间隙的 ' + count + ' 个素材会回到待评级区。',
+      'Remove tier "' + tier.label + '"?\n\nIts ' + count + ' item' + (count === 1 ? '' : 's') + ' and items below it will return to the unrated pool.');
     if (!confirm(message)) return;
   }
-  ratingState.items.forEach(function(it) { if (it.tierId === tier.id) it.tierId = null; });
+  ratingState.items.forEach(function(it) {
+    if (it.tierId === tier.id) {
+      it.tierId = null;
+      it.gapAfter = null;
+    } else if (it.gapAfter === tier.id) {
+      it.gapAfter = null;
+    }
+  });
   ratingState.tiers.splice(index, 1);
+  ratingState.items.forEach(function(it) {
+    if (it.gapAfter && !ratingValidGap(it.gapAfter)) it.gapAfter = null;
+  });
   ratingSave();
   ratingRender();
 }
-function ratingAddMaterial(key, tierId) {
+function ratingAddMaterial(key, tierId, beforeItemId, gapAfter, gapSlot) {
   ratingEnsureLoaded();
   const mat = ratingMaterialByKey(key);
   if (!mat) return;
@@ -16275,10 +16647,12 @@ function ratingAddMaterial(key, tierId) {
     subtitle: mat.subtitle || '',
     subtitleEn: mat.subtitleEn || '',
     image: mat.image,
-    tierId: ratingValidTier(tierId) ? tierId : null
+    tierId: null,
+    gapAfter: null,
+    gapSlot: null
   };
-  ratingState.items.push(item);
-  ratingUi.selectedItemId = tierId ? '' : item.id;
+  ratingPlaceItem(item, tierId, beforeItemId || '', gapAfter || null, gapSlot);
+  ratingUi.selectedItemId = ratingItemGroup(item).tierId || ratingItemGroup(item).gapAfter ? '' : item.id;
   ratingSave();
   ratingRender();
 }
@@ -16290,19 +16664,124 @@ function ratingAssignSelected(tierId) {
   if (!ratingState || !ratingUi.selectedItemId) return;
   const item = ratingState.items.filter(function(it) { return it.id === ratingUi.selectedItemId; })[0];
   if (!item) return;
-  item.tierId = ratingValidTier(tierId) ? tierId : null;
+  ratingPlaceItem(item, ratingValidTier(tierId) ? tierId : null, '', null);
   ratingUi.selectedItemId = '';
   ratingSave();
   ratingRender();
 }
-function ratingMoveItem(itemId, tierId) {
-  if (!ratingState) return;
-  const item = ratingState.items.filter(function(it) { return it.id === itemId; })[0];
-  if (!item) return;
-  item.tierId = ratingValidTier(tierId) ? tierId : null;
+function ratingAssignSelectedGap(gapAfter, gapSlot) {
+  if (!ratingState || !ratingUi.selectedItemId) return;
+  const item = ratingState.items.filter(function(it) { return it.id === ratingUi.selectedItemId; })[0];
+  if (!item || !ratingValidGap(gapAfter)) return;
+  ratingPlaceItem(item, null, '', gapAfter, gapSlot);
   ratingUi.selectedItemId = '';
   ratingSave();
   ratingRender();
+}
+function ratingPlaceItem(item, tierId, beforeItemId, gapAfter, gapSlot) {
+  if (!ratingState || !item) return;
+  const target = beforeItemId ? ratingState.items.filter(function(it) { return it.id === beforeItemId; })[0] : null;
+  const group = target ? ratingItemGroup(target) : (function() {
+    if (ratingValidTier(tierId)) return { tierId: tierId, gapAfter: null };
+    if (ratingValidGap(gapAfter)) return { tierId: null, gapAfter: gapAfter };
+    return { tierId: null, gapAfter: null };
+  })();
+  item.tierId = group.tierId;
+  item.gapAfter = group.gapAfter;
+  item.gapSlot = group.gapAfter ? ratingResolveGapSlot(group.gapAfter, gapSlot, item.id) : null;
+  const oldIndex = ratingState.items.indexOf(item);
+  if (oldIndex >= 0) ratingState.items.splice(oldIndex, 1);
+  if (target && target !== item) {
+    const targetIndex = ratingState.items.indexOf(target);
+    if (targetIndex >= 0) {
+      ratingState.items.splice(targetIndex, 0, item);
+      return;
+    }
+  }
+  let insertAt = ratingState.items.length;
+  for (let i = ratingState.items.length - 1; i >= 0; i--) {
+    if (ratingSameGroup(ratingState.items[i], item)) { insertAt = i + 1; break; }
+  }
+  ratingState.items.splice(insertAt, 0, item);
+}
+function ratingMoveItem(itemId, tierId, beforeItemId, gapAfter, gapSlot) {
+  if (!ratingState) return;
+  const item = ratingState.items.filter(function(it) { return it.id === itemId; })[0];
+  if (!item) return;
+  if (beforeItemId && beforeItemId === itemId) return;
+  ratingPlaceItem(item, tierId, beforeItemId || '', gapAfter || null, gapSlot);
+  ratingUi.selectedItemId = '';
+  ratingSave();
+  ratingRender();
+}
+let ratingTierMenuIndex = -1;
+let ratingTierMenuTierId = '';
+function ratingBoardContext(e) {
+  if (e.target.closest('input,button,textarea,select') && !e.target.closest('[data-rating-gap]')) return;
+  const gap = e.target.closest('[data-rating-gap]');
+  const tier = e.target.closest('.rating-tier');
+  let index = -1;
+  let label = '';
+  if (gap) {
+    const afterId = gap.getAttribute('data-rating-gap');
+    const afterIndex = ratingTierIndex(afterId);
+    if (afterIndex < 0) return;
+    index = afterIndex + 1;
+    label = ratingT('在此插入档位', 'Insert tier here');
+  } else if (tier) {
+    const tierIndex = ratingTierIndex(tier.getAttribute('data-tier-id'));
+    if (tierIndex < 0) return;
+    const rect = tier.getBoundingClientRect();
+    const above = e.clientY < rect.top + rect.height / 2;
+    index = tierIndex + (above ? 0 : 1);
+    label = above ? ratingT('在此上方插入档位', 'Insert tier above') : ratingT('在此下方插入档位', 'Insert tier below');
+  } else {
+    return;
+  }
+  e.preventDefault();
+  const tierId = tier ? tier.getAttribute('data-tier-id') : '';
+  ratingOpenTierMenu(e.clientX, e.clientY, index, label, tierId);
+}
+function ratingOpenTierMenu(x, y, index, label, tierId) {
+  const menu = document.getElementById('rating-tier-menu');
+  if (!menu) return;
+  const tier = tierId ? ratingTierById(tierId) : null;
+  ratingTierMenuIndex = index;
+  ratingTierMenuTierId = tier ? tier.id : '';
+  let html = '<button type="button" role="menuitem" onclick="ratingMenuInsertTier()">' + esc(label) + '</button>';
+  if (tier) {
+    const color = ratingTierColor(ratingTierIndex(tier.id), tier);
+    html += '<label class="rating-tier-menu-color"><span>' + esc(ratingT('颜色', 'Color')) + '</span>' +
+      '<input type="color" value="' + esc(color) + '" oninput="ratingMenuColorChanged(this.value)"></label>' +
+      '<button type="button" role="menuitem" class="rating-tier-menu-delete" onclick="ratingMenuDeleteTier()">' +
+      esc(ratingT('删除此行', 'Delete tier')) + '</button>';
+  }
+  menu.innerHTML = html;
+  menu.classList.remove('hidden');
+  const left = Math.max(8, Math.min(x, window.innerWidth - menu.offsetWidth - 8));
+  const top = Math.max(8, Math.min(y, window.innerHeight - menu.offsetHeight - 8));
+  menu.style.left = left + 'px';
+  menu.style.top = top + 'px';
+}
+function ratingMenuColorChanged(value) {
+  if (!ratingTierMenuTierId) return;
+  ratingTierColorChanged(ratingTierMenuTierId, value);
+}
+function ratingMenuDeleteTier() {
+  const tierId = ratingTierMenuTierId;
+  ratingCloseTierMenu();
+  if (tierId) ratingRemoveTier(tierId);
+}
+function ratingCloseTierMenu() {
+  const menu = document.getElementById('rating-tier-menu');
+  if (menu) menu.classList.add('hidden');
+  ratingTierMenuIndex = -1;
+  ratingTierMenuTierId = '';
+}
+function ratingMenuInsertTier() {
+  const index = ratingTierMenuIndex;
+  ratingCloseTierMenu();
+  if (index >= 0) ratingAddTierAt(index);
 }
 function ratingForgetCustom(item) {
   if (!item || item.kind !== 'custom') return;
@@ -16323,7 +16802,22 @@ function ratingItemNameChanged(itemId, value) {
   if (!ratingState) return;
   const item = ratingState.items.filter(function(it) { return it.id === itemId; })[0];
   if (!item) return;
-  const name = String(value || '').slice(0, 40);
+  let name = String(value || '').slice(0, 60).trim();
+  if (ratingIsPlayerItem(item)) {
+    const team = ratingTeamPrefix(ratingPlayerTeam(item));
+    if (team && name.indexOf(team + '.') === 0) {
+      name = name.slice(team.length + 1).trim();
+    } else if (name.indexOf('.') !== -1) {
+      const dot = name.indexOf('.');
+      const nextTeam = name.slice(0, dot).trim();
+      if (nextTeam) {
+        item.subtitle = nextTeam;
+        item.subtitleEn = nextTeam;
+        name = name.slice(dot + 1).trim();
+      }
+    }
+  }
+  name = name.slice(0, 40);
   if (item.name === name && item.nameEn === name) return;
   item.name = name;
   item.nameEn = name;
@@ -16348,11 +16842,11 @@ function ratingRenderPlayerMode() {
 }
 function ratingClearPool() {
   ratingEnsureLoaded();
-  const pool = ratingState.items.filter(function(it) { return !ratingValidTier(it.tierId); });
+  const pool = ratingPoolItems();
   if (!pool.length) return;
   if (!confirm(ratingT('清空待评级区的 ' + pool.length + ' 个素材？', 'Clear ' + pool.length + ' item' + (pool.length === 1 ? '' : 's') + ' from the unrated pool?'))) return;
   pool.forEach(ratingForgetCustom);
-  ratingState.items = ratingState.items.filter(function(it) { return ratingValidTier(it.tierId); });
+  ratingState.items = ratingState.items.filter(function(it) { return ratingValidTier(it.tierId) || ratingIsGapItem(it); });
   ratingUi.selectedItemId = '';
   ratingSave();
   ratingRender();
@@ -16439,21 +16933,63 @@ function ratingDrawBoard(canvas, snapshot, images) {
   const font = function(size, weight) {
     return (weight || 600) + ' ' + size + 'px "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif';
   };
-  const sections = snapshot.tiers.map(function(tier, index) {
-    return {
-      label: tier.label,
-      color: ratingTierColor(index),
-      items: snapshot.items.filter(function(it) { return it.tierId === tier.id; })
-    };
+  const tierIds = Object.create(null);
+  (snapshot.tiers || []).forEach(function(tier) { tierIds[tier.id] = 1; });
+  const gapAfter = Object.create(null);
+  (snapshot.items || []).forEach(function(item) {
+    if (item.tierId || !item.gapAfter || !tierIds[item.gapAfter]) return;
+    const tierIndex = (snapshot.tiers || []).findIndex(function(t) { return t.id === item.gapAfter; });
+    if (tierIndex < 0 || tierIndex >= snapshot.tiers.length - 1) return;
+    if (!gapAfter[item.gapAfter]) gapAfter[item.gapAfter] = [];
+    gapAfter[item.gapAfter].push(item);
   });
-  const unrated = snapshot.items.filter(function(it) { return !it.tierId || !snapshot.tiers.some(function(t) { return t.id === it.tierId; }); });
-  if (unrated.length) sections.push({ label: ratingT('待评级', 'Unrated'), color: '#59606e', items: unrated });
+  const sections = [];
+  const sectionSlots = function(tierId, index) {
+    const slots = Object.create(null);
+    function add(list) {
+      (list || []).forEach(function(item) {
+        const slot = ratingGapSlotInt(item.gapSlot);
+        if (slot >= 0) slots[slot] = 1;
+      });
+    }
+    if (index > 0) add(gapAfter[snapshot.tiers[index - 1].id]);
+    if (index < snapshot.tiers.length - 1) add(gapAfter[tierId]);
+    return Object.keys(slots).map(Number).filter(function(n) { return n >= 0; }).sort(function(a, b) { return a - b; });
+  };
+  (snapshot.tiers || []).forEach(function(tier, index) {
+    sections.push({
+      kind: 'tier',
+      tierId: tier.id,
+      label: tier.label,
+      color: ratingValidColor(tier.color) || ratingTierColor(index),
+      slots: sectionSlots(tier.id, index),
+      items: (snapshot.items || []).filter(function(it) { return it.tierId === tier.id; })
+    });
+  });
+  const unrated = (snapshot.items || []).filter(function(it) {
+    return !it.tierId && !(it.gapAfter && gapAfter[it.gapAfter]);
+  });
+  if (unrated.length) sections.push({ kind: 'tier', label: ratingT('待评级', 'Unrated'), color: '#59606e', slots: [], items: unrated });
   sections.forEach(function(section) {
-    const rows = Math.max(1, Math.ceil(section.items.length / COLS));
-    section.height = Math.max(120, TIER_PAD * 2 + rows * CARD_H + (rows - 1) * CARD_GAP);
+    const reserved = Object.create(null);
+    (section.slots || []).forEach(function(slot) { reserved[slot] = 1; });
+    section.placed = [];
+    let row = 0;
+    let col = 0;
+    section.items.forEach(function(item) {
+      while (reserved[col]) {
+        col++;
+        if (col >= COLS) { col = 0; row++; }
+      }
+      section.placed.push({ item: item, row: row, col: col });
+      col++;
+      if (col >= COLS) { col = 0; row++; }
+    });
+    section.rows = Math.max(1, row + (col ? 1 : 0));
+    section.height = Math.max(120, TIER_PAD * 2 + section.rows * CARD_H + (section.rows - 1) * CARD_GAP);
   });
   let height = HEADER_H + 50;
-  sections.forEach(function(section) { height += section.height + 16; });
+  sections.forEach(function(section) { height += section.height; });
   if (height > 30000) throw new Error('Rating image is too tall');
   canvas.width = W;
   canvas.height = height;
@@ -16475,59 +17011,75 @@ function ratingDrawBoard(canvas, snapshot, images) {
   ctx.fillText(ratingT('评级日期', 'Rated') + ' · ' + date, W / 2, 118);
   ctx.fillStyle = '#d9a010';
   ctx.fillRect(W / 2 - 40, 138, 80, 4);
+  const drawCard = function(item, x, cy) {
+    ratingRoundRect(ctx, x, cy, CARD_W, CARD_H, 12);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = '#e2e2e8';
+    ctx.stroke();
+    const img = item.image ? images.get(item.image) : null;
+    if (!ratingDrawImageContain(ctx, img, x + 18, cy + 15, CARD_W - 36, 96)) {
+      ratingRoundRect(ctx, x + 42, cy + 27, 66, 66, 12);
+      ctx.fillStyle = '#f0f0f4';
+      ctx.fill();
+      ctx.fillStyle = '#9999a4';
+      ctx.font = font(28, 700);
+      ctx.textAlign = 'center';
+      ctx.fillText('?', x + CARD_W / 2, cy + 72);
+    }
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#1d1d25';
+    ctx.font = font(18, 700);
+    const name = item.displayName != null ? item.displayName : ratingDisplayName(item);
+    ctx.fillText(ratingFitText(ctx, name, CARD_W - 18), x + CARD_W / 2, cy + 138);
+    const sub = item.displaySub != null ? item.displaySub : ratingDisplaySub(item);
+    if (sub) {
+      ctx.fillStyle = '#7c7c88';
+      ctx.font = font(13, 500);
+      ctx.fillText(ratingFitText(ctx, sub, CARD_W - 18), x + CARD_W / 2, cy + 159);
+    }
+  };
   let y = HEADER_H;
   sections.forEach(function(section) {
-    ratingRoundRect(ctx, PAD, y, W - PAD * 2, section.height, 18);
-    ctx.fillStyle = '#f4f4f7';
-    ctx.fill();
-    ctx.strokeStyle = '#e3e3e9';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ratingRoundRect(ctx, PAD, y, LABEL_W, section.height, 18);
-    ctx.fillStyle = section.color;
-    ctx.fill();
-    ctx.fillStyle = '#fff';
-    ctx.font = font(40, 800);
-    ctx.textAlign = 'center';
-    ctx.fillText(ratingFitText(ctx, section.label || '·', LABEL_W - 22), PAD + LABEL_W / 2, y + section.height / 2 + 14);
-    ctx.textAlign = 'left';
-    if (!section.items.length) {
-      ctx.fillStyle = '#9b9ba6';
-      ctx.font = font(18, 500);
-      ctx.fillText('—', CONTENT_X + 10, y + section.height / 2 + 7);
-    }
-    section.items.forEach(function(item, index) {
-      const col = index % COLS;
-      const row = Math.floor(index / COLS);
-      const x = CONTENT_X + col * (CARD_W + CARD_GAP);
-      const cy = y + TIER_PAD + row * (CARD_H + CARD_GAP);
-      ratingRoundRect(ctx, x, cy, CARD_W, CARD_H, 12);
-      ctx.fillStyle = '#ffffff';
+    section.y = y;
+    if (section.kind === 'tier') {
+      ratingRoundRect(ctx, PAD, y, W - PAD * 2, section.height, 0);
+      ctx.fillStyle = '#f4f4f7';
       ctx.fill();
-      ctx.strokeStyle = '#e2e2e8';
+      ctx.strokeStyle = '#e3e3e9';
+      ctx.lineWidth = 1;
       ctx.stroke();
-      const img = item.image ? images.get(item.image) : null;
-      if (!ratingDrawImageContain(ctx, img, x + 18, cy + 15, CARD_W - 36, 96)) {
-        ratingRoundRect(ctx, x + 42, cy + 27, 66, 66, 12);
-        ctx.fillStyle = '#f0f0f4';
-        ctx.fill();
-        ctx.fillStyle = '#9999a4';
-        ctx.font = font(28, 700);
-        ctx.textAlign = 'center';
-        ctx.fillText('?', x + CARD_W / 2, cy + 72);
-      }
+      ratingRoundRect(ctx, PAD, y, LABEL_W, section.height, 0);
+      ctx.fillStyle = section.color;
+      ctx.fill();
+      ctx.fillStyle = ratingTierTextColor(section.color);
+      ctx.font = font(40, 800);
       ctx.textAlign = 'center';
-      ctx.fillStyle = '#1d1d25';
-      ctx.font = font(18, 700);
-      ctx.fillText(ratingFitText(ctx, ratingDisplayName(item), CARD_W - 18), x + CARD_W / 2, cy + 138);
-      const sub = ratingDisplaySub(item);
-      if (sub) {
-        ctx.fillStyle = '#7c7c88';
-        ctx.font = font(13, 500);
-        ctx.fillText(ratingFitText(ctx, sub, CARD_W - 18), x + CARD_W / 2, cy + 159);
+      ctx.fillText(ratingFitText(ctx, section.label || '·', LABEL_W - 22), PAD + LABEL_W / 2, y + section.height / 2 + 14);
+      ctx.textAlign = 'left';
+      if (!section.items.length) {
+        ctx.fillStyle = '#9b9ba6';
+        ctx.font = font(18, 500);
+        ctx.fillText('—', CONTENT_X + 10, y + section.height / 2 + 7);
       }
+      (section.placed || []).forEach(function(entry) {
+        drawCard(entry.item, CONTENT_X + entry.col * (CARD_W + CARD_GAP),
+          y + TIER_PAD + entry.row * (CARD_H + CARD_GAP));
+      });
+    }
+    y += section.height;
+  });
+  sections.forEach(function(section) {
+    if (!section.tierId) return;
+    const items = gapAfter[section.tierId];
+    if (!items || !items.length) return;
+    items.forEach(function(item) {
+      const slot = ratingGapSlotInt(item.gapSlot);
+      if (slot < 0) return;
+      const x = CONTENT_X + slot * (CARD_W + CARD_GAP);
+      const cy = section.y + section.height - CARD_H / 2;
+      drawCard(item, x, cy);
     });
-    y += section.height + 16;
   });
   ctx.textAlign = 'right';
   ctx.fillStyle = '#8d8d98';
@@ -16585,12 +17137,14 @@ async function ratingExportImage() {
     await ratingHydrateUploads();
     const snapshot = {
       title: ratingState.title,
-      tiers: ratingState.tiers.map(function(t) { return { id: t.id, label: t.label }; }),
+      tight: true,
+      tiers: ratingState.tiers.map(function(t) { return { id: t.id, label: t.label, color: t.color }; }),
       items: ratingState.items.map(function(it) {
         return {
-          id: it.id, name: it.name, nameEn: it.nameEn,
+          id: it.id, refKey: it.refKey, name: it.name, nameEn: it.nameEn,
           subtitle: it.subtitle, subtitleEn: it.subtitleEn,
-          image: it.image, tierId: it.tierId
+          displayName: ratingDisplayName(it), displaySub: ratingDisplaySub(it),
+          image: it.image, tierId: it.tierId, gapAfter: it.gapAfter, gapSlot: it.gapSlot
         };
       })
     };
@@ -17861,8 +18415,9 @@ const EN = {
   '设置面板里还有未保存的修改，冲突副本不会包含它们。仍然继续吗？':
     'The Settings panel has unsaved changes that the conflict copy will not include. Continue anyway?',
   '线上赛事内容为空': 'The online event has no content',
-  '粉丝自制，与官方无关，与官方不一致的部分以官方为准。队标归各战队所有。积分规则参考':
-    'Fan-made and not affiliated with the official league. Where this site differs from the official rules, the official rules prevail. Team logos belong to their respective teams. Scoring rules reference ',
+  '粉丝自制，与官方无关，与官方不一致的部分以官方为准。队标归各战队所有，英雄图片版权归官方所有。积分规则参考':
+    'Fan-made and not affiliated with the official league. Where this site differs from the official rules, the official rules prevail. Team logos belong to their respective teams; hero images are copyright of the official owners. Scoring rules reference ',
+  '反馈建议：': 'Feedback: ',
   '永劫无间职业联赛 (NARAKA:BLADEPOINT PRO LEAGUE) 赛事规则 秋季赛':
     'NARAKA: BLADEPOINT Pro League — Autumn Split Match Rules',
 };
