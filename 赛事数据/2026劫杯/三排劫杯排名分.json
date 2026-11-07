@@ -1,0 +1,690 @@
+{
+  "events": [
+    {
+      "bp": {
+        "cfg": {
+          "scope": "order",
+          "simu": false,
+          "soloLimit": 2,
+          "soloMinDistinct": 3,
+          "soloMaxTwice": 1,
+          "soloUnique": true,
+          "trioStart": 0,
+          "trioUnique": false,
+          "trioTeamCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 3,
+            "5": 0,
+            "6": 0
+          },
+          "trioSameGameCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 2,
+            "5": 2,
+            "6": 2
+          }
+        },
+        "groupCount": 4,
+        "mirrors": [],
+        "order": [
+          "id-mukycwie-nxc95x",
+          "id-mukycwie-6a9q8m",
+          "id-mukycwie-dvpdes",
+          "id-mukycwie-3jf6xa",
+          "id-mukycwie-9u1d5m",
+          "id-mukycwie-9vgmly",
+          "id-mukycwie-14n7f5",
+          "id-mukycwie-cwrpdt",
+          "id-mukycwie-wsw0a9",
+          "id-mukycwie-ea3x1z",
+          "id-mukycwie-kmiqsc",
+          "id-mukycwie-nxqew5",
+          "id-mukycwie-ylt572",
+          "id-mukycwie-8a7bde",
+          "id-mukycwie-sj6c21",
+          "id-mukycwie-mpdm8y"
+        ],
+        "preset": "points",
+        "trioGroupSize": 2,
+        "trioGroups": [],
+        "v": 1,
+        "games": {}
+      },
+      "compStyles": [
+        {
+          "id": "id-mukycwie-kmiqsc",
+          "color": "#b8790a"
+        }
+      ],
+      "competitors": [
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-nxc95x",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/chengdu-wolves.webp",
+          "members": [
+            "NHq",
+            "Xn",
+            "ZK"
+          ],
+          "name": "成都Wolves",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-6a9q8m",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/all.webp",
+          "members": [
+            "Paste",
+            "Revenge",
+            "YouMa",
+            "RuoShui"
+          ],
+          "name": "ALL",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-dvpdes",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/fpx-zq.webp",
+          "members": [
+            "Z11",
+            "Xint",
+            "Js1"
+          ],
+          "name": "FPX.ZQ",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-3jf6xa",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/chengdu-gg.webp",
+          "members": [
+            "330",
+            "Lxm",
+            "Cjs",
+            "Yuyi"
+          ],
+          "name": "成都GG",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-9u1d5m",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/ssone.webp",
+          "members": [
+            "Luoye",
+            "Cracker",
+            "Over"
+          ],
+          "name": "SSONE",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-9vgmly",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/oug.webp",
+          "members": [
+            "7N",
+            "peak",
+            "BabyYu",
+            "duck"
+          ],
+          "name": "OUG",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-14n7f5",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/beijing-drg.webp",
+          "members": [
+            "Kakaxi",
+            "Blue",
+            "Zen"
+          ],
+          "name": "北京DRG",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-cwrpdt",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/beijing-wbg.webp",
+          "members": [
+            "vvv",
+            "PiPi",
+            "Xuan"
+          ],
+          "name": "北京WBG",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-wsw0a9",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/yzg.webp",
+          "members": [
+            "QGG",
+            "kuku2",
+            "17s"
+          ],
+          "name": "YZG",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-ea3x1z",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/shenzhen-te-su.webp",
+          "members": [
+            "XeM",
+            "1Feng",
+            "TXJ",
+            "yc",
+            "nue"
+          ],
+          "name": "深圳TE溯",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-kmiqsc",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/vn-521.webp",
+          "members": [
+            "PhatMilk",
+            "Pampy",
+            "Akame",
+            "Yin"
+          ],
+          "name": "VN.521",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-nxqew5",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/sr.webp",
+          "members": [
+            "Riko",
+            "Xhao",
+            "Ny7"
+          ],
+          "name": "SR",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-ylt572",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/wfg.webp",
+          "members": [
+            "XiaoWen",
+            "Mist",
+            "Water"
+          ],
+          "name": "WFG",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-8a7bde",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/xkg.webp",
+          "members": [
+            "TuTyc",
+            "Junxian",
+            "zxl",
+            "ZIHANG"
+          ],
+          "name": "XKG",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-sj6c21",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/shanghai-ig-meituan.webp",
+          "members": [
+            "Han",
+            "keke",
+            "L1N"
+          ],
+          "name": "上海iG美团",
+          "tag": null
+        },
+        {
+          "carry": 0,
+          "group": null,
+          "id": "id-mukycwie-mpdm8y",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/rw-xia.webp",
+          "members": [
+            "Yuan",
+            "ab",
+            "Youth"
+          ],
+          "name": "RW侠",
+          "tag": null
+        }
+      ],
+      "groups": [],
+      "id": "id-muky33jg-zux36h",
+      "lb": {
+        "order": [
+          "rank",
+          "group",
+          "tag",
+          "name",
+          "carry",
+          "games",
+          "total",
+          "mp"
+        ],
+        "show": {
+          "rank": true,
+          "group": true,
+          "tag": true,
+          "name": true,
+          "carry": true,
+          "games": true,
+          "total": true,
+          "mp": true
+        },
+        "width": {
+          "rank": 44,
+          "group": 40,
+          "tag": 76,
+          "name": 0,
+          "carry": 56,
+          "games": 0,
+          "total": 68,
+          "mp": 140
+        },
+        "logo": true,
+        "hideMembers": true,
+        "showTitle": true,
+        "title": "",
+        "titleEn": "",
+        "mapNames": true,
+        "cell": {
+          "py": 4,
+          "px": 8,
+          "fs": 14
+        }
+      },
+      "locked": true,
+      "manualOrder": [],
+      "matchPoint": {
+        "bonusEnabled": true,
+        "bonusStep": 1,
+        "championOverride": null,
+        "enabled": false,
+        "maxMatches": 8,
+        "sameGameCanWin": false,
+        "threshold": 40
+      },
+      "matchTie": [
+        {
+          "k": "kill",
+          "dir": "desc"
+        },
+        {
+          "k": "place",
+          "dir": "asc"
+        }
+      ],
+      "matches": [
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mukyf448-e85ll6",
+          "map": "春季赛",
+          "mvp": null,
+          "name": "",
+          "results": {
+            "id-mukycwie-14n7f5": {
+              "kills": null,
+              "placement": 13
+            },
+            "id-mukycwie-3jf6xa": {
+              "kills": null,
+              "placement": 5
+            },
+            "id-mukycwie-6a9q8m": {
+              "kills": null,
+              "placement": 11
+            },
+            "id-mukycwie-8a7bde": {
+              "kills": null,
+              "placement": 4
+            },
+            "id-mukycwie-9u1d5m": {
+              "kills": null,
+              "placement": 15
+            },
+            "id-mukycwie-9vgmly": {
+              "kills": null,
+              "placement": 7
+            },
+            "id-mukycwie-cwrpdt": {
+              "kills": null,
+              "placement": 10
+            },
+            "id-mukycwie-dvpdes": {
+              "kills": null,
+              "placement": 14
+            },
+            "id-mukycwie-ea3x1z": {
+              "kills": null,
+              "placement": 3
+            },
+            "id-mukycwie-kmiqsc": {
+              "kills": null,
+              "placement": 17
+            },
+            "id-mukycwie-mpdm8y": {
+              "kills": null,
+              "placement": 6
+            },
+            "id-mukycwie-nxc95x": {
+              "kills": null,
+              "placement": 8
+            },
+            "id-mukycwie-nxqew5": {
+              "kills": null,
+              "placement": 2
+            },
+            "id-mukycwie-sj6c21": {
+              "kills": null,
+              "placement": 16
+            },
+            "id-mukycwie-wsw0a9": {
+              "kills": null,
+              "placement": 9
+            },
+            "id-mukycwie-ylt572": {
+              "kills": null,
+              "placement": 12
+            }
+          },
+          "topPick": null,
+          "type": "wudao",
+          "typedRank": true
+        },
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mukyf5z2-y3gein",
+          "map": "秋季赛",
+          "mvp": null,
+          "name": "",
+          "results": {
+            "id-mukycwie-14n7f5": {
+              "kills": null,
+              "placement": 16
+            },
+            "id-mukycwie-3jf6xa": {
+              "kills": null,
+              "placement": 2
+            },
+            "id-mukycwie-6a9q8m": {
+              "kills": null,
+              "placement": 12
+            },
+            "id-mukycwie-8a7bde": {
+              "kills": null,
+              "placement": 1
+            },
+            "id-mukycwie-9u1d5m": {
+              "kills": null,
+              "placement": 13
+            },
+            "id-mukycwie-9vgmly": {
+              "kills": null,
+              "placement": 5
+            },
+            "id-mukycwie-cwrpdt": {
+              "kills": null,
+              "placement": 14
+            },
+            "id-mukycwie-dvpdes": {
+              "kills": null,
+              "placement": 11
+            },
+            "id-mukycwie-ea3x1z": {
+              "kills": null,
+              "placement": 3
+            },
+            "id-mukycwie-kmiqsc": {
+              "kills": null,
+              "placement": 8
+            },
+            "id-mukycwie-mpdm8y": {
+              "kills": null,
+              "placement": 6
+            },
+            "id-mukycwie-nxc95x": {
+              "kills": null,
+              "placement": 10
+            },
+            "id-mukycwie-nxqew5": {
+              "kills": null,
+              "placement": 9
+            },
+            "id-mukycwie-sj6c21": {
+              "kills": null,
+              "placement": 15
+            },
+            "id-mukycwie-wsw0a9": {
+              "kills": null,
+              "placement": 7
+            },
+            "id-mukycwie-ylt572": {
+              "kills": null,
+              "placement": 4
+            }
+          },
+          "topPick": null,
+          "type": "wudao",
+          "typedRank": false
+        }
+      ],
+      "mode": "trio",
+      "name": "三排劫杯排名分",
+      "nameEn": "2026 NBPL Trios Points Standings",
+      "notes": "VN.521为ASC第二名晋级劫杯入围赛（不占用CN名额）。1-4晋级劫杯小组赛，5-12晋级劫杯入围赛，13-16淘汰。",
+      "notesEn": "VN521 is ASC 2nd qualifying for closed qualifiers( the CN slot rolls over). 1st-4th qualify for J cup Group Stage, 5th-12th qualify for closed qualifiers, 13th-16th can not qualify for J cup.",
+      "rankStyles": [
+        {
+          "from": 14,
+          "to": 16,
+          "color": "#737b82"
+        },
+        {
+          "from": 1,
+          "to": 4,
+          "color": "#fff700"
+        }
+      ],
+      "scoring": {
+        "killCoef": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1,
+          "10": 1,
+          "11": 1,
+          "12": 1,
+          "13": 1,
+          "14": 1,
+          "15": 1,
+          "16": 1,
+          "17": 1,
+          "18": 1,
+          "19": 1,
+          "20": 1,
+          "21": 1,
+          "22": 1,
+          "23": 1,
+          "24": 1,
+          "25": 1,
+          "26": 1,
+          "27": 1,
+          "28": 1,
+          "29": 1,
+          "30": 1,
+          "31": 1,
+          "32": 1,
+          "33": 1,
+          "34": 1,
+          "35": 1,
+          "36": 1,
+          "37": 1,
+          "38": 1,
+          "39": 1,
+          "40": 1,
+          "41": 1,
+          "42": 1,
+          "43": 1,
+          "44": 1,
+          "45": 1,
+          "46": 1,
+          "47": 1,
+          "48": 1
+        },
+        "killPoints": 1,
+        "placement": {
+          "1": 4,
+          "2": 2,
+          "3": 1,
+          "4": 1,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "wudaoPlacement": {
+          "1": 100,
+          "2": 45,
+          "3": 40,
+          "4": 35,
+          "5": 30,
+          "6": 25,
+          "7": 20,
+          "8": 18,
+          "9": 16,
+          "10": 14,
+          "11": 12,
+          "12": 10,
+          "13": 8,
+          "14": 6,
+          "15": 4,
+          "16": 2,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        }
+      },
+      "tags": [],
+      "tieBreak": {
+        "mp": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          }
+        ],
+        "points": [
+          {
+            "k": "lastScore",
+            "dir": "desc"
+          }
+        ]
+      }
+    }
+  ],
+  "activeEventId": "id-muky33jg-zux36h"
+}

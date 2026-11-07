@@ -1,0 +1,1173 @@
+{
+  "events": [
+    {
+      "bp": {
+        "cfg": {
+          "scope": "order",
+          "simu": false,
+          "soloLimit": 2,
+          "soloMinDistinct": 5,
+          "soloMaxTwice": 1,
+          "soloUnique": true,
+          "trioStart": 5,
+          "trioUnique": false,
+          "trioTeamCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 3,
+            "5": 0,
+            "6": 0
+          },
+          "trioSameGameCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 2,
+            "5": 2,
+            "6": 2
+          }
+        },
+        "games": {
+          "id-mvw5wuf8-2qwxrm": {
+            "picks": [
+              {
+                "compId": "id-mvcdznp1-g2j3sq",
+                "slot": 0,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 1
+              },
+              {
+                "compId": "id-mvcdznp1-8lwdbf",
+                "slot": 0,
+                "heroId": 1000070,
+                "cost": 0,
+                "step": 2
+              },
+              {
+                "compId": "id-mvcdznp1-kqnd4b",
+                "slot": 0,
+                "heroId": 1000026,
+                "cost": 0,
+                "step": 3
+              },
+              {
+                "compId": "id-mvmcbufl-dc919k",
+                "slot": 0,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 4
+              },
+              {
+                "compId": "id-mvcdznp1-jokudp",
+                "slot": 0,
+                "heroId": 1000073,
+                "cost": 0,
+                "step": 5
+              },
+              {
+                "compId": "id-mvmcbufl-v44nju",
+                "slot": 0,
+                "heroId": 1000009,
+                "cost": 0,
+                "step": 6
+              },
+              {
+                "compId": "id-mvmcbufl-y564gw",
+                "slot": 0,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 7
+              },
+              {
+                "compId": "id-mvmcbufl-4tkmnx",
+                "slot": 0,
+                "heroId": 1000020,
+                "cost": 0,
+                "step": 8
+              }
+            ],
+            "order": [
+              "id-mvcdznp1-g2j3sq",
+              "id-mvcdznp1-8lwdbf",
+              "id-mvcdznp1-kqnd4b",
+              "id-mvmcbufl-dc919k",
+              "id-mvcdznp1-jokudp",
+              "id-mvmcbufl-v44nju",
+              "id-mvmcbufl-y564gw",
+              "id-mvmcbufl-4tkmnx"
+            ],
+            "groups": [
+              [
+                "id-mvcdznp1-g2j3sq"
+              ],
+              [
+                "id-mvcdznp1-8lwdbf"
+              ],
+              [
+                "id-mvcdznp1-kqnd4b"
+              ],
+              [
+                "id-mvmcbufl-dc919k"
+              ],
+              [
+                "id-mvcdznp1-jokudp"
+              ],
+              [
+                "id-mvmcbufl-v44nju"
+              ],
+              [
+                "id-mvmcbufl-y564gw"
+              ],
+              [
+                "id-mvmcbufl-4tkmnx"
+              ]
+            ]
+          },
+          "id-mvw7fd5m-mr4l20": {
+            "picks": [
+              {
+                "compId": "id-mvcdznp1-g2j3sq",
+                "slot": 0,
+                "heroId": 1000026,
+                "cost": 0,
+                "step": 3
+              },
+              {
+                "compId": "id-mvcdznp1-jokudp",
+                "slot": 0,
+                "heroId": 1000070,
+                "cost": 0,
+                "step": 4
+              },
+              {
+                "compId": "id-mvmcbufl-dc919k",
+                "slot": 0,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 5
+              },
+              {
+                "compId": "id-mvmcbufl-4tkmnx",
+                "slot": 0,
+                "heroId": 1000073,
+                "cost": 0,
+                "step": 6
+              },
+              {
+                "compId": "id-mvmcbufl-v44nju",
+                "slot": 0,
+                "heroId": 1000028,
+                "cost": 0,
+                "step": 7
+              },
+              {
+                "compId": "id-mvcdznp1-kqnd4b",
+                "slot": 0,
+                "heroId": 1000029,
+                "cost": 0,
+                "step": 8
+              },
+              {
+                "compId": "id-mvcdznp1-8lwdbf",
+                "slot": 0,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 1
+              },
+              {
+                "compId": "id-mvmcbufl-y564gw",
+                "slot": 0,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 2
+              }
+            ],
+            "order": [
+              "id-mvcdznp1-8lwdbf",
+              "id-mvmcbufl-y564gw",
+              "id-mvcdznp1-g2j3sq",
+              "id-mvcdznp1-jokudp",
+              "id-mvmcbufl-dc919k",
+              "id-mvmcbufl-4tkmnx",
+              "id-mvmcbufl-v44nju",
+              "id-mvcdznp1-kqnd4b"
+            ],
+            "groups": [
+              [
+                "id-mvcdznp1-8lwdbf"
+              ],
+              [
+                "id-mvmcbufl-y564gw"
+              ],
+              [
+                "id-mvcdznp1-g2j3sq"
+              ],
+              [
+                "id-mvcdznp1-jokudp"
+              ],
+              [
+                "id-mvmcbufl-dc919k"
+              ],
+              [
+                "id-mvmcbufl-4tkmnx"
+              ],
+              [
+                "id-mvmcbufl-v44nju"
+              ],
+              [
+                "id-mvcdznp1-kqnd4b"
+              ]
+            ]
+          },
+          "id-mvw8v72k-lr9zcs": {
+            "picks": [
+              {
+                "compId": "id-mvcdznp1-8lwdbf",
+                "slot": 0,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 1
+              },
+              {
+                "compId": "id-mvmcbufl-y564gw",
+                "slot": 0,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 2
+              },
+              {
+                "compId": "id-mvcdznp1-g2j3sq",
+                "slot": 0,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 3
+              },
+              {
+                "compId": "id-mvcdznp1-jokudp",
+                "slot": 0,
+                "heroId": 1000026,
+                "cost": 0,
+                "step": 4
+              },
+              {
+                "compId": "id-mvmcbufl-v44nju",
+                "slot": 0,
+                "heroId": 1000070,
+                "cost": 0,
+                "step": 5
+              },
+              {
+                "compId": "id-mvmcbufl-4tkmnx",
+                "slot": 0,
+                "heroId": 1000073,
+                "cost": 0,
+                "step": 6
+              },
+              {
+                "compId": "id-mvcdznp1-kqnd4b",
+                "slot": 0,
+                "heroId": 1000020,
+                "cost": 0,
+                "step": 7
+              },
+              {
+                "compId": "id-mvmcbufl-dc919k",
+                "slot": 0,
+                "heroId": 1000009,
+                "cost": 0,
+                "step": 8
+              }
+            ],
+            "order": [
+              "id-mvcdznp1-8lwdbf",
+              "id-mvmcbufl-y564gw",
+              "id-mvcdznp1-g2j3sq",
+              "id-mvcdznp1-jokudp",
+              "id-mvmcbufl-v44nju",
+              "id-mvmcbufl-4tkmnx",
+              "id-mvcdznp1-kqnd4b",
+              "id-mvmcbufl-dc919k"
+            ],
+            "groups": [
+              [
+                "id-mvcdznp1-8lwdbf"
+              ],
+              [
+                "id-mvmcbufl-y564gw"
+              ],
+              [
+                "id-mvcdznp1-g2j3sq"
+              ],
+              [
+                "id-mvcdznp1-jokudp"
+              ],
+              [
+                "id-mvmcbufl-v44nju"
+              ],
+              [
+                "id-mvmcbufl-4tkmnx"
+              ],
+              [
+                "id-mvcdznp1-kqnd4b"
+              ],
+              [
+                "id-mvmcbufl-dc919k"
+              ]
+            ]
+          },
+          "id-mvwansbh-gws3wt": {
+            "picks": [
+              {
+                "compId": "id-mvmcbufl-4tkmnx",
+                "slot": 0,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 1
+              },
+              {
+                "compId": "id-mvmcbufl-y564gw",
+                "slot": 0,
+                "heroId": 1000070,
+                "cost": 0,
+                "step": 2
+              },
+              {
+                "compId": "id-mvcdznp1-jokudp",
+                "slot": 0,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 3
+              },
+              {
+                "compId": "id-mvmcbufl-v44nju",
+                "slot": 0,
+                "heroId": 1000073,
+                "cost": 0,
+                "step": 4
+              },
+              {
+                "compId": "id-mvcdznp1-g2j3sq",
+                "slot": 0,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 5
+              },
+              {
+                "compId": "id-mvcdznp1-kqnd4b",
+                "slot": 0,
+                "heroId": 1000009,
+                "cost": 0,
+                "step": 6
+              },
+              {
+                "compId": "id-mvmcbufl-dc919k",
+                "slot": 0,
+                "heroId": 1000026,
+                "cost": 0,
+                "step": 7
+              },
+              {
+                "compId": "id-mvcdznp1-8lwdbf",
+                "slot": 0,
+                "heroId": 1000020,
+                "cost": 0,
+                "step": 8
+              }
+            ],
+            "order": [
+              "id-mvmcbufl-4tkmnx",
+              "id-mvmcbufl-y564gw",
+              "id-mvcdznp1-jokudp",
+              "id-mvmcbufl-v44nju",
+              "id-mvcdznp1-g2j3sq",
+              "id-mvcdznp1-kqnd4b",
+              "id-mvmcbufl-dc919k",
+              "id-mvcdznp1-8lwdbf"
+            ],
+            "groups": [
+              [
+                "id-mvmcbufl-4tkmnx"
+              ],
+              [
+                "id-mvmcbufl-y564gw"
+              ],
+              [
+                "id-mvcdznp1-jokudp"
+              ],
+              [
+                "id-mvmcbufl-v44nju"
+              ],
+              [
+                "id-mvcdznp1-g2j3sq"
+              ],
+              [
+                "id-mvcdznp1-kqnd4b"
+              ],
+              [
+                "id-mvmcbufl-dc919k"
+              ],
+              [
+                "id-mvcdznp1-8lwdbf"
+              ]
+            ]
+          },
+          "id-mvwc0ck3-62a7oc": {
+            "picks": [
+              {
+                "compId": "id-mvmcbufl-y564gw",
+                "slot": 0,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 1
+              },
+              {
+                "compId": "id-mvmcbufl-4tkmnx",
+                "slot": 0,
+                "heroId": 1000026,
+                "cost": 0,
+                "step": 2
+              },
+              {
+                "compId": "id-mvcdznp1-8lwdbf",
+                "slot": 0,
+                "heroId": 1000073,
+                "cost": 0,
+                "step": 3
+              },
+              {
+                "compId": "id-mvcdznp1-jokudp",
+                "slot": 0,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 4
+              },
+              {
+                "compId": "id-mvmcbufl-v44nju",
+                "slot": 0,
+                "heroId": 1000070,
+                "cost": 0,
+                "step": 5
+              },
+              {
+                "compId": "id-mvcdznp1-g2j3sq",
+                "slot": 0,
+                "heroId": 1000010,
+                "cost": 0,
+                "step": 6
+              },
+              {
+                "compId": "id-mvcdznp1-kqnd4b",
+                "slot": 0,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 7
+              },
+              {
+                "compId": "id-mvmcbufl-dc919k",
+                "slot": 0,
+                "heroId": 1000020,
+                "cost": 0,
+                "step": 8
+              }
+            ],
+            "order": [
+              "id-mvmcbufl-y564gw",
+              "id-mvmcbufl-4tkmnx",
+              "id-mvcdznp1-8lwdbf",
+              "id-mvcdznp1-jokudp",
+              "id-mvmcbufl-v44nju",
+              "id-mvcdznp1-g2j3sq",
+              "id-mvcdznp1-kqnd4b",
+              "id-mvmcbufl-dc919k"
+            ],
+            "groups": [
+              [
+                "id-mvmcbufl-y564gw"
+              ],
+              [
+                "id-mvmcbufl-4tkmnx"
+              ],
+              [
+                "id-mvcdznp1-8lwdbf"
+              ],
+              [
+                "id-mvcdznp1-jokudp"
+              ],
+              [
+                "id-mvmcbufl-v44nju"
+              ],
+              [
+                "id-mvcdznp1-g2j3sq"
+              ],
+              [
+                "id-mvcdznp1-kqnd4b"
+              ],
+              [
+                "id-mvmcbufl-dc919k"
+              ]
+            ]
+          }
+        },
+        "groupCount": 8,
+        "mirrors": [],
+        "order": [
+          "id-mvcdznp1-g2j3sq",
+          "id-mvcdznp1-8lwdbf",
+          "id-mvcdznp1-kqnd4b",
+          "id-mvcdznp1-jokudp",
+          "id-mvmcbufl-y564gw",
+          "id-mvmcbufl-v44nju",
+          "id-mvmcbufl-4tkmnx",
+          "id-mvmcbufl-dc919k"
+        ],
+        "preset": "mp",
+        "trioGroupSize": 2,
+        "trioGroups": [
+          [
+            "id-mvmcbufl-y564gw"
+          ],
+          [
+            "id-mvmcbufl-4tkmnx"
+          ],
+          [
+            "id-mvcdznp1-8lwdbf"
+          ],
+          [
+            "id-mvcdznp1-jokudp"
+          ],
+          [
+            "id-mvmcbufl-v44nju"
+          ],
+          [
+            "id-mvcdznp1-g2j3sq"
+          ],
+          [
+            "id-mvcdznp1-kqnd4b"
+          ],
+          [
+            "id-mvmcbufl-dc919k"
+          ]
+        ],
+        "v": 1
+      },
+      "compStyles": [],
+      "competitors": [
+        {
+          "carry": 4,
+          "group": null,
+          "id": "id-mvcdznp1-g2j3sq",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/wfg.webp",
+          "members": [],
+          "name": "WFG.xuanyuan",
+          "tag": null
+        },
+        {
+          "carry": 3.5,
+          "group": null,
+          "id": "id-mvcdznp1-8lwdbf",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/sr.webp",
+          "members": [],
+          "name": "SR.Spider",
+          "tag": null
+        },
+        {
+          "carry": 3,
+          "group": null,
+          "id": "id-mvcdznp1-kqnd4b",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/yzg.webp",
+          "members": [],
+          "name": "YZG.T225",
+          "tag": null
+        },
+        {
+          "carry": 2.5,
+          "group": null,
+          "id": "id-mvcdznp1-jokudp",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/shenzhen-te-su.webp",
+          "members": [],
+          "name": "深圳TE溯.WF",
+          "tag": null
+        },
+        {
+          "carry": 2,
+          "group": null,
+          "id": "id-mvmcbufl-y564gw",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/vn-521.webp",
+          "members": [],
+          "name": "VN.521.Yagami",
+          "tag": null
+        },
+        {
+          "carry": 1.5,
+          "group": null,
+          "id": "id-mvmcbufl-v44nju",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/xkg.webp",
+          "members": [],
+          "name": "XKG.ARano",
+          "tag": null
+        },
+        {
+          "carry": 1,
+          "group": null,
+          "id": "id-mvmcbufl-4tkmnx",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/oug.webp",
+          "members": [],
+          "name": "OUG.Mike",
+          "tag": null
+        },
+        {
+          "carry": 0.5,
+          "group": null,
+          "id": "id-mvmcbufl-dc919k",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/beijing-wbg.webp",
+          "members": [],
+          "name": "北京WBG.Verse",
+          "tag": null
+        }
+      ],
+      "groups": [],
+      "id": "id-muky2idm-7h8q0s",
+      "lb": {
+        "order": [
+          "rank",
+          "group",
+          "tag",
+          "name",
+          "carry",
+          "games",
+          "total",
+          "mp"
+        ],
+        "show": {
+          "rank": true,
+          "group": true,
+          "tag": true,
+          "name": true,
+          "carry": true,
+          "games": true,
+          "total": true,
+          "mp": true
+        },
+        "width": {
+          "rank": 44,
+          "group": 40,
+          "tag": 76,
+          "name": 0,
+          "carry": 56,
+          "games": 0,
+          "total": 68,
+          "mp": 140
+        },
+        "logo": true,
+        "hideMembers": false,
+        "showTitle": true,
+        "title": "",
+        "titleEn": "",
+        "mapNames": false,
+        "cell": {
+          "py": 8,
+          "px": 8,
+          "fs": 14
+        }
+      },
+      "locked": true,
+      "manualOrder": [],
+      "matchPoint": {
+        "bonusEnabled": true,
+        "bonusStep": 0.5,
+        "championOverride": null,
+        "enabled": true,
+        "maxMatches": 8,
+        "sameGameCanWin": false,
+        "threshold": 16
+      },
+      "matchTie": [
+        {
+          "k": "kill",
+          "dir": "desc"
+        },
+        {
+          "k": "place",
+          "dir": "asc"
+        }
+      ],
+      "matches": [
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvw43s6i-s0zkqs",
+          "map": "火罗国",
+          "mvp": null,
+          "name": "",
+          "results": {
+            "id-mvcdznp1-8lwdbf": {
+              "kills": null,
+              "placement": 5
+            },
+            "id-mvcdznp1-g2j3sq": {
+              "kills": null,
+              "placement": 2
+            },
+            "id-mvcdznp1-jokudp": {
+              "kills": null,
+              "placement": 7
+            },
+            "id-mvcdznp1-kqnd4b": {
+              "kills": null,
+              "placement": 8
+            },
+            "id-mvmcbufl-4tkmnx": {
+              "kills": null,
+              "placement": 4
+            },
+            "id-mvmcbufl-dc919k": {
+              "kills": null,
+              "placement": 1
+            },
+            "id-mvmcbufl-v44nju": {
+              "kills": null,
+              "placement": 3
+            },
+            "id-mvmcbufl-y564gw": {
+              "kills": null,
+              "placement": 6
+            }
+          },
+          "topPick": null,
+          "type": "wudao",
+          "typedRank": false
+        },
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvw5wuf8-2qwxrm",
+          "map": "聚窟州·早晨",
+          "mvp": null,
+          "name": "",
+          "results": {
+            "id-mvcdznp1-8lwdbf": {
+              "kills": 6,
+              "placement": 2
+            },
+            "id-mvcdznp1-g2j3sq": {
+              "kills": 1,
+              "placement": 6
+            },
+            "id-mvcdznp1-jokudp": {
+              "kills": 2,
+              "placement": 4
+            },
+            "id-mvcdznp1-kqnd4b": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-mvmcbufl-4tkmnx": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-mvmcbufl-dc919k": {
+              "kills": 1,
+              "placement": 5
+            },
+            "id-mvmcbufl-v44nju": {
+              "kills": 1,
+              "placement": 3
+            },
+            "id-mvmcbufl-y564gw": {
+              "kills": 2,
+              "placement": 1
+            }
+          },
+          "topPick": null,
+          "type": "tianti",
+          "typedRank": false
+        },
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvw7fd5m-mr4l20",
+          "map": "火罗国·阴天",
+          "mvp": null,
+          "name": "",
+          "results": {
+            "id-mvcdznp1-8lwdbf": {
+              "kills": 4,
+              "placement": 3
+            },
+            "id-mvcdznp1-g2j3sq": {
+              "kills": 2,
+              "placement": 2
+            },
+            "id-mvcdznp1-jokudp": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-mvcdznp1-kqnd4b": {
+              "kills": 2,
+              "placement": 5
+            },
+            "id-mvmcbufl-4tkmnx": {
+              "kills": 2,
+              "placement": 4
+            },
+            "id-mvmcbufl-dc919k": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-mvmcbufl-v44nju": {
+              "kills": 3,
+              "placement": 6
+            },
+            "id-mvmcbufl-y564gw": {
+              "kills": 3,
+              "placement": 1
+            }
+          },
+          "topPick": null,
+          "type": "tianti",
+          "typedRank": false
+        },
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvw8v72k-lr9zcs",
+          "map": "龙隐洞天·朝露",
+          "mvp": null,
+          "name": "",
+          "results": {
+            "id-mvcdznp1-8lwdbf": {
+              "kills": 3,
+              "placement": 6
+            },
+            "id-mvcdznp1-g2j3sq": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-mvcdznp1-jokudp": {
+              "kills": 5,
+              "placement": 3
+            },
+            "id-mvcdznp1-kqnd4b": {
+              "kills": 1,
+              "placement": 5
+            },
+            "id-mvmcbufl-4tkmnx": {
+              "kills": 6,
+              "placement": 1
+            },
+            "id-mvmcbufl-dc919k": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mvmcbufl-v44nju": {
+              "kills": 3,
+              "placement": 2
+            },
+            "id-mvmcbufl-y564gw": {
+              "kills": 2,
+              "placement": 4
+            }
+          },
+          "topPick": null,
+          "type": "tianti",
+          "typedRank": false
+        },
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvwansbh-gws3wt",
+          "map": "聚窟州·正午",
+          "name": "",
+          "results": {
+            "id-mvcdznp1-8lwdbf": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mvcdznp1-g2j3sq": {
+              "kills": 3,
+              "placement": 3
+            },
+            "id-mvcdznp1-jokudp": {
+              "kills": 1,
+              "placement": 4
+            },
+            "id-mvcdznp1-kqnd4b": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-mvmcbufl-4tkmnx": {
+              "kills": 4,
+              "placement": 2
+            },
+            "id-mvmcbufl-dc919k": {
+              "kills": 1,
+              "placement": 6
+            },
+            "id-mvmcbufl-v44nju": {
+              "kills": 2,
+              "placement": 5
+            },
+            "id-mvmcbufl-y564gw": {
+              "kills": 3,
+              "placement": 1
+            }
+          },
+          "type": "tianti",
+          "topPick": null,
+          "mvp": null,
+          "typedRank": false
+        },
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvwc0ck3-62a7oc",
+          "map": "火罗国·星夜",
+          "name": "",
+          "results": {
+            "id-mvcdznp1-8lwdbf": {
+              "kills": 1,
+              "placement": 3
+            },
+            "id-mvcdznp1-g2j3sq": {
+              "kills": 2,
+              "placement": 4
+            },
+            "id-mvcdznp1-jokudp": {
+              "kills": 0,
+              "placement": 7
+            },
+            "id-mvcdznp1-kqnd4b": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-mvmcbufl-4tkmnx": {
+              "kills": 4,
+              "placement": 2
+            },
+            "id-mvmcbufl-dc919k": {
+              "kills": 2,
+              "placement": 1
+            },
+            "id-mvmcbufl-v44nju": {
+              "kills": 1,
+              "placement": 5
+            },
+            "id-mvmcbufl-y564gw": {
+              "kills": 5,
+              "placement": 6
+            }
+          },
+          "type": "tianti",
+          "topPick": null,
+          "mvp": null,
+          "typedRank": false
+        }
+      ],
+      "mode": "solo",
+      "name": "2026年秋季赛单排决赛",
+      "nameEn": "2026 Fall Split Solo Grand Finals",
+      "notes": "预测<del>龚总第十冠</del><del>深渊剑指</del>双会首冠。\n武道：Mike 2:1 T225; ARano 2:1 WF; Verse 2:0 Yagami; xuanyuan 2:1 Spider;\n          Verse 2:0 Mike; xuanyuan 2:1 Arano;\n          Verse 2:1 xuanyuan",
+      "notesEn": "Predict: Yagami wins the champion.\nVersus: Mike 2:1 T225; ARano 2:1 WF; Verse 2:0 Yagami; xuanyuan 2:1 Spider;\n          Verse 2:0 Mike; xuanyuan 2:1 Arano;\n          Verse 2:1 xuanyuan",
+      "rankStyles": [],
+      "scoring": {
+        "killCoef": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1,
+          "10": 1,
+          "11": 1,
+          "12": 1,
+          "13": 1,
+          "14": 1,
+          "15": 1,
+          "16": 1,
+          "17": 1,
+          "18": 1,
+          "19": 1,
+          "20": 1,
+          "21": 1,
+          "22": 1,
+          "23": 1,
+          "24": 1,
+          "25": 1,
+          "26": 1,
+          "27": 1,
+          "28": 1,
+          "29": 1,
+          "30": 1,
+          "31": 1,
+          "32": 1,
+          "33": 1,
+          "34": 1,
+          "35": 1,
+          "36": 1,
+          "37": 1,
+          "38": 1,
+          "39": 1,
+          "40": 1,
+          "41": 1,
+          "42": 1,
+          "43": 1,
+          "44": 1,
+          "45": 1,
+          "46": 1,
+          "47": 1,
+          "48": 1
+        },
+        "killPoints": 1,
+        "placement": {
+          "1": 2.5,
+          "2": 1,
+          "3": 0.5,
+          "4": 0.5,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "wudaoPlacement": {
+          "1": 2,
+          "2": 1,
+          "3": 0.5,
+          "4": 0.5,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        }
+      },
+      "tags": [],
+      "tieBreak": {
+        "mp": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          }
+        ],
+        "points": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          },
+          {
+            "k": "firstScore",
+            "dir": "asc"
+          },
+          {
+            "k": "kills",
+            "dir": "desc"
+          },
+          {
+            "k": "bestScore",
+            "dir": "desc"
+          },
+          {
+            "k": "bestKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastScore",
+            "dir": "desc"
+          },
+          {
+            "k": "lastKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastPlace",
+            "dir": "asc"
+          }
+        ]
+      }
+    }
+  ],
+  "activeEventId": "id-muky2idm-7h8q0s"
+}

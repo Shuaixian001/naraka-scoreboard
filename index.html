@@ -587,6 +587,10 @@
     flex: 1; min-width: 0;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
+  .jcup-badge {
+    width: 28px; height: 28px; flex: none; object-fit: contain;
+    border-radius: 5px; background: var(--panel2); padding: 2px;
+  }
   .batch-row.cur .bname { font-weight: 700; }
   .batch-row .bmeta { flex: none; color: var(--muted); font-size: 12px; }
   .batch-row .bmove { flex: none; display: flex; gap: 2px; }
@@ -837,6 +841,37 @@
   .modal-box h3 { margin-bottom: 14px; }
   .modal-box label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 6px; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
+  #lp-export-modal .lp-export-box {
+    width: min(860px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
+  }
+  .lp-export-head h3 { margin: 0 0 4px; }
+  .lp-export-head .muted { font-size: 12px; line-height: 1.6; }
+  .lp-export-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0 8px; }
+  .lp-export-fields {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px 12px; margin: 0 0 10px;
+  }
+  .lp-export-fields label { margin: 0; font-size: 12px; color: var(--muted); }
+  .lp-export-fields input { width: 100%; margin-top: 3px; padding: 5px 7px; font-size: 12px; }
+  .lp-export-fields .lp-export-inline { display: flex; align-items: center; gap: 4px; margin-top: 3px; }
+  .lp-export-fields .lp-export-inline input { width: 62px; margin-top: 0; }
+  .lp-export-note { font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 8px; }
+  .lp-export-text {
+    width: 100%; box-sizing: border-box; display: block;
+    min-height: 260px; height: min(52vh, 520px); resize: vertical;
+    padding: 10px 12px; border-radius: 8px; background: var(--bg); color: var(--text);
+    font: 12px/1.55 ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    white-space: pre; overflow: auto;
+  }
+  @media (max-width: 640px) {
+    #lp-export-modal { padding: 0; }
+    #lp-export-modal .lp-export-box {
+      width: 100%; max-width: 100%; max-height: 100vh; border-radius: 0;
+    }
+    .lp-export-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lp-export-text { height: 46vh; min-height: 220px; }
+  }
 
   /* ---- BP 选人工作台 ---- */
   #bp-modal { padding: 12px; }
@@ -982,7 +1017,12 @@
   .bpw-group-size input { width: 42px; padding: 2px 3px; font-size: 11px; text-align: center; }
   .bpw-group-board {
     padding: 6px 7px 8px; display: flex; flex-direction: column; gap: 6px;
-    border-bottom: 1px dashed var(--border);
+    border-bottom: 1px dashed var(--border); scroll-margin-top: 8px;
+  }
+  .bpw-group-board.bpw-gb-flash { animation: bpwGbFlash .9s ease; }
+  @keyframes bpwGbFlash {
+    0% { background: rgba(43,127,212,.18); }
+    100% { background: transparent; }
   }
   .bpw-modal-box.bp-setup-mode #bpw-order { display: none; }
   .bpw-modal-box:not(.bp-setup-mode) #bpw-group-board { display: none; }
@@ -1782,6 +1822,7 @@
   <section class="card expanded" id="card-lb">
     <h2>实时积分榜 <span class="hint" id="lb-meta"></span>
       <button class="ghost tiny" id="lb-cfg-btn" onclick="openLbCfg()">显示设置</button>
+      <button class="ghost tiny hidden" id="lb-lp-btn" onclick="openLpExport()" title="导出 Liquipedia 代码">Liquipedia 导出</button>
       <button class="ghost tiny hidden" id="lb-view" onclick="toggleLbView()">简表</button>
       <button class="ghost tiny hidden" id="lb-expand" onclick="toggleLbExpand()">展开全部</button>
     </h2>
@@ -1870,6 +1911,7 @@
         <button class="chip" id="carry-bulk-toggle" onclick="toggleCarryBulk()">批量填写前序积分</button>
         <button class="chip" id="comp-batch-open" onclick="openCompBatch()">批量管理 / 删除</button>
         <button class="chip" id="official-open" onclick="openOfficialRoster()">+ 添加官方战队</button>
+        <button class="chip" id="jcup-open" onclick="openJcupOverseas()">+ 劫杯海外选手/战队</button>
         <button class="chip" id="pickcomp-open" onclick="openPickComp()">+ 从已有赛事挑选</button>
         <span class="muted" id="carry-summary"></span>
       </div>
@@ -2411,8 +2453,8 @@
             <button type="button" class="ghost tiny" id="bpw-trio-group-btn" onclick="bpApplyGroupsByCount()" title="按当前顺序把选手/队伍分到各组；也可以直接拖卡片">按顺序分到各组</button>
             <button type="button" class="ghost tiny" id="bpw-trio-points-btn" onclick="bpApplyTrioPointsOrder()" title="按当前积分排序列出队伍，不自动分组；排序后再按顺序分组">按积分排序</button>
             <button type="button" class="ghost tiny" id="bpw-trio-points-mp-btn" onclick="bpApplyTrioPointsMpOrder()" title="按当前积分排序并把赛点队伍后置，不自动分组；排序后再按顺序分组">按积分排序（赛点后置）</button>
-            <button type="button" class="ghost tiny" id="bpw-points-btn" onclick="bpApplyPointsOrder()">当前积分（赛点后置）</button>
-            <button type="button" class="ghost tiny" id="bpw-points-plain-btn" onclick="bpApplyPointsPlainOrder()" title="按当前积分从高到低，不区分赛点，适合第 6–7 局">当前积分（正序）</button>
+            <button type="button" class="ghost tiny" id="bpw-points-btn" onclick="bpApplyPointsOrder()" title="按当前积分排序并分组，赛点选手后置">按积分分组（赛点后置）</button>
+            <button type="button" class="ghost tiny" id="bpw-points-plain-btn" onclick="bpApplyPointsPlainOrder()" title="按当前积分正序排序并分组，不区分赛点，适合第 6–7 局">按积分分组（正序）</button>
             <button type="button" class="ghost tiny" onclick="bpToggleOrderEditor()">手动录入</button>
           </div>
           <div id="bpw-group-board" class="bpw-group-board"></div>
@@ -2622,6 +2664,25 @@
   </div>
 </div>
 
+<!-- 劫杯海外选手 / 战队名单 -->
+<div class="modal hidden" id="jcup-modal">
+  <div class="modal-box" style="width:580px">
+    <h3 id="jcup-title">添加劫杯海外选手</h3>
+    <div class="muted" id="jcup-desc" style="font-size:12px;margin:-8px 0 10px;line-height:1.7"></div>
+    <div class="batch-tools">
+      <span class="muted" id="jcup-count"></span>
+      <span class="grow"></span>
+      <button class="ghost tiny" onclick="jcupCheckAll(true)">全选</button>
+      <button class="ghost tiny" onclick="jcupCheckAll(false)">全不选</button>
+    </div>
+    <div id="jcup-list" class="batch-list"></div>
+    <div class="modal-actions">
+      <button class="ghost" onclick="closeJcupOverseas()">取消</button>
+      <button onclick="confirmJcupOverseas()">添加选中</button>
+    </div>
+  </div>
+</div>
+
 <!-- 从已有赛事挑选选手弹窗 -->
 <div class="modal hidden" id="pickcomp-modal">
   <div class="modal-box" style="width:560px">
@@ -2787,6 +2848,49 @@
       <button class="ghost" onclick="resetLbCfg()">恢复默认</button>
       <span class="grow"></span>
       <button id="lbcfg-done-btn" onclick="closeLbCfg()">完成</button>
+    </div>
+  </div>
+</div>
+
+<!-- Liquipedia 积分表导出 -->
+<div class="modal hidden" id="lp-export-modal">
+  <div class="modal-box lp-export-box">
+    <div class="lp-export-head">
+      <h3>导出 Liquipedia 代码</h3>
+      <div class="muted">基于当前榜单生成；原来的赛事 JSON 和评级图片导出不受影响。</div>
+    </div>
+    <div class="lp-export-tabs">
+      <button type="button" class="chip active" id="lpfmt-match" onclick="lpExportSetFormat('match')">单日 Match</button>
+      <button type="button" class="chip" id="lpfmt-wiki" onclick="lpExportSetFormat('wiki')">通用 Wiki 表格</button>
+    </div>
+    <div class="lp-export-fields" id="lp-export-match-fields">
+      <label>比赛日期
+        <input type="date" id="lp-export-date" oninput="lpExportRender()">
+      </label>
+      <label>首局时间
+        <input type="time" id="lp-export-time" value="16:00" oninput="lpExportRender()">
+      </label>
+      <label>局间间隔
+        <span class="lp-export-inline">
+          <input type="number" id="lp-export-gap" min="0" max="240" step="1" value="40" oninput="lpExportRender()">
+          分钟
+        </span>
+      </label>
+      <label>晋级标记
+        <input type="text" id="lp-export-bg" placeholder="1-4=up,5-8=down" oninput="lpExportRender()">
+      </label>
+    </div>
+    <div class="lp-export-note" id="lp-export-note-match">
+      按单个比赛日生成 Liquipedia 的 Bracket/2 + Match 代码：每局对应一个 Map，前序分写 startingpoints，每局分数写 MS|p。日期、首局时间和晋级标记可留空后补；单独粘贴时轮次会显示为 Grand Final，要并入现有多日 Bracket 时只复制 R1M1 整段。
+    </div>
+    <div class="lp-export-note hidden" id="lp-export-note-wiki">
+      标准 MediaWiki 表格，保留当前名次、并列和赛点冠军；粘贴到任意 Liquipedia 页面即可。队名和选手名沿用赛事数据。
+    </div>
+    <textarea id="lp-export-text" class="lp-export-text" readonly spellcheck="false" data-noi18n></textarea>
+    <div class="modal-actions">
+      <button class="ghost" onclick="lpExportDownload()">下载 .txt</button>
+      <button onclick="lpExportCopy()">复制代码</button>
+      <button class="ghost" onclick="closeLpExport()">关闭</button>
     </div>
   </div>
 </div>
@@ -2994,6 +3098,61 @@ const NBPL_TEAMS = [
   ]},
 ];
 
+/* 2026 劫杯入围赛海外选手 / 战队（按入围赛分组截图整理） */
+const JCUP_OVERSEAS_LOGO_BASE = 'assets/logos/2026JCUP_LOGOS/';
+const JCUP_OVERSEAS_TEAM_LOGOS = {
+  'BWG': JCUP_OVERSEAS_LOGO_BASE + 'bwg.png',
+  'Zen': JCUP_OVERSEAS_LOGO_BASE + 'zen.png',
+  'OWN': JCUP_OVERSEAS_LOGO_BASE + 'own.png',
+  'ARS': JCUP_OVERSEAS_LOGO_BASE + 'ars.png',
+  'RUE': JCUP_OVERSEAS_LOGO_BASE + 'rue.png',
+  'VN84': JCUP_OVERSEAS_LOGO_BASE + 'vn84.png',
+  '7oo': JCUP_OVERSEAS_LOGO_BASE + '7oo.png',
+  'WE': JCUP_OVERSEAS_LOGO_BASE + 'we.png',
+  'OPGG': JCUP_OVERSEAS_LOGO_BASE + 'opgg.png',
+  'HEX': JCUP_OVERSEAS_LOGO_BASE + 'hex.png',
+  'Lobby28': JCUP_OVERSEAS_LOGO_BASE + 'lobby28.png',
+  'MVP': JCUP_OVERSEAS_LOGO_BASE + 'mvp.png',
+  'HYW': JCUP_OVERSEAS_LOGO_BASE + 'hyw.png',
+  'VN.521': NBPL_LOGOS['VN.521']
+};
+const JCUP_OVERSEAS_SOLO = [
+  { name: 'RUE.Godzzz', team: 'RUE', group: 'A' },
+  { name: 'VN84.LyPolaris', team: 'VN84', group: 'A' },
+  { name: 'BWG.Bgreen', team: 'BWG', group: 'A' },
+  { name: 'Zen.zay', team: 'Zen', group: 'A' },
+  { name: '7oo.Choice', team: '7oo', group: 'B' },
+  { name: 'OWN.Zell', team: 'OWN', group: 'B' },
+  { name: 'ARS.tryhard', team: 'ARS', group: 'B' }
+];
+const JCUP_OVERSEAS_TRIO = [
+  { name: 'WE', group: 'A', members: ['Minds', 'AzBonn', 'Simpson'] },
+  { name: '7oo', group: 'A', members: ['Choice', 'Echo', 'XianMM'] },
+  { name: 'OPGG', group: 'A', members: ['Jasonnn5', 'Catt', 'Lambo'] },
+  { name: 'HEX', group: 'A', members: ['Sachiko', 'LLExNN', 'Woowie', 'Korn'] },
+  { name: 'Lobby28', group: 'B', members: ['D229', 'Guitar', 'Loves', 'CBB'] },
+  { name: 'MVP', group: 'B', members: ['ShiYun', 'Kaimao', 'LTZ'] },
+  { name: 'HYW', group: 'B', members: ['Windy', 'Taliska', 'God7'] },
+  { name: 'VN.521', group: 'B', members: ['Pampy', 'PhatMilk', 'Akame', 'Yin'] }
+];
+/* 评级素材用的海外战队列表；7oo 同时参加单排与三排。 */
+const JCUP_OVERSEAS_RATING = [
+  { name: 'BWG', scope: 'solo' },
+  { name: 'Zen', scope: 'solo' },
+  { name: 'OWN', scope: 'solo' },
+  { name: 'ARS', scope: 'solo' },
+  { name: 'RUE', scope: 'solo' },
+  { name: 'VN84', scope: 'solo' },
+  { name: '7oo', scope: 'both' },
+  { name: 'WE', scope: 'trio' },
+  { name: 'OPGG', scope: 'trio' },
+  { name: 'HEX', scope: 'trio' },
+  { name: 'Lobby28', scope: 'trio' },
+  { name: 'MVP', scope: 'trio' },
+  { name: 'HYW', scope: 'trio' },
+  { name: 'VN.521', scope: 'trio' }
+];
+
 /* BP 英雄资料：来源同 WorkBuddy 简易版，头像存放在 assets/heroes/ */
 const BP_ICON_DIR = 'assets/heroes/';
 const BP_HEROES = [
@@ -3025,7 +3184,8 @@ const BP_HEROES = [
   { id: 1000032, cn: '巫真', en: 'Zenda Wu', file: 'icon_head_f_wuzhen_01.png' },
   { id: 1000033, cn: '甘璇', en: 'Tara Gan', file: 'icon_head_f_ganxuan_01.png' },
   { id: 1000073, cn: '叶修', en: 'Ye Xiu', file: 'icon_head_m_yexiu_01.png' },
-  { id: 1000070, cn: '南宫锦', en: 'Anassa Nangong', file: 'icon_head_f_nangongjin_01.png' }
+  { id: 1000070, cn: '南宫锦', en: 'Anassa Nangong', file: 'icon_head_f_nangongjin_01.png' },
+  { id: 1000074, cn: '云庆', en: 'Kael', file: 'icon_head_m_yunqing_01.png' }
 ];
 const BP_HERO_BY_ID = {};
 BP_HEROES.forEach(function(h) { BP_HERO_BY_ID[h.id] = h; });
@@ -3130,6 +3290,11 @@ function unitOf(ev) { return (ev && ev.mode === 'trio') ? '队' : '人'; }
 let state = null;
 let currentPanel = 'record';
 let lbFilter = { board: 'merged', group: null };
+let lpExportFormat = 'match';
+let lpExportMeta = { date: '', time: '16:00', gap: 40, bg: '' };
+let lpExportMetaEventId = '';
+let lpExportBracketId = '';
+let lpExportBracketEventId = '';
 let eventModeFilter = '';     // 顶栏赛事下拉的筛选：'' 全部 / 'solo' 单排 / 'trio' 三排
 let placeTarget = 'tianti';   // 当前编辑的排名分表：天人 / 武道
 let placeDraft = null;        // 设置面板打开期间的暂存，保存时一次写回
@@ -3445,7 +3610,7 @@ function newEvent(mode, name, matchPointEnabled) {
     lb: defaultLbCfg(),
     manualOrder: [],
     matchPoint: Object.assign(defaultMatchPoint(mode), { enabled: !!matchPointEnabled }),
-    bp: defaultBp(matchPointEnabled),
+    bp: defaultBp(matchPointEnabled, mode),
     competitors: [],
     matches: []
   };
@@ -3468,13 +3633,17 @@ function normalizeMatchPoint(ev) {
     ? { compId: mp.championOverride.compId } : null;
 }
 
-function defaultBp(matchPointEnabled) {
+function defaultBp(matchPointEnabled, mode) {
   const preset = matchPointEnabled ? 'mp' : 'points';
   return {
     v: 1, preset: preset, cfg: Object.assign({}, BP_PRESETS[preset]),
-    order: [], trioGroupSize: 2, trioGroups: [], groupCount: 4,
+    order: [], trioGroupSize: 2, trioGroups: [],
+    groupCount: (mode === 'solo' && matchPointEnabled) ? 8 : 4,
     mirrors: [], games: {}
   };
+}
+function bpDefaultGroupCount(ev) {
+  return (ev && ev.mode === 'solo' && ev.matchPoint && ev.matchPoint.enabled) ? 8 : 4;
 }
 function bpInt(v, min, max, fallback) {
   const n = Math.round(Number(v));
@@ -3493,7 +3662,7 @@ function bpNormalizeCostTable(src, fallback) {
 /* BP 是赛事的附属数据；这里只修形状，不碰成绩 */
 function normalizeBp(ev) {
   if (!ev.bp || typeof ev.bp !== 'object' || Array.isArray(ev.bp)) {
-    ev.bp = defaultBp(ev.matchPoint && ev.matchPoint.enabled);
+    ev.bp = defaultBp(ev.matchPoint && ev.matchPoint.enabled, ev.mode);
   }
   const bp = ev.bp;
   bp.v = 1;
@@ -3528,7 +3697,7 @@ function normalizeBp(ev) {
   const compIds = Object.create(null);
   ev.competitors.forEach(function(c) { compIds[c.id] = 1; });
   bp.trioGroupSize = bpInt(bp.trioGroupSize, 1, 20, 2);
-  bp.groupCount = bpInt(bp.groupCount, 1, 20, 4);
+  bp.groupCount = bpInt(bp.groupCount, 1, 20, bpDefaultGroupCount(ev));
   const baseGroups = [];
   (Array.isArray(bp.trioGroups) ? bp.trioGroups : []).forEach(function(src) {
     const group = [];
@@ -5379,7 +5548,7 @@ function bpSetTrioBaseGroups(ev, groups) {
 }
 function bpGroupCountValue(ev) {
   const el = document.getElementById('bpw-group-count');
-  const count = bpInt(el ? el.value : (ev && ev.bp ? ev.bp.groupCount : 4), 1, 20, 4);
+  const count = bpInt(el ? el.value : (ev && ev.bp ? ev.bp.groupCount : bpDefaultGroupCount(ev)), 1, 20, bpDefaultGroupCount(ev));
   if (ev && ev.bp) ev.bp.groupCount = count;
   if (el && String(el.value) !== String(count)) el.value = count;
   return count;
@@ -5438,8 +5607,7 @@ function bpGroupBoardData(ev, m) {
   const byId = Object.create(null);
   const allowed = Object.create(null);
   parts.forEach(function(c) { byId[c.id] = c; allowed[c.id] = 1; });
-  const base = bpTrioBaseGroups(ev);
-  const src = base.length ? base : bpGameGroups(ev, m);
+  const src = bpGameGroups(ev, m);
   const groups = [];
   for (let i = 0; i < count; i++) groups.push([]);
   const used = Object.create(null);
@@ -6350,11 +6518,10 @@ function bpApplyPointsOrder() {
   const g = bpGame(ev, m.id);
   g.groups = [];
   g.order = order;
-  bpRecalcCosts(ev);
-  saveState();
-  const msg = document.getElementById('bpw-order-msg');
-  if (msg) msg.textContent = '已按当前积分生成，赛点选手后置';
-  bpRender();
+  ev.bp.trioGroups = [];
+  bpApplyGroupsByCount();
+  const msg = document.getElementById('bpw-group-msg');
+  if (msg) msg.textContent = '已按当前积分分组（赛点后置）';
 }
 function bpApplyPointsPlainOrder() {
   const ev = getActiveEvent(); if (!ev || !bpCanEdit(ev)) return;
@@ -6374,11 +6541,10 @@ function bpApplyPointsPlainOrder() {
   const g = bpGame(ev, m.id);
   g.groups = [];
   g.order = order;
-  bpRecalcCosts(ev);
-  saveState();
-  const msg = document.getElementById('bpw-order-msg');
-  if (msg) msg.textContent = '已按当前积分正序生成（不区分赛点）';
-  bpRender();
+  ev.bp.trioGroups = [];
+  bpApplyGroupsByCount();
+  const msg = document.getElementById('bpw-group-msg');
+  if (msg) msg.textContent = '已按当前积分分组（正序，不区分赛点）';
 }
 function bpApplyGroupsByCount() {
   const ev = getActiveEvent(); if (!ev || !bpCanEdit(ev)) return;
@@ -6408,6 +6574,14 @@ function bpApplyGroupsByCount() {
     ? '已按顺序分到 ' + count + ' 组'
     : '已按顺序分到 ' + count + ' 组';
   bpRender();
+  requestAnimationFrame(function() {
+    const board = document.getElementById('bpw-group-board');
+    if (!board) return;
+    board.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    board.classList.remove('bpw-gb-flash');
+    void board.offsetWidth;
+    board.classList.add('bpw-gb-flash');
+  });
 }
 function bpApplyTrioGroups() { bpApplyGroupsByCount(); }
 function bpApplyTrioPointsSort(mpLast) {
@@ -7332,7 +7506,7 @@ function bpRender() {
   if (trioRotateBtn) trioRotateBtn.classList.toggle('hidden', !editable || !setup);
   const groupCountInput = document.getElementById('bpw-group-count');
   if (groupCountInput && document.activeElement !== groupCountInput) {
-    groupCountInput.value = ev.bp.groupCount || 4;
+    groupCountInput.value = ev.bp.groupCount || bpDefaultGroupCount(ev);
   }
   if (trioGroupSizeWrap) {
     trioGroupSizeWrap.title = LANG === 'en' ? 'Number of groups' : '分组数量';
@@ -7394,7 +7568,7 @@ function bpOpenBoard(stage) {
   }
   if (stage === 'setup') {
     const gc = document.getElementById('bpw-group-count');
-    if (gc) gc.value = ev.bp.groupCount || 4;
+    if (gc) gc.value = ev.bp.groupCount || bpDefaultGroupCount(ev);
     bpSeedSoloWudaoGroups(ev);
     bpMaybeApplyPointsDefaults(ev);
   }
@@ -8198,16 +8372,19 @@ function simApplyPointsSort(ev, m, mpLast) {
   const g = bpGame(ev, m.id);
   g.order = ordered.map(function(r) { return r.id; });
   g.groups = [];
-  if (ev.mode === 'trio') ev.bp.trioGroups = [];
+  ev.bp.trioGroups = [];
+  if (ev.mode === 'solo') {
+    bpApplyGroupsByCount();
+    const msg = document.getElementById('bpw-group-msg');
+    if (msg) msg.textContent = mpLast
+      ? '已按当前积分分组（赛点后置）'
+      : '已按当前积分分组（正序，不区分赛点）';
+    return;
+  }
   bpRecalcCosts(ev);
   saveState();
-  if (ev.mode === 'trio') {
-    const msg = document.getElementById('bpw-group-msg');
-    if (msg) msg.textContent = mpLast ? '已按当前积分排序，赛点后置（未分组）' : '已按当前积分排序（未分组）';
-  } else {
-    const msg = document.getElementById('bpw-order-msg');
-    if (msg) msg.textContent = mpLast ? '已按当前积分生成，赛点选手后置' : '已按当前积分正序生成（不区分赛点）';
-  }
+  const msg = document.getElementById('bpw-group-msg');
+  if (msg) msg.textContent = mpLast ? '已按当前积分排序，赛点后置（未分组）' : '已按当前积分排序（未分组）';
   bpRender();
 }
 function simAppendCompetitors(ev, list) {
@@ -9077,6 +9254,325 @@ function renderLbFilters(ev) {
     h += '<button class="chip' + active + '" onclick="setLbFilter(\'group\',\'' + jsq(g) + '\')">' + esc(g) + ' 组（' + n + '）</button>';
   });
   el.innerHTML = h;
+}
+
+/* ==========================================================================
+   Liquipedia 表格导出
+   ========================================================================== */
+function lpExportIsMember() {
+  return !!(cloud.uid && !cloud.anonymous && (cloud.editor || cloud.admin));
+}
+function lpExportDeny() {
+  showToast('Liquipedia 导出为会员专用，请先登录并获得会员授权');
+  if (cloud.status === 'ready') openAccountModal();
+}
+function updateLpExportEntry() {
+  const btn = document.getElementById('lb-lp-btn');
+  if (!btn) return;
+  const member = lpExportIsMember();
+  btn.classList.toggle('hidden', !member);
+  if (!member) {
+    const modal = document.getElementById('lp-export-modal');
+    if (modal && modal.className.indexOf('hidden') === -1) closeLpExport();
+  }
+}
+function lpExportTextSafe(value) {
+  return String(value == null ? '' : value)
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/[|{}<>]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+function lpExportTitle(ev) {
+  const name = lpExportTextSafe(ev.nameEn || ev.name) || 'Standings';
+  const group = (lbFilter.board === 'group' && lbFilter.group)
+    ? ' - Group ' + lpExportTextSafe(lbFilter.group) : '';
+  return name + group;
+}
+function lpExportList() {
+  const ev = getActiveEvent();
+  if (!ev) return null;
+  const S = computeStandings(ev);
+  return { ev: ev, S: S, list: boardRows(S) };
+}
+const LP_MAP_NAMES = {
+  '火罗国': 'Martial Arts Showdown',
+  '聚窟州·早晨': 'Morus Isle (Dawn)',
+  '聚窟州·正午': 'Morus Isle (Midday)',
+  '聚窟州·黄昏': 'Morus Isle (Dusk)',
+  '聚窟州·夜晚': 'Morus Isle (Night)',
+  '火罗国·阴天': 'Holoroth (Cloudy)',
+  '火罗国·晴天': 'Holoroth (Sunny)',
+  '火罗国·黄昏': 'Holoroth (Dusk)',
+  '火罗国·星夜': 'Holoroth (Starry Night)',
+  '龙隐洞天·朝露': 'Perdoria (Morning Dew)',
+  '龙隐洞天·日暮': 'Perdoria (Eventide)',
+  '龙隐洞天·夜半': 'Perdoria (Midnight)',
+  '宛渠·夕阳': 'Wanchu (Sunset)',
+  '宛渠·烈日': 'Wanchu (Blaze)',
+  '宛渠·星夜': 'Wanchu (Starry Night)'
+};
+const LP_TEAM_LOGO_CODES = {
+  'chengdu-wolves': 'wolves', 'all': 'all', 'fpx-zq': 'fpxzq', 'chengdu-gg': 'gg',
+  'ssone': 'ssone', 'oug': 'oug', 'beijing-drg': 'drg', 'beijing-wbg': 'wbg',
+  'yzg': 'yzg', 'shenzhen-te-su': 'te', 'vn-521': '521', 'sr': 'sr',
+  'wfg': 'wfg', 'xkg': 'xkg', 'shanghai-ig-meituan': 'ig', 'rw-xia': 'rw'
+};
+const LP_TEAM_NAME_ALIASES = [
+  [/FPX/i, 'fpxzq'],
+  [/Wolves/i, 'wolves'],
+  [/WBG/i, 'wbg'],
+  [/TE溯|深圳TE|^TE$/i, 'te'],
+  [/成都GG|^GG$/i, 'gg'],
+  [/^ALL$/i, 'all'],
+  [/SSONE/i, 'ssone'],
+  [/OUG/i, 'oug'],
+  [/DRG/i, 'drg'],
+  [/YZG/i, 'yzg'],
+  [/^SR$/i, 'sr'],
+  [/WFG/i, 'wfg'],
+  [/XKG/i, 'xkg'],
+  [/上海iG|^iG$/i, 'ig'],
+  [/RW侠|^RW$/i, 'rw'],
+  [/521/, '521']
+];
+function lpExportKnownTeamCode(comp) {
+  const logo = String(comp && comp.logo || '').split('/').pop().replace(/\.(webp|png|jpe?g|gif)$/i, '');
+  if (LP_TEAM_LOGO_CODES[logo]) return LP_TEAM_LOGO_CODES[logo];
+  const name = String(comp && comp.name || '').trim();
+  for (let i = 0; i < LP_TEAM_NAME_ALIASES.length; i++) {
+    if (LP_TEAM_NAME_ALIASES[i][0].test(name)) return LP_TEAM_NAME_ALIASES[i][1];
+  }
+  return '';
+}
+function lpExportTeamCode(comp) {
+  const known = lpExportKnownTeamCode(comp);
+  if (known) return known;
+  const name = String(comp && comp.name || '').trim();
+  const ascii = name.replace(/[^A-Za-z0-9]/g, '').toLowerCase();
+  return ascii || lpExportTextSafe(name);
+}
+function lpExportSoloParts(comp) {
+  const raw = String(comp && comp.name || '').trim();
+  const dot = raw.lastIndexOf('.');
+  const player = lpExportTextSafe(dot > 0 ? raw.slice(dot + 1) : raw) || 'TBD';
+  const prefix = dot > 0 ? raw.slice(0, dot) : '';
+  let team = lpExportKnownTeamCode({ logo: comp && comp.logo, name: '' });
+  if (!team && prefix) team = lpExportKnownTeamCode({ logo: null, name: prefix });
+  return { player: player, team: team };
+}
+function lpExportBracketIdentifier(ev) {
+  if (lpExportBracketEventId !== ev.id || !lpExportBracketId) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let id = '';
+    for (let i = 0; i < 10; i++) id += chars.charAt(Math.floor(Math.random() * chars.length));
+    lpExportBracketId = id;
+    lpExportBracketEventId = ev.id;
+  }
+  return lpExportBracketId;
+}
+function lpExportMapName(match) {
+  if (!match) return '';
+  if (match.type === 'wudao' || match.map === '火罗国') return 'Martial Arts Showdown';
+  return LP_MAP_NAMES[match.map] || lpExportTextSafe(match.map);
+}
+function lpExportMapDateTime(index) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(lpExportMeta.date || '')) return '';
+  const parts = lpExportMeta.date.split('-').map(Number);
+  const time = /^\d{2}:\d{2}$/.test(lpExportMeta.time || '') ? lpExportMeta.time : '';
+  if (!time) return lpExportMeta.date;
+  const hm = time.split(':').map(Number);
+  const gap = isFinite(Number(lpExportMeta.gap)) ? Math.max(0, Math.min(240, Math.round(Number(lpExportMeta.gap)))) : 40;
+  let minutes = hm[0] * 60 + hm[1] + index * gap;
+  const dayOffset = Math.floor(minutes / 1440);
+  minutes -= dayOffset * 1440;
+  const d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2] + dayOffset));
+  const pad = function(n) { return (n < 10 ? '0' : '') + n; };
+  return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) +
+    ' ' + pad(Math.floor(minutes / 60)) + ':' + pad(minutes % 60) + ' {{Abbr/CST}}';
+}
+function lpExportApplyMetaFields() {
+  const date = document.getElementById('lp-export-date');
+  const time = document.getElementById('lp-export-time');
+  const gap = document.getElementById('lp-export-gap');
+  const bg = document.getElementById('lp-export-bg');
+  if (date) date.value = lpExportMeta.date || '';
+  if (time) time.value = lpExportMeta.time || '16:00';
+  if (gap) gap.value = String(lpExportMeta.gap != null ? lpExportMeta.gap : 40);
+  if (bg) bg.value = lpExportMeta.bg || '';
+}
+function lpExportPrepareMeta(ev) {
+  if (lpExportMetaEventId !== ev.id) {
+    lpExportMeta = { date: '', time: '16:00', gap: 40, bg: '' };
+    lpExportMetaEventId = ev.id;
+  }
+  lpExportApplyMetaFields();
+}
+function lpExportReadMetaFields() {
+  const date = document.getElementById('lp-export-date');
+  const time = document.getElementById('lp-export-time');
+  const gap = document.getElementById('lp-export-gap');
+  const bg = document.getElementById('lp-export-bg');
+  if (date) lpExportMeta.date = date.value || '';
+  if (time) lpExportMeta.time = time.value || '';
+  if (gap) {
+    const n = Number(gap.value);
+    lpExportMeta.gap = isFinite(n) ? Math.max(0, Math.min(240, Math.round(n))) : 40;
+  }
+  if (bg) lpExportMeta.bg = lpExportTextSafe(bg.value);
+}
+function lpExportMatch(ev, S, list) {
+  const lines = [];
+  const allFinished = ev.matches.length > 0 && ev.matches.every(function(m, i) {
+    const games = list.map(function(item) { return item.row.games[i]; })
+      .filter(function(g) { return g && g.participated; });
+    return games.length > 0 && games.every(function(g) { return g.hasResult; });
+  });
+  const pointCounts = {};
+  list.forEach(function(item) { pointCounts[item.row.totalT] = (pointCounts[item.row.totalT] || 0) + 1; });
+  const sortedByPoints = list.slice().sort(function(a, b) { return b.row.totalT - a.row.totalT; });
+  const pointsPos = {};
+  sortedByPoints.forEach(function(item, i) { pointsPos[item.row.id] = i + 1; });
+
+  lines.push('{{Bracket|Bracket/2|id=' + lpExportBracketIdentifier(ev));
+  lines.push('');
+  lines.push('|R1M1={{Match|finished=' + (allFinished ? '1' : '0') + '|showgamedetails=false');
+  lines.push('    |p_kill=' + fmtT(T(ev.scoring.killPoints || 0)));
+  const placeLine = [];
+  for (let i = 1; i <= list.length; i++) {
+    placeLine.push('p' + i + '=' + fmtT(T(ev.scoring.placement[i] || 0)));
+  }
+  if (placeLine.length) lines.push('    |' + placeLine.join(' |'));
+  const common = ['twitch=', 'youtube='];
+  if (S.usingMP) common.push('matchpoint=' + fmtT(S.thT));
+  if (lpExportMeta.bg) common.push('bg=' + lpExportMeta.bg);
+  lines.push('    |' + common.join('|'));
+  ev.matches.forEach(function(m, i) {
+    const games = list.map(function(item) { return item.row.games[i]; })
+      .filter(function(g) { return g && g.participated; });
+    const finished = games.length > 0 && games.every(function(g) { return g.hasResult; });
+    lines.push('    |map' + (i + 1) + '={{Map|date=' + lpExportMapDateTime(i) +
+      '|finished=' + (finished ? '1' : '0') +
+      '|map=' + lpExportTextSafe(lpExportMapName(m)) + '|vod=}}');
+  });
+  const teamMode = ev.mode === 'trio';
+  list.forEach(function(item, index) {
+    const r = item.row;
+    const solo = teamMode ? null : lpExportSoloParts(r.comp);
+    const parts = [teamMode ? (lpExportTeamCode(r.comp) || 'TBD') : solo.player];
+    if (!teamMode && solo.team) parts.push('team=' + solo.team);
+    if (r.carryT) parts.push('startingpoints=' + fmtT(r.carryT));
+    const tieCount = pointCounts[r.totalT] || 1;
+    if (tieCount > 1 || item.rank !== pointsPos[r.id]) parts.push('placement=' + item.rank);
+    r.games.forEach(function(g, i) {
+      if (g.participated && g.hasResult) parts.push('m' + (i + 1) + '={{MS|p=' + fmtT(g.totalT) + '}}');
+    });
+    lines.push('    |opponent' + (index + 1) + '={{' + (teamMode ? 'TeamOpponent' : 'SoloOpponent') +
+      '|' + parts.join('|') + '}}');
+  });
+  lines.push('}}');
+  lines.push('}}');
+  return lines.join('\n') + '\n';
+}
+function lpExportWiki(ev, S, list) {
+  const head = ['#', 'Participant'];
+  ev.matches.forEach(function(meta, i) { head.push('Game ' + (i + 1)); });
+  head.push('Pts');
+  const out = [];
+  out.push('{| class="wikitable" style="text-align:center;"');
+  out.push('|+ ' + lpExportTitle(ev));
+  out.push('|-');
+  out.push('! ' + head.join(' !! '));
+  list.forEach(function(item) {
+    const r = item.row;
+    const cells = [String(item.rank), lpExportTextSafe(r.comp.name) || 'TBD'];
+    r.games.forEach(function(g) {
+      cells.push(!g.participated ? '-' : (g.hasResult ? fmtT(g.totalT) : '0'));
+    });
+    cells.push(fmtT(r.totalT));
+    out.push('|-');
+    out.push('| ' + cells.join(' || '));
+  });
+  out.push('|}');
+  if (S.champion && S.byId[S.champion.compId] &&
+      list.some(function(item) { return item.row.id === S.champion.compId; })) {
+    out.push('');
+    out.push("'''Champion:''' " + (lpExportTextSafe(S.byId[S.champion.compId].comp.name) || 'TBD'));
+  }
+  return out.join('\n') + '\n';
+}
+function lpExportBuild() {
+  if (!lpExportIsMember()) return '';
+  const data = lpExportList();
+  if (!data || !data.list.length) return '';
+  if (lpExportFormat === 'wiki' || !data.ev.matches.length) {
+    return lpExportWiki(data.ev, data.S, data.list);
+  }
+  return lpExportMatch(data.ev, data.S, data.list);
+}
+function lpExportRender() {
+  lpExportReadMetaFields();
+  const match = document.getElementById('lpfmt-match');
+  const wiki = document.getElementById('lpfmt-wiki');
+  const fields = document.getElementById('lp-export-match-fields');
+  const noteMatch = document.getElementById('lp-export-note-match');
+  const noteWiki = document.getElementById('lp-export-note-wiki');
+  const text = document.getElementById('lp-export-text');
+  if (match) match.className = 'chip' + (lpExportFormat === 'match' ? ' active' : '');
+  if (wiki) wiki.className = 'chip' + (lpExportFormat === 'wiki' ? ' active' : '');
+  if (fields) fields.classList.toggle('hidden', lpExportFormat !== 'match');
+  if (noteMatch) noteMatch.classList.toggle('hidden', lpExportFormat !== 'match');
+  if (noteWiki) noteWiki.classList.toggle('hidden', lpExportFormat !== 'wiki');
+  if (text) text.value = lpExportBuild();
+}
+function openLpExport() {
+  if (!lpExportIsMember()) { lpExportDeny(); return; }
+  const data = lpExportList();
+  if (!data) { showToast('还没有可以导出的赛事'); return; }
+  if (!data.list.length) { showToast('当前榜单没有可导出的数据'); return; }
+  const match = document.getElementById('lpfmt-match');
+  if (match) {
+    match.disabled = !data.ev.matches.length;
+    match.title = data.ev.matches.length ? '' : '还没有对局，无法生成单日 Match';
+  }
+  lpExportPrepareMeta(data.ev);
+  lpExportFormat = data.ev.matches.length ? 'match' : 'wiki';
+  document.getElementById('lp-export-modal').className = 'modal';
+  lpExportRender();
+}
+function closeLpExport() {
+  const modal = document.getElementById('lp-export-modal');
+  if (modal) modal.className = 'modal hidden';
+}
+function lpExportSetFormat(format) {
+  if (format !== 'match' && format !== 'wiki') return;
+  lpExportFormat = format;
+  lpExportRender();
+}
+function lpExportCopy() {
+  if (!lpExportIsMember()) { lpExportDeny(); return; }
+  const text = document.getElementById('lp-export-text');
+  const value = text ? text.value : '';
+  if (!value) { showToast('没有可复制的内容'); return; }
+  copyPlainText(value).then(function() {
+    showToast('Liquipedia 代码已复制');
+  }).catch(function() {
+    showToast('复制失败，请从预览框手动复制');
+  });
+}
+function lpExportDownload() {
+  if (!lpExportIsMember()) { lpExportDeny(); return; }
+  const ev = getActiveEvent();
+  const text = document.getElementById('lp-export-text');
+  const value = text ? text.value : '';
+  if (!ev || !value) { showToast('没有可下载的内容'); return; }
+  const blob = new Blob([value], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = safeFileName(lpExportTitle(ev)) + '_Liquipedia.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Liquipedia 代码已下载');
 }
 
 /* 展开 / 收起积分榜：展开后不限高，所有名次一次显示出来 */
@@ -11315,6 +11811,110 @@ function confirmOfficialRoster() {
   renderAll();
 }
 
+/* ---------- 劫杯海外选手 / 战队 ---------- */
+function jcupT(zh, en) { return LANG === 'en' ? en : zh; }
+function jcupRosterData() {
+  const ev = getActiveEvent();
+  if (!ev) return null;
+  const solo = ev.mode === 'solo';
+  return { ev: ev, solo: solo, list: solo ? JCUP_OVERSEAS_SOLO : JCUP_OVERSEAS_TRIO };
+}
+function openJcupOverseas() {
+  const data = jcupRosterData();
+  if (!data) return;
+  if (data.ev.locked) {
+    alert(jcupT('本赛事已结束积分，无法添加参赛者。', 'This event has ended and no longer accepts competitors.'));
+    return;
+  }
+  renderJcupOverseasList();
+  document.getElementById('jcup-modal').className = 'modal';
+}
+function closeJcupOverseas() {
+  document.getElementById('jcup-modal').className = 'modal hidden';
+}
+function renderJcupOverseasList() {
+  const data = jcupRosterData();
+  if (!data) return;
+  const solo = data.solo;
+  document.getElementById('jcup-title').textContent = solo
+    ? jcupT('添加劫杯海外选手', 'Add J Cup Overseas Players')
+    : jcupT('添加劫杯海外战队', 'Add J Cup Overseas Teams');
+  document.getElementById('jcup-desc').textContent = solo
+    ? jcupT('2026 劫杯入围赛海外单排名单。勾选后添加为「战队.选手」，已存在的会跳过。',
+            'Overseas Solo roster from the 2026 J Cup qualifiers. Selected players are added as Team.Player; existing names are skipped.')
+    : jcupT('2026 劫杯入围赛海外三排名单。勾选后按整队添加，成员会一起带入；已存在的会跳过。',
+            'Overseas Trios roster from the 2026 J Cup qualifiers. Selected teams are added with their members; existing names are skipped.');
+  const totalMembers = data.list.reduce(function(n, t) { return n + (t.members ? t.members.length : 0); }, 0);
+  document.getElementById('jcup-count').textContent = solo
+    ? jcupT('共 ' + data.list.length + ' 名选手', data.list.length + ' players')
+    : jcupT('共 ' + data.list.length + ' 支战队 · ' + totalMembers + ' 名队员',
+            data.list.length + ' teams · ' + totalMembers + ' members');
+  const box = document.getElementById('jcup-list');
+  box.innerHTML = data.list.map(function(item) {
+    const team = solo ? item.team : item.name;
+    const logo = JCUP_OVERSEAS_TEAM_LOGOS[team] || '';
+    const meta = jcupT(item.group + '组', 'Group ' + item.group) +
+      (solo ? ' · ' + jcupT('单排', 'Solo') : ' · ' + item.members.join(' / '));
+    return '<label class="batch-row">' +
+      '<input type="checkbox" data-name="' + esc(item.name) + '" checked>' +
+      (logo ? '<img class="jcup-badge" src="' + esc(logo) + '" alt="">' : '') +
+      '<span class="bname">' + esc(item.name) + '</span>' +
+      '<span class="bmeta">' + esc(meta) + '</span></label>';
+  }).join('');
+}
+function jcupCheckAll(on) {
+  Array.prototype.forEach.call(document.querySelectorAll('#jcup-list input[type=checkbox]'), function(cb) {
+    cb.checked = !!on;
+  });
+}
+function confirmJcupOverseas() {
+  const data = jcupRosterData();
+  if (!data || data.ev.locked) return;
+  const checked = Array.prototype.slice.call(document.querySelectorAll('#jcup-list input[type=checkbox]'))
+    .filter(function(cb) { return cb.checked; })
+    .map(function(cb) { return cb.getAttribute('data-name'); });
+  if (!checked.length) {
+    alert(data.solo ? jcupT('还没勾选任何选手。', 'No players selected.')
+                    : jcupT('还没勾选任何战队。', 'No teams selected.'));
+    return;
+  }
+  const existing = {};
+  data.ev.competitors.forEach(function(c) { existing[c.name] = 1; });
+  const added = [], dup = [];
+  checked.forEach(function(name) {
+    const item = data.list.filter(function(x) { return x.name === name; })[0];
+    if (!item) return;
+    if (existing[name]) { dup.push(name); return; }
+    const solo = data.solo;
+    const team = solo ? item.team : item.name;
+    existing[name] = 1;
+    added.push({
+      name: name,
+      members: solo ? [] : item.members.slice(),
+      group: null,
+      carry: 0,
+      tag: null,
+      logo: JCUP_OVERSEAS_TEAM_LOGOS[team] || null
+    });
+  });
+  if (!added.length) {
+    alert(jcupT('选中的都已经添加过了。', 'All selected entries are already added.'));
+    return;
+  }
+  let msg = data.solo
+    ? jcupT('将添加 ' + added.length + ' 名海外选手：\n', 'Add ' + added.length + ' overseas players:\n')
+    : jcupT('将添加 ' + added.length + ' 支海外战队：\n', 'Add ' + added.length + ' overseas teams:\n');
+  msg += added.slice(0, 8).map(function(a) { return a.name; }).join('、') +
+    (added.length > 8 ? jcupT(' 等', ' etc.') : '');
+  if (dup.length) msg += jcupT('\n（跳过 ' + dup.length + ' 个已存在的）', '\n(' + dup.length + ' existing skipped)');
+  msg += jcupT('\n\n确认？', '\n\nConfirm?');
+  if (!confirm(msg)) return;
+  added.forEach(function(c) { c.id = uid(); data.ev.competitors.push(c); });
+  closeJcupOverseas();
+  saveState();
+  renderAll();
+}
+
 /* ---------- 参赛者批量管理 ---------- */
 function openCompBatch() {
   const ev = getActiveEvent(); if (!ev) return;
@@ -12749,6 +13349,7 @@ function retryCloud() {
 
 /* ---- 顶栏状态 / 公开横幅 ---- */
 function updateCloudChrome(ev) {
+  updateLpExportEntry();
   const enabled = cloud.status !== 'disabled';
   const libBtn = document.getElementById('library-btn');
   const emptyBtn = document.getElementById('empty-library-btn');
@@ -15599,6 +16200,7 @@ const RATING_MAX_TIERS = 20;
 const RATING_CATS = [
   { id: 'all', zh: '全部', en: 'All' },
   { id: 'team', zh: '战队', en: 'Teams' },
+  { id: 'jcup-overseas', zh: '海外劫杯', en: 'J Cup Overseas' },
   { id: 'hero', zh: '英雄', en: 'Heroes' },
   { id: 'weapon', zh: '武器', en: 'Weapons' },
   { id: 'player-solo', zh: '单排', en: 'Solo' },
@@ -15779,6 +16381,21 @@ function ratingMaterialCatalog() {
       subtitle: '',
       subtitleEn: '',
       image: NBPL_LOGOS[name]
+    });
+  });
+  JCUP_OVERSEAS_RATING.forEach(function(team) {
+    const image = JCUP_OVERSEAS_TEAM_LOGOS[team.name];
+    if (!image) return;
+    const scopeZh = team.scope === 'both' ? '单排 / 三排' : (team.scope === 'solo' ? '单排' : '三排');
+    const scopeEn = team.scope === 'both' ? 'Solo / Trios' : (team.scope === 'solo' ? 'Solo' : 'Trios');
+    out.push({
+      key: 'jcup-team:' + team.name,
+      category: 'jcup-overseas',
+      name: team.name,
+      nameEn: team.name,
+      subtitle: scopeZh,
+      subtitleEn: scopeEn,
+      image: image
     });
   });
   BP_HEROES.forEach(function(hero) {
@@ -16535,8 +17152,8 @@ function ratingRender() {
   if (poolMove) poolMove.textContent = ratingT('放回待评级', 'Move to unrated');
   const credit = document.getElementById('rating-lib-credit');
   if (credit) {
-    credit.innerHTML = ratingT('图片来源于 <a href="https://naraka.wiki" target="_blank" rel="noopener noreferrer">naraka.wiki</a> 和 <a href="https://www.narakathegame.com" target="_blank" rel="noopener noreferrer">narakathegame.com</a>，版权归官方所有。',
-      'Images come from <a href="https://naraka.wiki" target="_blank" rel="noopener noreferrer">naraka.wiki</a> and <a href="https://www.narakathegame.com" target="_blank" rel="noopener noreferrer">narakathegame.com</a>; all rights belong to the official owners.');
+    credit.innerHTML = ratingT('图片来源于 <a href="https://naraka.wiki" target="_blank" rel="noopener noreferrer">naraka.wiki</a>、<a href="https://www.narakathegame.com" target="_blank" rel="noopener noreferrer">narakathegame.com</a> 和 <a href="https://www.yjwujian.cn/match/#/team-system" target="_blank" rel="noopener noreferrer">www.yjwujian.cn/match/#/team-system</a>，版权归官方所有。',
+      'Images come from <a href="https://naraka.wiki" target="_blank" rel="noopener noreferrer">naraka.wiki</a>, <a href="https://www.narakathegame.com" target="_blank" rel="noopener noreferrer">narakathegame.com</a> and <a href="https://www.yjwujian.cn/match/#/team-system" target="_blank" rel="noopener noreferrer">www.yjwujian.cn/match/#/team-system</a>; all rights belong to the official owners.');
   }
   ratingRenderPlayerMode();
   ratingRenderLibrary();
@@ -17283,6 +17900,15 @@ const EN = {
   '每组': 'Per group',
   '组数': 'Groups',
   '按顺序分到各组': 'Fill groups in order',
+  '按积分分组（赛点后置）': 'Group by points (Match Point last)',
+  '按积分分组（正序）': 'Group by points (in order)',
+  '按当前积分排序并分组，赛点选手后置':
+    'Sort by current points and group them; match-point players go last.',
+  '按当前积分正序排序并分组，不区分赛点，适合第 6–7 局':
+    'Sort by current points in order and group them; match-point status is ignored. For games 6–7.',
+  '已按当前积分分组（赛点后置）': 'Grouped by current points (match-point players last)',
+  '已按当前积分分组（正序，不区分赛点）':
+    'Grouped by current points in order (match-point status ignored)',
   '队': 'teams',
   '三排每组的队伍数': 'Teams per group (Trios)',
   '按当前顺序分组，并按组号循环填充各局':
@@ -17581,6 +18207,33 @@ const EN = {
   '该组暂无参赛者': 'No competitors in this group',
   '· 合并总榜': '· Overall',
   '合并总榜': 'Overall',
+  'Liquipedia 导出': 'Liquipedia Export',
+  'Liquipedia 导出为会员专用，请先登录并获得会员授权':
+    'Liquipedia export is members-only — sign in and get member access first.',
+  '导出 Liquipedia 代码': 'Export Liquipedia Code',
+  '基于当前榜单生成；原来的赛事 JSON 和评级图片导出不受影响。':
+    'Generated from the current standings; the existing event JSON and tier-list image exports are unchanged.',
+  '单日 Match': 'Single-day Match',
+  '通用 Wiki 表格': 'Generic Wiki Table',
+  '比赛日期': 'Match date',
+  '首局时间': 'First game time',
+  '局间间隔': 'Game interval',
+  '分钟': 'min',
+  '晋级标记': 'Advancement bg',
+  '按单个比赛日生成 Liquipedia 的 Bracket/2 + Match 代码：每局对应一个 Map，前序分写 startingpoints，每局分数写 MS|p。日期、首局时间和晋级标记可留空后补；单独粘贴时轮次会显示为 Grand Final，要并入现有多日 Bracket 时只复制 R1M1 整段。':
+    'Generates Liquipedia Bracket/2 + Match code for a single match day: one Map per game, carry-in points as startingpoints, and each game score as MS|p. Date, first-game time and advancement bg can be left blank and filled in later. When pasted standalone, the round is labelled Grand Final; to merge into an existing multi-day Bracket, copy only the R1M1 block.',
+  '标准 MediaWiki 表格，保留当前名次、并列和赛点冠军；粘贴到任意 Liquipedia 页面即可。队名和选手名沿用赛事数据。':
+    'A standard MediaWiki table that keeps the current placements, ties and Match Point champion. Paste it into any Liquipedia page; team and player names come from the event data.',
+  '还没有可以导出的赛事': 'No event available to export',
+  '当前榜单没有可导出的数据': 'The current standings have no data to export',
+  '还没有对局，无法生成单日 Match': 'No games yet; a single-day Match cannot be generated',
+  '下载 .txt': 'Download .txt',
+  '复制代码': 'Copy Code',
+  '没有可复制的内容': 'Nothing to copy',
+  'Liquipedia 代码已复制': 'Liquipedia code copied',
+  '复制失败，请从预览框手动复制': 'Copy failed — select the text in the preview manually',
+  '没有可下载的内容': 'Nothing to download',
+  'Liquipedia 代码已下载': 'Liquipedia code downloaded',
 
   /* ---- 面板 / 参赛者 ---- */
   '比赛录入': 'Match Entry',
@@ -17593,6 +18246,7 @@ const EN = {
   '未匹配到的名称会提示，其余参赛者不受影响': 'Unmatched names are reported; other competitors are unaffected',
   '批量管理 / 删除': 'Bulk Manage / Delete',
   '+ 添加官方战队': '+ Add Official Teams',
+  '+ 劫杯海外选手/战队': '+ J Cup Overseas Players / Teams',
   '+ 从已有赛事挑选': '+ Pick from Other Events',
   '无赛区': 'No region',
   '未分组': 'Ungrouped',

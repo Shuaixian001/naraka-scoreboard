@@ -1,0 +1,1941 @@
+{
+  "events": [
+    {
+      "bp": {
+        "cfg": {
+          "scope": "order",
+          "simu": false,
+          "soloLimit": 2,
+          "soloMinDistinct": 5,
+          "soloMaxTwice": 1,
+          "soloUnique": true,
+          "trioStart": 5,
+          "trioUnique": false,
+          "trioTeamCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 3,
+            "5": 0,
+            "6": 0
+          },
+          "trioSameGameCosts": {
+            "1": 0,
+            "2": 0,
+            "3": 2,
+            "4": 2,
+            "5": 2,
+            "6": 2
+          }
+        },
+        "games": {
+          "id-mvxjid3g-dcrkdm": {
+            "picks": [
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 0,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 1
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 1,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 2
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 2,
+                "heroId": 1000029,
+                "cost": 0,
+                "step": 3
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 0,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 4
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 1,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 5
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 2,
+                "heroId": 1000029,
+                "cost": 0,
+                "step": 6
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 0,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 7
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 1,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 8
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 9
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 0,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 10
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 1,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 11
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 12
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 0,
+                "heroId": 1000004,
+                "cost": 0,
+                "step": 13
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 1,
+                "heroId": 1000018,
+                "cost": 0,
+                "step": 14
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 2,
+                "heroId": 1000027,
+                "cost": 0,
+                "step": 15
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 0,
+                "heroId": 1000018,
+                "cost": 0,
+                "step": 16
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 1,
+                "heroId": 1000004,
+                "cost": 0,
+                "step": 17
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 2,
+                "heroId": 1000027,
+                "cost": 0,
+                "step": 18
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 0,
+                "heroId": 1000029,
+                "cost": 2,
+                "step": 19
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 1,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 20
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 2,
+                "heroId": 1000011,
+                "cost": 0,
+                "step": 21
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 0,
+                "heroId": 1000029,
+                "cost": 2,
+                "step": 22
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 1,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 23
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 2,
+                "heroId": 1000011,
+                "cost": 0,
+                "step": 24
+              }
+            ],
+            "order": [
+              "id-mvdwfmmz-kbvqvz",
+              "id-mvdwfmmz-bvqzr5",
+              "id-mvdwfmmz-doh91y",
+              "id-mvdwfmmz-js5y9p",
+              "id-mvns6bv0-5ztig4",
+              "id-mvns6bv0-wl4zet",
+              "id-mvns6bv0-uhacw1",
+              "id-mvns6bv0-xlps3c"
+            ],
+            "groups": [
+              [
+                "id-mvdwfmmz-kbvqvz",
+                "id-mvdwfmmz-bvqzr5"
+              ],
+              [
+                "id-mvdwfmmz-doh91y",
+                "id-mvdwfmmz-js5y9p"
+              ],
+              [
+                "id-mvns6bv0-5ztig4",
+                "id-mvns6bv0-wl4zet"
+              ],
+              [
+                "id-mvns6bv0-uhacw1",
+                "id-mvns6bv0-xlps3c"
+              ]
+            ]
+          },
+          "id-mvxlhbxw-8olhtx": {
+            "picks": [
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 0,
+                "heroId": 1000003,
+                "cost": 0,
+                "step": 1
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 1,
+                "heroId": 1000015,
+                "cost": 0,
+                "step": 2
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 2,
+                "heroId": 1000027,
+                "cost": 0,
+                "step": 3
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 0,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 4
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 1,
+                "heroId": 1000029,
+                "cost": 0,
+                "step": 5
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 2,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 6
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 0,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 7
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 1,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 8
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 9
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 0,
+                "heroId": 1000029,
+                "cost": 0,
+                "step": 10
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 1,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 11
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 2,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 12
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 0,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 13
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 1,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 14
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 15
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 0,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 16
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 1,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 17
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 18
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 0,
+                "heroId": 1000003,
+                "cost": 0,
+                "step": 19
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 1,
+                "heroId": 1000027,
+                "cost": 0,
+                "step": 20
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 2,
+                "heroId": 1000022,
+                "cost": 0,
+                "step": 21
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 0,
+                "heroId": 1000018,
+                "cost": 0,
+                "step": 22
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 1,
+                "heroId": 1000004,
+                "cost": 0,
+                "step": 23
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 2,
+                "heroId": 1000027,
+                "cost": 0,
+                "step": 24
+              }
+            ],
+            "order": [
+              "id-mvdwfmmz-bvqzr5",
+              "id-mvdwfmmz-doh91y",
+              "id-mvdwfmmz-kbvqvz",
+              "id-mvns6bv0-5ztig4",
+              "id-mvns6bv0-uhacw1",
+              "id-mvns6bv0-xlps3c",
+              "id-mvdwfmmz-js5y9p",
+              "id-mvns6bv0-wl4zet"
+            ],
+            "groups": [
+              [
+                "id-mvdwfmmz-bvqzr5",
+                "id-mvdwfmmz-doh91y"
+              ],
+              [
+                "id-mvdwfmmz-kbvqvz",
+                "id-mvns6bv0-5ztig4"
+              ],
+              [
+                "id-mvns6bv0-uhacw1",
+                "id-mvns6bv0-xlps3c"
+              ],
+              [
+                "id-mvdwfmmz-js5y9p",
+                "id-mvns6bv0-wl4zet"
+              ]
+            ]
+          },
+          "id-mvxmtbb0-etrrid": {
+            "picks": [
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 0,
+                "heroId": 1000027,
+                "cost": 0,
+                "step": 1
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 1,
+                "heroId": 1000015,
+                "cost": 0,
+                "step": 2
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 2,
+                "heroId": 1000003,
+                "cost": 0,
+                "step": 3
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 0,
+                "heroId": 1000018,
+                "cost": 0,
+                "step": 4
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 1,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 5
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 2,
+                "heroId": 1000029,
+                "cost": 0,
+                "step": 6
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 0,
+                "heroId": 1000029,
+                "cost": 0,
+                "step": 7
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 1,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 8
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 2,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 9
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 0,
+                "heroId": 1000029,
+                "cost": 0,
+                "step": 10
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 1,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 11
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 2,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 12
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 0,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 13
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 1,
+                "heroId": 1000029,
+                "cost": 2,
+                "step": 14
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 2,
+                "heroId": 1000011,
+                "cost": 0,
+                "step": 15
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 0,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 16
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 1,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 17
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 18
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 0,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 19
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 1,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 20
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 21
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 0,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 22
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 1,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 23
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 24
+              }
+            ],
+            "order": [
+              "id-mvdwfmmz-bvqzr5",
+              "id-mvdwfmmz-doh91y",
+              "id-mvns6bv0-wl4zet",
+              "id-mvdwfmmz-js5y9p",
+              "id-mvdwfmmz-kbvqvz",
+              "id-mvns6bv0-5ztig4",
+              "id-mvns6bv0-uhacw1",
+              "id-mvns6bv0-xlps3c"
+            ],
+            "groups": [
+              [
+                "id-mvdwfmmz-bvqzr5",
+                "id-mvdwfmmz-doh91y"
+              ],
+              [
+                "id-mvns6bv0-wl4zet",
+                "id-mvdwfmmz-js5y9p"
+              ],
+              [
+                "id-mvdwfmmz-kbvqvz",
+                "id-mvns6bv0-5ztig4"
+              ],
+              [
+                "id-mvns6bv0-uhacw1",
+                "id-mvns6bv0-xlps3c"
+              ]
+            ]
+          },
+          "id-mvxofhbk-ybxt99": {
+            "picks": [
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 0,
+                "heroId": 1000029,
+                "cost": 2,
+                "step": 1
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 1,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 2
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 2,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 3
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 0,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 4
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 1,
+                "heroId": 1000029,
+                "cost": 0,
+                "step": 5
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 2,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 6
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 0,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 7
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 1,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 8
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 2,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 9
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 0,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 10
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 1,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 11
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 2,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 12
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 0,
+                "heroId": 1000018,
+                "cost": 0,
+                "step": 13
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 1,
+                "heroId": 1000004,
+                "cost": 0,
+                "step": 14
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 2,
+                "heroId": 1000027,
+                "cost": 0,
+                "step": 15
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 0,
+                "heroId": 1000027,
+                "cost": 0,
+                "step": 16
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 1,
+                "heroId": 1000004,
+                "cost": 0,
+                "step": 17
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 2,
+                "heroId": 1000018,
+                "cost": 0,
+                "step": 18
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 0,
+                "heroId": 1000003,
+                "cost": 0,
+                "step": 19
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 1,
+                "heroId": 1000022,
+                "cost": 0,
+                "step": 20
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 2,
+                "heroId": 1000001,
+                "cost": 0,
+                "step": 21
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 0,
+                "heroId": 1000003,
+                "cost": 2,
+                "step": 22
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 1,
+                "heroId": 1000001,
+                "cost": 0,
+                "step": 23
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 2,
+                "heroId": 1000022,
+                "cost": 0,
+                "step": 24
+              }
+            ],
+            "order": [
+              "id-mvdwfmmz-kbvqvz",
+              "id-mvns6bv0-uhacw1",
+              "id-mvns6bv0-wl4zet",
+              "id-mvdwfmmz-js5y9p",
+              "id-mvns6bv0-5ztig4",
+              "id-mvns6bv0-xlps3c",
+              "id-mvdwfmmz-doh91y",
+              "id-mvdwfmmz-bvqzr5"
+            ],
+            "groups": [
+              [
+                "id-mvdwfmmz-kbvqvz",
+                "id-mvns6bv0-uhacw1"
+              ],
+              [
+                "id-mvns6bv0-wl4zet",
+                "id-mvdwfmmz-js5y9p"
+              ],
+              [
+                "id-mvns6bv0-5ztig4",
+                "id-mvns6bv0-xlps3c"
+              ],
+              [
+                "id-mvdwfmmz-doh91y",
+                "id-mvdwfmmz-bvqzr5"
+              ]
+            ]
+          },
+          "id-mvxq9noh-lgk4l1": {
+            "picks": [
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 0,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 1
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 1,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 2
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 3
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 0,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 4
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 1,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 5
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 6
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 0,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 7
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 1,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 8
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 2,
+                "heroId": 1000029,
+                "cost": 2,
+                "step": 9
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 0,
+                "heroId": 1000003,
+                "cost": 0,
+                "step": 10
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 1,
+                "heroId": 1000001,
+                "cost": 0,
+                "step": 11
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 2,
+                "heroId": 1000022,
+                "cost": 0,
+                "step": 12
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 0,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 13
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 1,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 14
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 2,
+                "heroId": 1000029,
+                "cost": 0,
+                "step": 15
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 0,
+                "heroId": 1000003,
+                "cost": 0,
+                "step": 16
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 1,
+                "heroId": 1000027,
+                "cost": 0,
+                "step": 17
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 2,
+                "heroId": 1000015,
+                "cost": 0,
+                "step": 18
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 0,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 19
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 1,
+                "heroId": 1000011,
+                "cost": 0,
+                "step": 20
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 2,
+                "heroId": 1000029,
+                "cost": 2,
+                "step": 21
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 0,
+                "heroId": 1000018,
+                "cost": 0,
+                "step": 22
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 1,
+                "heroId": 1000027,
+                "cost": 0,
+                "step": 23
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 2,
+                "heroId": 1000004,
+                "cost": 0,
+                "step": 24
+              }
+            ],
+            "order": [
+              "id-mvdwfmmz-bvqzr5",
+              "id-mvdwfmmz-kbvqvz",
+              "id-mvdwfmmz-doh91y",
+              "id-mvns6bv0-uhacw1",
+              "id-mvns6bv0-5ztig4",
+              "id-mvdwfmmz-js5y9p",
+              "id-mvns6bv0-wl4zet",
+              "id-mvns6bv0-xlps3c"
+            ],
+            "groups": [
+              [
+                "id-mvdwfmmz-bvqzr5",
+                "id-mvdwfmmz-kbvqvz"
+              ],
+              [
+                "id-mvdwfmmz-doh91y",
+                "id-mvns6bv0-uhacw1"
+              ],
+              [
+                "id-mvns6bv0-5ztig4",
+                "id-mvdwfmmz-js5y9p"
+              ],
+              [
+                "id-mvns6bv0-wl4zet",
+                "id-mvns6bv0-xlps3c"
+              ]
+            ]
+          },
+          "id-mvxrrvjw-jh6r1i": {
+            "picks": [
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 0,
+                "heroId": 1000027,
+                "cost": 0,
+                "step": 1
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 1,
+                "heroId": 1000015,
+                "cost": 0,
+                "step": 2
+              },
+              {
+                "compId": "id-mvdwfmmz-kbvqvz",
+                "slot": 2,
+                "heroId": 1000003,
+                "cost": 0,
+                "step": 3
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 0,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 4
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 1,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 5
+              },
+              {
+                "compId": "id-mvdwfmmz-doh91y",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 6
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 0,
+                "heroId": 1000029,
+                "cost": 0,
+                "step": 7
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 1,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 8
+              },
+              {
+                "compId": "id-mvdwfmmz-bvqzr5",
+                "slot": 2,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 9
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 0,
+                "heroId": 1000029,
+                "cost": 2,
+                "step": 10
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 1,
+                "heroId": 1000023,
+                "cost": 0,
+                "step": 11
+              },
+              {
+                "compId": "id-mvns6bv0-uhacw1",
+                "slot": 2,
+                "heroId": 1000017,
+                "cost": 0,
+                "step": 12
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 0,
+                "heroId": 1000003,
+                "cost": 2,
+                "step": 13
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 1,
+                "heroId": 1000027,
+                "cost": 2,
+                "step": 14
+              },
+              {
+                "compId": "id-mvdwfmmz-js5y9p",
+                "slot": 2,
+                "heroId": 1000022,
+                "cost": 0,
+                "step": 15
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 0,
+                "heroId": 1000007,
+                "cost": 0,
+                "step": 16
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 1,
+                "heroId": 1000005,
+                "cost": 0,
+                "step": 17
+              },
+              {
+                "compId": "id-mvns6bv0-wl4zet",
+                "slot": 2,
+                "heroId": 1000032,
+                "cost": 0,
+                "step": 18
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 0,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 19
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 1,
+                "heroId": 1000011,
+                "cost": 0,
+                "step": 20
+              },
+              {
+                "compId": "id-mvns6bv0-5ztig4",
+                "slot": 2,
+                "heroId": 1000029,
+                "cost": 4,
+                "step": 21
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 0,
+                "heroId": 1000029,
+                "cost": 2,
+                "step": 22
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 1,
+                "heroId": 1000024,
+                "cost": 0,
+                "step": 23
+              },
+              {
+                "compId": "id-mvns6bv0-xlps3c",
+                "slot": 2,
+                "heroId": 1000011,
+                "cost": 0,
+                "step": 24
+              }
+            ],
+            "order": [
+              "id-mvdwfmmz-kbvqvz",
+              "id-mvdwfmmz-doh91y",
+              "id-mvdwfmmz-bvqzr5",
+              "id-mvns6bv0-uhacw1",
+              "id-mvdwfmmz-js5y9p",
+              "id-mvns6bv0-wl4zet",
+              "id-mvns6bv0-5ztig4",
+              "id-mvns6bv0-xlps3c"
+            ],
+            "groups": [
+              [
+                "id-mvdwfmmz-kbvqvz",
+                "id-mvdwfmmz-doh91y"
+              ],
+              [
+                "id-mvdwfmmz-bvqzr5",
+                "id-mvns6bv0-uhacw1"
+              ],
+              [
+                "id-mvdwfmmz-js5y9p",
+                "id-mvns6bv0-wl4zet"
+              ],
+              [
+                "id-mvns6bv0-5ztig4",
+                "id-mvns6bv0-xlps3c"
+              ]
+            ]
+          }
+        },
+        "groupCount": 4,
+        "mirrors": [],
+        "order": [
+          "id-mvdwfmmz-kbvqvz",
+          "id-mvdwfmmz-bvqzr5",
+          "id-mvdwfmmz-doh91y",
+          "id-mvdwfmmz-js5y9p",
+          "id-mvns6bv0-5ztig4",
+          "id-mvns6bv0-wl4zet",
+          "id-mvns6bv0-uhacw1",
+          "id-mvns6bv0-xlps3c"
+        ],
+        "preset": "mp",
+        "trioGroupSize": 2,
+        "trioGroups": [
+          [
+            "id-mvdwfmmz-kbvqvz",
+            "id-mvdwfmmz-doh91y"
+          ],
+          [
+            "id-mvdwfmmz-bvqzr5",
+            "id-mvns6bv0-uhacw1"
+          ],
+          [
+            "id-mvdwfmmz-js5y9p",
+            "id-mvns6bv0-wl4zet"
+          ],
+          [
+            "id-mvns6bv0-5ztig4",
+            "id-mvns6bv0-xlps3c"
+          ]
+        ],
+        "v": 1
+      },
+      "compStyles": [],
+      "competitors": [
+        {
+          "carry": 8,
+          "group": null,
+          "id": "id-mvdwfmmz-kbvqvz",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/chengdu-gg.webp",
+          "members": [
+            "330",
+            "Lxm",
+            "Cjs",
+            "Yuyi"
+          ],
+          "name": "成都GG",
+          "tag": null
+        },
+        {
+          "carry": 7,
+          "group": null,
+          "id": "id-mvdwfmmz-bvqzr5",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/wfg.webp",
+          "members": [
+            "XiaoWen",
+            "Mist",
+            "Water"
+          ],
+          "name": "WFG",
+          "tag": null
+        },
+        {
+          "carry": 6,
+          "group": null,
+          "id": "id-mvdwfmmz-doh91y",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/shenzhen-te-su.webp",
+          "members": [
+            "XeM",
+            "1Feng",
+            "TXJ",
+            "yc",
+            "nue"
+          ],
+          "name": "深圳TE溯",
+          "tag": null
+        },
+        {
+          "carry": 5,
+          "group": null,
+          "id": "id-mvdwfmmz-js5y9p",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/oug.webp",
+          "members": [
+            "7N",
+            "peak",
+            "BabyYu",
+            "duck"
+          ],
+          "name": "OUG",
+          "tag": null
+        },
+        {
+          "carry": 4,
+          "group": null,
+          "id": "id-mvns6bv0-5ztig4",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/yzg.webp",
+          "members": [
+            "QGG",
+            "kuku2",
+            "17s"
+          ],
+          "name": "YZG",
+          "tag": null
+        },
+        {
+          "carry": 3,
+          "group": null,
+          "id": "id-mvns6bv0-wl4zet",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/xkg.webp",
+          "members": [
+            "TuTyc",
+            "Junxian",
+            "zxl",
+            "ZIHANG"
+          ],
+          "name": "XKG",
+          "tag": null
+        },
+        {
+          "carry": 2,
+          "group": null,
+          "id": "id-mvns6bv0-uhacw1",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/rw-xia.webp",
+          "members": [
+            "Yuan",
+            "ab",
+            "Youth"
+          ],
+          "name": "RW侠",
+          "tag": null
+        },
+        {
+          "carry": 1,
+          "group": null,
+          "id": "id-mvns6bv0-xlps3c",
+          "logo": "assets/logos/2026FALL_NBPL_LOGOS/vn-521.webp",
+          "members": [
+            "PhatMilk",
+            "Pampy",
+            "Akame",
+            "Yin"
+          ],
+          "name": "VN.521",
+          "tag": null
+        }
+      ],
+      "groups": [],
+      "id": "id-muky2qww-rg9vuo",
+      "lb": {
+        "order": [
+          "rank",
+          "group",
+          "tag",
+          "name",
+          "carry",
+          "games",
+          "total",
+          "mp"
+        ],
+        "show": {
+          "rank": true,
+          "group": true,
+          "tag": true,
+          "name": true,
+          "carry": true,
+          "games": true,
+          "total": true,
+          "mp": true
+        },
+        "width": {
+          "rank": 44,
+          "group": 40,
+          "tag": 76,
+          "name": 0,
+          "carry": 56,
+          "games": 0,
+          "total": 68,
+          "mp": 140
+        },
+        "logo": true,
+        "hideMembers": false,
+        "showTitle": true,
+        "title": "",
+        "titleEn": "",
+        "mapNames": false,
+        "cell": {
+          "py": 8,
+          "px": 8,
+          "fs": 14
+        }
+      },
+      "locked": true,
+      "manualOrder": [],
+      "matchPoint": {
+        "bonusEnabled": true,
+        "bonusStep": 1,
+        "championOverride": null,
+        "enabled": true,
+        "maxMatches": 8,
+        "sameGameCanWin": false,
+        "threshold": 36
+      },
+      "matchTie": [
+        {
+          "k": "kill",
+          "dir": "desc"
+        },
+        {
+          "k": "place",
+          "dir": "asc"
+        }
+      ],
+      "matches": [
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvxjid3g-dcrkdm",
+          "map": "聚窟州·早晨",
+          "mvp": {
+            "compId": "id-mvdwfmmz-bvqzr5",
+            "member": "Mist"
+          },
+          "name": "",
+          "results": {
+            "id-mvdwfmmz-bvqzr5": {
+              "kills": 12,
+              "placement": 3
+            },
+            "id-mvdwfmmz-doh91y": {
+              "kills": 8,
+              "placement": 1
+            },
+            "id-mvdwfmmz-js5y9p": {
+              "kills": 0,
+              "placement": 8
+            },
+            "id-mvdwfmmz-kbvqvz": {
+              "kills": 6,
+              "placement": 2
+            },
+            "id-mvns6bv0-5ztig4": {
+              "kills": 8,
+              "placement": 4
+            },
+            "id-mvns6bv0-uhacw1": {
+              "kills": 7,
+              "placement": 5
+            },
+            "id-mvns6bv0-wl4zet": {
+              "kills": 1,
+              "placement": 7
+            },
+            "id-mvns6bv0-xlps3c": {
+              "kills": 4,
+              "placement": 6
+            }
+          },
+          "topPick": null,
+          "type": "tianti",
+          "typedRank": false
+        },
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvxlhbxw-8olhtx",
+          "map": "火罗国·阴天",
+          "mvp": {
+            "compId": "id-mvns6bv0-wl4zet",
+            "member": "TuTyc"
+          },
+          "name": "",
+          "results": {
+            "id-mvdwfmmz-bvqzr5": {
+              "kills": 7,
+              "placement": 3
+            },
+            "id-mvdwfmmz-doh91y": {
+              "kills": 6,
+              "placement": 5
+            },
+            "id-mvdwfmmz-js5y9p": {
+              "kills": 11,
+              "placement": 2
+            },
+            "id-mvdwfmmz-kbvqvz": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-mvns6bv0-5ztig4": {
+              "kills": 4,
+              "placement": 6
+            },
+            "id-mvns6bv0-uhacw1": {
+              "kills": 5,
+              "placement": 4
+            },
+            "id-mvns6bv0-wl4zet": {
+              "kills": 12,
+              "placement": 1
+            },
+            "id-mvns6bv0-xlps3c": {
+              "kills": 8,
+              "placement": 8
+            }
+          },
+          "topPick": null,
+          "type": "tianti",
+          "typedRank": false
+        },
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvxmtbb0-etrrid",
+          "map": "龙隐洞天·朝露",
+          "mvp": {
+            "compId": "id-mvdwfmmz-doh91y",
+            "member": "1Feng"
+          },
+          "name": "",
+          "results": {
+            "id-mvdwfmmz-bvqzr5": {
+              "kills": 10,
+              "placement": 4
+            },
+            "id-mvdwfmmz-doh91y": {
+              "kills": 15,
+              "placement": 1
+            },
+            "id-mvdwfmmz-js5y9p": {
+              "kills": 4,
+              "placement": 6
+            },
+            "id-mvdwfmmz-kbvqvz": {
+              "kills": 13,
+              "placement": 2
+            },
+            "id-mvns6bv0-5ztig4": {
+              "kills": 2,
+              "placement": 3
+            },
+            "id-mvns6bv0-uhacw1": {
+              "kills": 10,
+              "placement": 7
+            },
+            "id-mvns6bv0-wl4zet": {
+              "kills": 2,
+              "placement": 5
+            },
+            "id-mvns6bv0-xlps3c": {
+              "kills": 3,
+              "placement": 8
+            }
+          },
+          "topPick": null,
+          "type": "tianti",
+          "typedRank": false
+        },
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvxofhbk-ybxt99",
+          "map": "聚窟州·正午",
+          "mvp": {
+            "compId": "id-mvdwfmmz-kbvqvz",
+            "member": "Cjs"
+          },
+          "name": "",
+          "results": {
+            "id-mvdwfmmz-bvqzr5": {
+              "kills": 8,
+              "placement": 6
+            },
+            "id-mvdwfmmz-doh91y": {
+              "kills": 3,
+              "placement": 7
+            },
+            "id-mvdwfmmz-js5y9p": {
+              "kills": 6,
+              "placement": 3
+            },
+            "id-mvdwfmmz-kbvqvz": {
+              "kills": 11,
+              "placement": 1
+            },
+            "id-mvns6bv0-5ztig4": {
+              "kills": 8,
+              "placement": 4
+            },
+            "id-mvns6bv0-uhacw1": {
+              "kills": 3,
+              "placement": 2
+            },
+            "id-mvns6bv0-wl4zet": {
+              "kills": 1,
+              "placement": 5
+            },
+            "id-mvns6bv0-xlps3c": {
+              "kills": 3,
+              "placement": 8
+            }
+          },
+          "topPick": null,
+          "type": "tianti",
+          "typedRank": false
+        },
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvxq9noh-lgk4l1",
+          "map": "火罗国·星夜",
+          "mvp": {
+            "compId": "id-mvns6bv0-wl4zet",
+            "member": "TuTyc"
+          },
+          "name": "",
+          "results": {
+            "id-mvdwfmmz-bvqzr5": {
+              "kills": 2,
+              "placement": 7
+            },
+            "id-mvdwfmmz-doh91y": {
+              "kills": 5,
+              "placement": 6
+            },
+            "id-mvdwfmmz-js5y9p": {
+              "kills": 10,
+              "placement": 2
+            },
+            "id-mvdwfmmz-kbvqvz": {
+              "kills": 6,
+              "placement": 4
+            },
+            "id-mvns6bv0-5ztig4": {
+              "kills": 3,
+              "placement": 3
+            },
+            "id-mvns6bv0-uhacw1": {
+              "kills": 10,
+              "placement": 1
+            },
+            "id-mvns6bv0-wl4zet": {
+              "kills": 14,
+              "placement": 5
+            },
+            "id-mvns6bv0-xlps3c": {
+              "kills": 4,
+              "placement": 8
+            }
+          },
+          "topPick": "id-mvns6bv0-wl4zet",
+          "type": "tianti",
+          "typedRank": false
+        },
+        {
+          "finished": false,
+          "groups": [],
+          "id": "id-mvxrrvjw-jh6r1i",
+          "map": "龙隐洞天·夜半",
+          "mvp": {
+            "compId": "id-mvns6bv0-wl4zet",
+            "member": "zxl"
+          },
+          "name": "",
+          "results": {
+            "id-mvdwfmmz-bvqzr5": {
+              "kills": 3,
+              "placement": 6
+            },
+            "id-mvdwfmmz-doh91y": {
+              "kills": 5,
+              "placement": 5
+            },
+            "id-mvdwfmmz-js5y9p": {
+              "kills": 10,
+              "placement": 1
+            },
+            "id-mvdwfmmz-kbvqvz": {
+              "kills": 7,
+              "placement": 4
+            },
+            "id-mvns6bv0-5ztig4": {
+              "kills": 5,
+              "placement": 7
+            },
+            "id-mvns6bv0-uhacw1": {
+              "kills": 1,
+              "placement": 8
+            },
+            "id-mvns6bv0-wl4zet": {
+              "kills": 17,
+              "placement": 2
+            },
+            "id-mvns6bv0-xlps3c": {
+              "kills": 6,
+              "placement": 3
+            }
+          },
+          "topPick": null,
+          "type": "tianti",
+          "typedRank": false
+        }
+      ],
+      "mode": "trio",
+      "name": "2026秋季赛三排决赛",
+      "nameEn": "2026 Fall Split Trios Grand Finals",
+      "notes": "预测OUG夺冠。",
+      "notesEn": "Predict: OUG wins the champion.",
+      "rankStyles": [],
+      "scoring": {
+        "killCoef": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1,
+          "10": 1,
+          "11": 1,
+          "12": 1,
+          "13": 1,
+          "14": 1,
+          "15": 1,
+          "16": 1,
+          "17": 1,
+          "18": 1,
+          "19": 1,
+          "20": 1,
+          "21": 1,
+          "22": 1,
+          "23": 1,
+          "24": 1,
+          "25": 1,
+          "26": 1,
+          "27": 1,
+          "28": 1,
+          "29": 1,
+          "30": 1,
+          "31": 1,
+          "32": 1,
+          "33": 1,
+          "34": 1,
+          "35": 1,
+          "36": 1,
+          "37": 1,
+          "38": 1,
+          "39": 1,
+          "40": 1,
+          "41": 1,
+          "42": 1,
+          "43": 1,
+          "44": 1,
+          "45": 1,
+          "46": 1,
+          "47": 1,
+          "48": 1
+        },
+        "killPoints": 1,
+        "placement": {
+          "1": 4,
+          "2": 2,
+          "3": 1,
+          "4": 1,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        },
+        "wudaoPlacement": {
+          "1": 8,
+          "2": 4,
+          "3": 2,
+          "4": 2,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0,
+          "14": 0,
+          "15": 0,
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0,
+          "27": 0,
+          "28": 0,
+          "29": 0,
+          "30": 0,
+          "31": 0,
+          "32": 0,
+          "33": 0,
+          "34": 0,
+          "35": 0,
+          "36": 0,
+          "37": 0,
+          "38": 0,
+          "39": 0,
+          "40": 0,
+          "41": 0,
+          "42": 0,
+          "43": 0,
+          "44": 0,
+          "45": 0,
+          "46": 0,
+          "47": 0,
+          "48": 0
+        }
+      },
+      "tags": [],
+      "tieBreak": {
+        "mp": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          }
+        ],
+        "points": [
+          {
+            "k": "carry",
+            "dir": "asc"
+          },
+          {
+            "k": "firstScore",
+            "dir": "asc"
+          },
+          {
+            "k": "kills",
+            "dir": "desc"
+          },
+          {
+            "k": "bestScore",
+            "dir": "desc"
+          },
+          {
+            "k": "bestKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastScore",
+            "dir": "desc"
+          },
+          {
+            "k": "lastKills",
+            "dir": "desc"
+          },
+          {
+            "k": "lastPlace",
+            "dir": "asc"
+          }
+        ]
+      }
+    }
+  ],
+  "activeEventId": "id-muky2qww-rg9vuo"
+}
